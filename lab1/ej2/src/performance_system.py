@@ -1,6 +1,5 @@
 import experiment_generator as eg
 
-
 n = 15     
 A = [0,2,3,3,4,4,5,5,2,3,3,4,4,5,5] 
 A1 = [1,0,0,0,0,4,5,5,0,0,0,0,4,5,5] 
@@ -46,7 +45,8 @@ def jugada(T,turn,A):
 #WHITE = 2 
 
 T = eg.experimentGenerator(n)
-turn = 1
+#T es un tablero con la primer ficha negra colocada en una posicion aleatoria
+turn = 2
 print(T)
 T = jugada(T, turn,A)
 print(T)
