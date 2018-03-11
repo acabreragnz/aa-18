@@ -1,4 +1,4 @@
-import experiment_generator
+import experiment_generator as eg
 
 
 n = 15     
@@ -45,7 +45,7 @@ def jugada(T,turn,A):
 #BLACK = 1
 #WHITE = 2 
 
-T = experimentGenerator(n)
+T = eg.experimentGenerator(n)
 turn = 1
 print(T)
 T = jugada(T, turn,A)
