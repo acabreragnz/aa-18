@@ -16,9 +16,38 @@ def apply_v(v_params):
 
     return base_weight + sum_weight_features
 
-def convertir(T):
-    #[x2,y2,x3,y3,x4,y4,x5,w2,z2,w3,z3,w4,z4,w5]
-    return (0,0,0,0,0,0,0,0,0,0,0,0,0);    
+def convert(board_matrix):
+    """
+    :param board_matrix: el tablero en version matricial
+    :return: Los board_features
+    """
+
+    b2 = [0, 0]
+    b3 = [0, 0]
+    b4 = [0, 0]
+    b5 = 0
+
+    w2 = [0, 0]
+    w3 = [0, 0]
+    w4 = [0, 0]
+    w5 = 0
+
+    return [
+        b2[0],
+        b2[1],
+        b3[0],
+        b3[1],
+        b4[0],
+        b4[1],
+        b5,
+        w2[0],
+        w2[1],
+        w3[0],
+        w3[1],
+        w4[0],
+        w4[1],
+        w5,
+    ] 
 
 
 def jugada(T,turn,W):
@@ -44,3 +73,4 @@ def jugada(T,turn,W):
                 T_next[i][j] = 0
     
     return T_result    
+
