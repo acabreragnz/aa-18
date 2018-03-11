@@ -1,8 +1,8 @@
 #Experiment Generator
-def experimentGenerator():
+def experimentGenerator(n):
     #Genero un tablero de nxn vacio.
-    tablero = [[0 for x in range(n)] for y in range(n)] 
-    return tablero;
+    board = [[0 for x in range(n)] for y in range(n)] 
+    return board;
 
 
 

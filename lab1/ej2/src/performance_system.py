@@ -15,10 +15,10 @@ def convertir(T):
 def V(T, A):
     #return a0 + a1x2 + a2y2 + a3x3 + a4y3 + a5x4 + a6y4 + a7x5 + a8w2 + a9z2 + a10w3 + a11z3 + a12w4 + a13z4 + a14w5
     return A[0] + A[1]*T[0] + A[2]*T[1] + A[3]*T[2] + A[4]*T[3] + A[5]*T[4] + A[6]*T[5] + A[7]*T[6] + A[8]*T[7] + A[9]*T[8] + A[10]*T[9] + A[11]*T[10] + A[12]*T[11] + A[13]*T[11] + A[14]*T[12]
-    
 
 
-def jugada(T,turno,A):
+
+def jugada(T,turn,A):
     #V es una función de evaluación que asigna una puntuación numérica a cualquier estado de tablero.
     #Pretendemos que esta función objetivo V asigne puntuaciones más altas a mejores estados de tablero. 
     #Obener la mejor jugada se puede lograr generando el estado del tablero sucesor producido por cada jugada legal, 
@@ -33,7 +33,7 @@ def jugada(T,turno,A):
     for i in range (0, n):
         for j in range (0, n):
             if T_next[i][j] == 0 :
-                T_next[i][j] = turno
+                T_next[i][j] = turn
                 v_result = V(convertir(T_next),A)
                 if v_result >= v_max :
                     v_max = v_result
@@ -45,8 +45,8 @@ def jugada(T,turno,A):
 #BLACK = 1
 #WHITE = 2 
 
-T = experimentGenerator()
-turno = 1
+T = experimentGenerator(n)
+turn = 1
 print(T)
-T = jugada(T, turno,A)
+T = jugada(T, turn,A)
 print(T)
