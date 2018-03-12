@@ -1,4 +1,4 @@
-from tablero import apply_v
+from lab1.ej2.src.utils import apply_v
 
 
 def gen(training_examples, initial_weights, moderate_constant=0.1):

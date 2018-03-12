@@ -1,3 +1,6 @@
+from lab1.ej2.src.utils import apply_v
+
+
 def get_training_examples(game_trace, weights):
     """
     Genera los valores de entrenamiento
@@ -8,24 +11,8 @@ def get_training_examples(game_trace, weights):
 
     training_examples = []
     for index, board_features in game_trace:
-        training_examples.append((board_features, apply_v_op((weights, game_trace[index + 1]))))
+        v_op_value_for_board_features = apply_v((weights, game_trace[index + 1]))
+        training_examples.append((board_features, v_op_value_for_board_features))
     return training_examples
 
-
-def apply_v_op(v_params):
-    """
-    :param v_params: tupla con la forma (weights, board_features)
-    :return: la funcion v_op aplicada
-    """
-    
-    weights = v_params[0]
-    board_features = v_params[1]
-
-    base_weight = weights[0]
-    sum_weight_features = 0
-
-    for index, board_feature in board_features:
-        sum_weight_features += weights[index + 1] * board_features[index]
-
-    return base_weight + sum_weight_features
 
