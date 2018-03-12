@@ -50,7 +50,7 @@ def convert(board_matrix):
     ] 
 
 
-def move(T,turn,W):
+def move(board,turn,W,n):
     #V es una función de evaluación que asigna una puntuación numérica a cualquier estado de tablero.
     #Pretendemos que esta función objetivo V asigne puntuaciones más altas a mejores estados de tablero. 
     #Obener la mejor jugada se puede lograr generando el estado del tablero sucesor producido por cada jugada legal, 
@@ -59,18 +59,22 @@ def move(T,turn,W):
     #Determinar todas las jugadas posibles para el turno pasado por parametro - para cada celda vacia de la matriz purebo a colocar una ficha del color
     #del turno que esta jugando
     
-    v_max = apply_v( (W,convert(T)) );    
-    T_next = [[T[x][y] for x in range(n)] for y in range(n)] 
-    T_result = []
+    v_max = apply_v( (W, convert(board)) );    
+    board_next = [[board[x][y] for x in range(n)] for y in range(n)] 
+    board_result = []
     for i in range (0, n):
         for j in range (0, n):
-            if T_next[i][j] == 0 :
-                T_next[i][j] = turn
-                v_result = apply_v( (W,convert(T_next)) )
+            if board_next[i][j] == 0 :
+                board_next[i][j] = turn
+                v_result = apply_v( (W,convert(board_next)) )
                 if v_result >= v_max :
                     v_max = v_result
-                    T_result = [[T_next[x][y] for x in range(n)] for y in range(n)] 
-                T_next[i][j] = 0
+                    board_result = [[board_next[x][y] for x in range(n)] for y in range(n)] 
+                board_next[i][j] = 0
     
-    return T_result    
+    return board_result    
 
+
+def isgameover(board):
+    convert(board)
+    return 0
