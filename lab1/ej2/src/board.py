@@ -1,6 +1,8 @@
 from copy import deepcopy
 from random import randint
-import lab1.ej2.src.constants as const
+from utils import apply_v
+import constants as const
+
 
 
 def random_movement(board_matrix, turn):
@@ -56,7 +58,7 @@ def convert(board_matrix):
     ] 
 
 
-def move(board,turn,W,n):
+def move(board,turn,W):
     #V es una función de evaluación que asigna una puntuación numérica a cualquier estado de tablero.
     #Pretendemos que esta función objetivo V asigne puntuaciones más altas a mejores estados de tablero. 
     #Obener la mejor jugada se puede lograr generando el estado del tablero sucesor producido por cada jugada legal, 
@@ -66,16 +68,16 @@ def move(board,turn,W,n):
     #del turno que esta jugando
     
     v_max = apply_v( (W, convert(board)) );    
-    board_next = [[board[x][y] for x in range(n)] for y in range(n)] 
+    board_next = [[board[x][y] for x in range(const.N)] for y in range(const.N)] 
     board_result = []
-    for i in range (0, n):
-        for j in range (0, n):
+    for i in range (0, const.N):
+        for j in range (0, const.N):
             if board_next[i][j] == 0 :
                 board_next[i][j] = turn
                 v_result = apply_v( (W,convert(board_next)) )
                 if v_result >= v_max :
                     v_max = v_result
-                    board_result = [[board_next[x][y] for x in range(n)] for y in range(n)] 
+                    board_result = [[board_next[x][y] for x in range(const.N)] for y in range(const.N)] 
                 board_next[i][j] = 0
     
     return board_result    

@@ -1,4 +1,4 @@
-from lab1.ej2.src.utils import apply_v
+from utils import apply_v
 
 
 def get_training_examples(game_trace, weights):
