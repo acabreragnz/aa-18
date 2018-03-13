@@ -1,6 +1,5 @@
 from lab1.ej2.src.experiment_generator import experimentGenerator
-from lab1.ej2.src.board import convert, move, isgameover
-from lab1.ej2.src.utils import apply_v
+from lab1.ej2.src.board import move, isgameover
 
 n = 15     
 
