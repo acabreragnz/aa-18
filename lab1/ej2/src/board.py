@@ -1,8 +1,9 @@
 from copy import deepcopy
 from random import randint
-from utils import apply_v
-import constants as const
+from lab1.ej2.src.converter.converter import convert
+from lab1.ej2.src.utils import apply_v
 
+import lab1.ej2.src.constants as const
 
 
 def random_movement(board_matrix, turn):
@@ -24,43 +25,9 @@ def random_movement(board_matrix, turn):
             return new_board_matrix
 
 
-def convert(board_matrix):
-    """
-    :param board_matrix: el tablero en version matricial
-    :return: Los board_features
-    """
-
-    b2 = [0, 0]
-    b3 = [0, 0]
-    b4 = [0, 0]
-    b5 = 0
-
-    w2 = [0, 0]
-    w3 = [0, 0]
-    w4 = [0, 0]
-    w5 = 0
-
-    return [
-        b2[0],
-        b2[1],
-        b3[0],
-        b3[1],
-        b4[0],
-        b4[1],
-        b5,
-        w2[0],
-        w2[1],
-        w3[0],
-        w3[1],
-        w4[0],
-        w4[1],
-        w5,
-    ] 
-
-
-def move(board,turn,W):
-    #V es una función de evaluación que asigna una puntuación numérica a cualquier estado de tablero.
-    #Pretendemos que esta función objetivo V asigne puntuaciones más altas a mejores estados de tablero. 
+def move(board,turn,W,n):
+    #V es una funcion de evaluacion que asigna una puntuacion numerica a cualquier estado de tablero.
+    #Pretendemos que esta funcion objetivo V asigne puntuaciones mas altas a mejores estados de tablero.
     #Obener la mejor jugada se puede lograr generando el estado del tablero sucesor producido por cada jugada legal, 
     #luego usando V para elegir el mejor estado sucesor y, por lo tanto, el mejor movimiento legal.
 
@@ -68,16 +35,16 @@ def move(board,turn,W):
     #del turno que esta jugando
     
     v_max = apply_v( (W, convert(board)) );    
-    board_next = [[board[x][y] for x in range(const.N)] for y in range(const.N)] 
+    board_next = [[board[x][y] for x in range(n)] for y in range(n)] 
     board_result = []
-    for i in range (0, const.N):
-        for j in range (0, const.N):
+    for i in range (0, n):
+        for j in range (0, n):
             if board_next[i][j] == 0 :
                 board_next[i][j] = turn
                 v_result = apply_v( (W,convert(board_next)) )
                 if v_result >= v_max :
                     v_max = v_result
-                    board_result = [[board_next[x][y] for x in range(const.N)] for y in range(const.N)] 
+                    board_result = [[board_next[x][y] for x in range(n)] for y in range(n)] 
                 board_next[i][j] = 0
     
     return board_result    

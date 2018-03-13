@@ -5,3 +5,8 @@ WHITE_TURN = 1
 BLACK = 'X'
 WHITE = 'O'
 VOID = ''
+
+# edge types
+CLEAN = 'clean'
+DIRTY = 'dirty'
+IGNORE = 'ignore'
