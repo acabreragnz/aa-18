@@ -33,8 +33,7 @@ def move(board,turn,W,game_trace):
     #del turno que esta jugando
 
     #En game_trace guardo board_features para generar la traza para critics
-    #En isgameover devulvo si termino el juego
-    isgameover = 0
+
     v_max = apply_v( (W, convert(board)) );    
     board_next = [[board[x][y] for x in range(N)] for y in range(N)] 
     board_result = []
@@ -48,10 +47,12 @@ def move(board,turn,W,game_trace):
                     v_max = v_result
                     board_result = [[board_next[x][y] for x in range(N)] for y in range(N)] 
                     game_trace.append(board_features)
-                    if board_features[6] or board_features[13]:
-                        isgameover = 1
                 board_next[i][j] = 0
     
-    return (isgameover, board_result)    
+    return board_result  
 
+
+def isgameover(board):
+    board_features = convert(board)
+    return board_features[6] == 1 or board_features[13] == 1
 
