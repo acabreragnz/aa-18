@@ -10,8 +10,8 @@ def get_training_examples(game_trace, weights):
     """
 
     training_examples = []
-    for index, board_features in game_trace:
-        v_op_value_for_board_features = apply_v((weights, game_trace[index + 1]))
+    for index, board_features in enumerate(game_trace):
+        v_op_value_for_board_features = apply_v((weights, game_trace[index]))
         training_examples.append((board_features, v_op_value_for_board_features))
     return training_examples
 

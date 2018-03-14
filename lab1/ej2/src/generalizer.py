@@ -20,8 +20,8 @@ def gen(training_examples, initial_weights, moderate_constant=0.1):
         v_op_applied_to_board = apply_v((calculated_weights, current_board_features))
 
         # se calculan los nuevos pesos
-        for index, wi in calculated_weights:
+        for index, wi in enumerate(calculated_weights):
             error = v_train_applied_to_board - v_op_applied_to_board
-            calculated_weights[index] = wi + moderate_constant * error * current_board_features[index]
+            calculated_weights[index] = wi + moderate_constant * error * current_board_features[index - 1]
 
     return calculated_weights

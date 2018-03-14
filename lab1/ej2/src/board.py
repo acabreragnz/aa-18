@@ -1,9 +1,9 @@
 from copy import deepcopy
 from random import randint
-from lab1.ej2.src.converter import convert
-from lab1.ej2.src.utils import apply_v
+from converter import convert
+from utils import apply_v
 
-import lab1.ej2.src.constants as const
+import constants as const
 
 
 def random_movement(board_matrix, turn):
@@ -25,7 +25,7 @@ def random_movement(board_matrix, turn):
             return new_board_matrix
 
 
-def move(board,turn,W,n):
+def move(board,turn,W,game_trace):
     #V es una funcion de evaluacion que asigna una puntuacion numerica a cualquier estado de tablero.
     #Pretendemos que esta funcion objetivo V asigne puntuaciones mas altas a mejores estados de tablero.
     #Obener la mejor jugada se puede lograr generando el estado del tablero sucesor producido por cada jugada legal, 
@@ -33,23 +33,28 @@ def move(board,turn,W,n):
 
     #Determinar todas las jugadas posibles para el turno pasado por parametro - para cada celda vacia de la matriz purebo a colocar una ficha del color
     #del turno que esta jugando
+
+    #En game_trace guardo board_features para generar la traza para critics
+    #En isgameover devulvo si termino el juego
+    isgameover = 0
     
     v_max = apply_v( (W, convert(board)) );    
-    board_next = [[board[x][y] for x in range(n)] for y in range(n)] 
+    board_next = [[board[x][y] for x in range(const.N)] for y in range(const.N)] 
     board_result = []
-    for i in range (0, n):
-        for j in range (0, n):
+    for i in range (const.N):
+        for j in range (const.N):
             if board_next[i][j] == 0 :
                 board_next[i][j] = turn
-                v_result = apply_v( (W,convert(board_next)) )
+                board_features = convert(board_next)
+                v_result = apply_v( (W,board_features) )
                 if v_result >= v_max :
                     v_max = v_result
-                    board_result = [[board_next[x][y] for x in range(n)] for y in range(n)] 
+                    board_result = [[board_next[x][y] for x in range(const.N)] for y in range(const.N)] 
+                    game_trace.append(board_features)
+                    if board_features[6] or board_features[13]:
+                        isgameover = 1
                 board_next[i][j] = 0
     
-    return board_result    
+    return (isgameover, board_result)    
 
 
-def isgameover(board):
-    convert(board)
-    return 0

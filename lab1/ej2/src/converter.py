@@ -33,7 +33,7 @@ def do_convert(board):
         for y in range(N):
             convert_point(board, (x, y), board_features, visited)
 
-    print(board_features)
+    #print(board_features)
 
     return [
         board_features[BLACK][2][CLEAN],
