@@ -1,5 +1,5 @@
 
-# Dedicación: alta, media, baja. 
+# Dedicacion: alta, media, baja.
 # Dificultad: alta, media, baja. 
 # Horario: matutino, nocturno. 
 # Humedad: alta, media, baja. 
