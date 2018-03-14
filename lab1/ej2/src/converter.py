@@ -1,4 +1,4 @@
-from lab1.ej2.src.constants import N, BLACK, WHITE, CLEAN, DIRTY, IGNORE
+from constants import N, BLACK, WHITE, CLEAN, DIRTY, IGNORE
 import numpy as np
 
 
@@ -214,41 +214,3 @@ def evaluate_diag_left_up(point):
     left_point = evaluate_left(point)
 
     return evaluate_up(left_point)
-
-
-def test():
-    # import imp
-    # t=imp.load_source('', 'ruta_absoulta_a_este_archivo')
-    # t.test()
-
-    board = [[0 for y in range(N)] for x in range(N)]
-
-    board[1][0] = 1
-    board[1][0] = 1
-    board[2][0] = 1
-    board[1][1] = 1
-    board[1][2] = 1
-    board[0][3] = 2
-    board[1][3] = 2
-    board[2][3] = 2
-    board[3][3] = 1
-    board[1][4] = 2
-    board[1][5] = 1
-    board[1][6] = 1
-    board[1][7] = 1
-    board[2][4] = 2
-    board[2][5] = 2
-    board[2][6] = 2
-    board[2][7] = 2
-    board[2][8] = 1
-    board[2][2] = 1
-    board[1][9] = 2
-    board[2][10] = 1
-    board[3][11] = 1
-    board[4][12] = 1
-    board[5][13] = 1
-    board[6][14] = 2
-
-    print(np.matrix(board))
-
-    return convert(board)

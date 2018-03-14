@@ -12,7 +12,7 @@ W1 = [0,2,3,3,4,4,5,5,2,3,3,4,4,5,5]
 
 
 #Jugar sobre una version menos entrenada de si mismo
-board = experimentGenerator(n)
+board = experimentGenerator()
 
 #T es un tablero con la primer ficha negra colocada en una posicion aleatoria
 turn = 2

@@ -1,6 +1,6 @@
 from copy import deepcopy
 from random import randint
-from lab1.ej2.src.converter.converter import convert
+from lab1.ej2.src.converter import convert
 from lab1.ej2.src.utils import apply_v
 
 import lab1.ej2.src.constants as const
