@@ -1,8 +1,8 @@
 import unittest
 import numpy as np
 import numpy.testing as npt
-from lab1.ej2.src.converter import convert
-from lab1.ej2.src.constants import N
+from converter import convert
+from constants import N
 
 
 class TestConverterMethod(unittest.TestCase):
