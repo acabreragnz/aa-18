@@ -36,17 +36,17 @@ def move(board,turn,W,game_trace):
     #En isgameover devulvo si termino el juego
     isgameover = 0
     v_max = apply_v( (W, convert(board)) );    
-    board_next = [[board[x][y] for x in range(const.N)] for y in range(const.N)] 
+    board_next = [[board[x][y] for x in range(N)] for y in range(N)] 
     board_result = []
-    for i in range (const.N):
-        for j in range (const.N):
+    for i in range (N):
+        for j in range (N):
             if board_next[i][j] == 0 :
                 board_next[i][j] = turn
                 board_features = convert(board_next)
                 v_result = apply_v( (W,board_features) )
                 if v_result >= v_max :
                     v_max = v_result
-                    board_result = [[board_next[x][y] for x in range(const.N)] for y in range(const.N)] 
+                    board_result = [[board_next[x][y] for x in range(N)] for y in range(N)] 
                     game_trace.append(board_features)
                     if board_features[6] or board_features[13]:
                         isgameover = 1

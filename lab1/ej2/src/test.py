@@ -1,4 +1,4 @@
-from experiment_generator import experimentGenerator
+from experiment_generator import experiment_generator
 from board import move
 from critic import get_training_examples
 from generalizer import gen
@@ -14,7 +14,7 @@ W0 = [0,2,3,3,4,4,5,5,2,3,3,4,4,5,5]
 
 
 #Jugar sobre una version menos entrenada de si mismo
-board = experimentGenerator()
+board = experiment_generator()
 
 
 #T es un tablero con la primer ficha negra colocada en una posicion aleatoria
