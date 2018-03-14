@@ -40,6 +40,6 @@ for i in range(9000):
 
 #print(game_trace)
 training_examples = get_training_examples(game_trace, weights)   
-print(len(training_examples))     
+     
 weights1 = gen(training_examples, weights, 0.7)
 print(weights1)
