@@ -1,8 +1,8 @@
 import unittest
 import numpy as np
 import numpy.testing as npt
-from converter import convert
-from constants import N
+from lab1.ej2.src.converter import convert
+from lab1.ej2.src.constants import N
 
 
 class TestConverterMethod(unittest.TestCase):
@@ -56,6 +56,24 @@ class TestConverterMethod(unittest.TestCase):
 
         calculated_features = convert(board)
         expected_features = [0, 0, 0, 0, 0, 0, 0, 6, 0, 1, 0, 0, 0, 0]
+
+        npt.assert_array_equal(calculated_features, expected_features)
+
+    def test_board_issue3(self):
+        board = [[0 for y in range(N)] for x in range(N)]
+
+        board[6][6] = 2
+        board[6][7] = 2
+        board[7][6] = 2
+        board[7][7] = 2
+        board[7][8] = 2
+        board[8][6] = 2
+        board[8][7] = 2
+
+        print(np.matrix(board))
+
+        calculated_features = convert(board)
+        expected_features = [0, 0, 0, 0, 0, 0, 0, 8, 0, 3, 0, 0, 0, 0]
 
         npt.assert_array_equal(calculated_features, expected_features)
 
