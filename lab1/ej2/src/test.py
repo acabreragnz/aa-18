@@ -1,5 +1,5 @@
 from experiment_generator import experiment_generator
-from board import move
+from board import move, random_movement
 from critic import get_training_examples
 from generalizer import gen
 
@@ -23,22 +23,23 @@ turn = 2
 
 isgameover = 0
 game_trace = []
-for i in range(1000):
+for i in range(9000):
 	while not isgameover :
 		weights = W0
 		if turn == 1 :
-			weights = W0
-			turn = 2
+			t = move(board, turn, weights, game_trace)
+			isgameover = t[0]
+			board = t[1]			
 		elif turn == 2 :
-			weights = W0
+			board = random_movement(board, turn)
 			turn = 1
 
-		t = move(board, turn, weights, game_trace)
-		isgameover = t[0]
-		board = t[1]
+		
+
 
 
 #print(game_trace)
-training_examples = get_training_examples(game_trace, weights)        
+training_examples = get_training_examples(game_trace, weights)   
+print(len(training_examples))     
 weights1 = gen(training_examples, weights, 0.7)
 print(weights1)
