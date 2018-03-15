@@ -46,14 +46,13 @@ class Board:
     def is_empty_square(self, square):
         return self._board[square[0]][square[1]] == Board.EMPTY_SQUARE
 
-    def random_movement(self, turn, game_trace):
+    def random_movement(self, piece, game_trace):
         """
-        Realiza un movimiento aleatorio para el jugador cuyo turno se indique en turn
+        Realiza un movimiento aleatorio para el tipo de pieza indicado en piece.
+        Luego de invocarla, modifica la instancia y agrega su representacion en forma de tupla a game_trace
 
-        :param board: Matriz cuadrada representando el estado del juego (board[i][j] in [0, 1, 2] para todo (i,j))
-        :param turn: Turno que le corresponde al jugador que quiere realizar el movimiento aleatorio (turn in [1,2])
-        :param game_trace:
-        :return: Una nueva matriz con el estado del juego luego del movimiento
+        :param piece: Entero para indicar quien realiza el movimiento, piece in [self.BLACK_PIECE, self.WHITE_PIECE]
+        :param game_trace: Lista de tuplas
         """
 
         board = self
@@ -62,7 +61,7 @@ class Board:
         while not board.is_empty_square(random_square):
             random_square = board.select_random_square()
 
-        board.put_piece(random_square, turn)
+        board.put_piece(random_square, piece)
         board_features = board.to_features()
         game_trace.append(board_features)
 
