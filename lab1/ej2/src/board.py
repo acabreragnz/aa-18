@@ -48,7 +48,7 @@ def move(board,turn,W,game_trace):
                 v_result = apply_v( (W,board_features) )
                 if v_result >= v_max :
                     v_max = v_result
-                    board_result = [[board_next[x][y] for x in range(N)] for y in range(N)] 
+                    board_result = deepcopy(board_next)
                     board_features_result = board_features
                     game_trace.append(board_features)
                 board_next[i][j] = 0
