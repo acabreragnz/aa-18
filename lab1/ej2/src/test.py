@@ -22,27 +22,29 @@ def printBoard(board):
 
 
 game_trace = []
-for i in range(100):
+for i in range(1):
 
 	board = experiment_generator()
 	#T es un tablero con la primer ficha negra colocada en una posicion aleatoria
 	turn = 2
-	
-	while not isgameover(board):
+	end = 0
+
+	while not end:
 		if turn == 1 :
-			board = move(board, turn, weights, game_trace)
+			(board, board_features) = move(board, turn, weights, game_trace)
 			turn = 2		
 		elif turn == 2 :
-			board = random_movement(board, turn)
+			(board, board_features) = random_movement(board, turn, game_trace)
 			turn = 1
+		
+		end = isgameover(board_features)
 		#printBoard(board)
 
 
-		
 #print(game_trace)
 training_examples = get_training_examples(game_trace, weights) 
 
-#printTraining(training_examples)  
+printTraining(training_examples)  
      
 weights1 = gen(training_examples, weights, 0.7)
 print(weights1)

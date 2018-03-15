@@ -6,7 +6,7 @@ from constants import N
 
 
 
-def random_movement(board, turn):
+def random_movement(board, turn, game_trace):
     """
     Realiza un movimiento aleatorio para el jugador cuyo turno se indique en turn
 
@@ -20,7 +20,9 @@ def random_movement(board, turn):
         j = randint(0, N - 1)
         if new_board[i][j] == 0:
             new_board[i][j] = turn
-            return new_board
+            board_features = convert(new_board)
+            game_trace.append(board_features)
+            return (new_board, board_features)
 
 def move(board,turn,W,game_trace):
 
@@ -37,6 +39,7 @@ def move(board,turn,W,game_trace):
     v_max = apply_v( (W, convert(board)) );    
     board_next = [[board[x][y] for x in range(N)] for y in range(N)] 
     board_result = []
+    board_features_result = []
     for i in range (N):
         for j in range (N):
             if board_next[i][j] == 0 :
@@ -46,13 +49,13 @@ def move(board,turn,W,game_trace):
                 if v_result >= v_max :
                     v_max = v_result
                     board_result = [[board_next[x][y] for x in range(N)] for y in range(N)] 
+                    board_features_result = board_features
                     game_trace.append(board_features)
                 board_next[i][j] = 0
     
-    return board_result  
+    return (board_result,board_features)  
 
 
-def isgameover(board):
-    board_features = convert(board)
+def isgameover(board_features):
     return board_features[6] == 1 or board_features[13] == 1
 
