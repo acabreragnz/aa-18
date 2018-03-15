@@ -17,12 +17,12 @@ def get_game_trace_with_random_player(initial_board, weights):
     while True:
         # Turno del jugador 2 (jugador aleatorio)
         board.random_movement(Board.WHITE_PIECE, game_trace)
-        if Board.is_game_over(game_trace[-1]):
+        if Board.is_game_over_from_features(game_trace[-1]):
             break
         else:
             # Turno del jugador 1 (jugador que busca la funcion v)
-            board.best_move(board, 1, weights)
-            if Board.is_game_over(game_trace[-1]):
+            board.best_move(Board.BLACK_PIECE, weights, game_trace)
+            if Board.is_game_over_from_features(game_trace[-1]):
                 break
     return game_trace
 
