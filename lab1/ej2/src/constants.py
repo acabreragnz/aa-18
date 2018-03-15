@@ -8,3 +8,6 @@ VOID = ''
 CLEAN = 'clean'
 DIRTY = 'dirty'
 IGNORE = 'ignore'
+
+#
+TOTAL_REQUIRED_ITEMS_IN_LINE = 5

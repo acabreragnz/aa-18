@@ -1,4 +1,4 @@
-from constants import N, BLACK, WHITE, CLEAN, DIRTY, IGNORE
+from constants import N, BLACK, WHITE, CLEAN, DIRTY, IGNORE, TOTAL_REQUIRED_ITEMS_IN_LINE
 import numpy as np
 
 
@@ -15,25 +15,15 @@ def do_convert(board):
     visited = [[False for y in range(N)] for x in range(N)]
 
     board_features = {
-        BLACK: {
-            2: {CLEAN: 0, DIRTY: 0},
-            3: {CLEAN: 0, DIRTY: 0},
-            4: {CLEAN: 0, DIRTY: 0},
-            5: {CLEAN: 0, DIRTY: 0},
-        },
-        WHITE: {
-            2: {CLEAN: 0, DIRTY: 0},
-            3: {CLEAN: 0, DIRTY: 0},
-            4: {CLEAN: 0, DIRTY: 0},
-            5: {CLEAN: 0, DIRTY: 0},
-        }
+        BLACK: {index: {CLEAN: 0, DIRTY: 0} for index in range(2, TOTAL_REQUIRED_ITEMS_IN_LINE + 1)},
+        WHITE: {index: {CLEAN: 0, DIRTY: 0} for index in range(2, TOTAL_REQUIRED_ITEMS_IN_LINE + 1)}
     }
 
     for x in range(N):
         for y in range(N):
             convert_point(board, (x, y), board_features, visited)
 
-    #print(board_features)
+    print(board_features)
 
     return [
         board_features[BLACK][2][CLEAN],
@@ -85,6 +75,10 @@ def search_line_for_direction(search_fn, board, point, turn, board_features, vis
 def update_board_features_for_direction(direction_result, turn, board_features):
     color_value = turn_to_color(turn)
     total_direction_result = direction_result[0]
+
+    if total_direction_result > TOTAL_REQUIRED_ITEMS_IN_LINE:
+        print("Error: you have made a line with more than the required", total_direction_result)
+        raise ValueError
 
     if direction_result[1] != IGNORE and total_direction_result > 1:
         if direction_result[1] == CLEAN:
