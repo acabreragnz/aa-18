@@ -33,7 +33,7 @@ def gen(training_examples, initial_weights, moderate_constant=0.1):
             if index == 0:
                 calculated_weights[index] = wi
             else:
-                calculated_weights[index] = wi + moderate_constant * error * current_board_features[index-1] / norm
+                calculated_weights[index] = wi + moderate_constant * error * current_board_features[index-1]/norm
 
-        print(calculated_weights)
+        #print(calculated_weights)
     return calculated_weights
