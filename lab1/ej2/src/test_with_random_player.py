@@ -7,6 +7,13 @@ from utils import squared_error
 
 
 class TestWithRandomPlayer(unittest.TestCase):
+    """
+
+    NOTAS:
+
+        - La cantidad de tuplas de entrenamiento obtenidas al normalizar los pesos en la funcion gen de
+        lab1/ejr2/src/generalizer.py es mucho mayor que sin normalizar.
+    """
 
     def test_squared_errors_1(self):
         weights = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
