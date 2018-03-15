@@ -25,6 +25,9 @@ class Board:
 
         return self
 
+    def get_piece(self, square):
+        return self._board[square[0]][square[1]]
+
     def remove_piece(self, square):
         self.put_piece(square, Board.EMPTY_SQUARE)
 
@@ -35,11 +38,10 @@ class Board:
         print(np.matrix(self._board))
 
     def is_game_over(self):
-        Board.is_game_over_from_features(self.to_features())
+        return Board.is_game_over_from_features(self.to_features())
 
     def to_features(self):
         return convert(self._board)
-
 
     def is_empty_square(self, square):
         return self._board[square[0]][square[1]] == Board.EMPTY_SQUARE
@@ -98,11 +100,7 @@ class Board:
                         v_max = v_result
                         best_square = current_square
 
-        self.do_print()
-
         self.put_piece(best_square, turn)
-
-        print(best_square)
 
         game_trace.append(self.to_features())
 
@@ -137,8 +135,8 @@ class Board:
         first_and_last = 2
         clean_and_dirty = 2
 
-        white_won_index = (TOTAL_REQUIRED_ITEMS_IN_LINE - first_and_last) * clean_and_dirty
-        black_won_index = len(features) - 1
+        black_won_index = (TOTAL_REQUIRED_ITEMS_IN_LINE - first_and_last) * clean_and_dirty
+        white_won_index = len(features) - 1
 
         black_won = features[black_won_index] >= 1
         white_won = features[white_won_index] >= 1

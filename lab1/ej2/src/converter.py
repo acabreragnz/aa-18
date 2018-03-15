@@ -1,5 +1,6 @@
 from constants import N, BLACK, WHITE, CLEAN, DIRTY, IGNORE, TOTAL_REQUIRED_ITEMS_IN_LINE
-
+import numpy as np
+import logging
 
 def convert(board):
     """
@@ -74,8 +75,10 @@ def update_board_features_for_direction(direction_result, turn, board_features):
     total_direction_result = direction_result[0]
 
     if total_direction_result > TOTAL_REQUIRED_ITEMS_IN_LINE:
-        print("Error: you have made a line with more than the required", total_direction_result)
-        raise ValueError
+        logging.warning("Error: you have made a line with more than the required")
+
+        # puede pasar que queden mas de 5 XXXX_X
+        total_direction_result = 5
 
     if direction_result[1] != IGNORE and total_direction_result > 1:
         if direction_result[1] == CLEAN:

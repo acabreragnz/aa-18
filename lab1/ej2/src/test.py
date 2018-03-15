@@ -1,7 +1,7 @@
 from experiment_generator import experiment_generator
 from board import Board
 from critic import get_training_examples
-from generalizer import gen
+import generalizer
 from constants import N
 
 n = N
@@ -24,20 +24,21 @@ for i in range(1):
     turn = board.BLACK_PIECE
 
     board_features = []
+
     while not board.is_game_over():
-        if turn == board.BLACK_PIECE:
+        if turn == Board.BLACK_PIECE:
             board.best_move(turn, weights, game_trace)
-            turn = board.WHITE_PIECE
+            turn = Board.WHITE_PIECE
         elif turn == board.WHITE_PIECE:
             board.random_movement(turn, game_trace)
-            turn = board.BLACK_PIECE
+            turn = Board.BLACK_PIECE
 
-# board.do_print()
+    # board.do_print()
 
-# print(game_trace)
-training_examples = get_training_examples(game_trace, weights)
+    # print(game_trace)
+    training_examples = get_training_examples(game_trace, weights)
 
-# print_training(training_examples)
+    # print_training(training_examples)
 
-weights1 = gen(training_examples, weights, 0.7)
-print(weights1)
+    weights = generalizer.gen(training_examples, weights, 0.1)
+    print(weights)

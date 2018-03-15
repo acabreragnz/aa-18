@@ -1,5 +1,5 @@
-from lab1.ej2.src.board import Board
-from lab1.ej2.src.converter import convert
+from board import Board
+from converter import convert
 
 
 def get_game_trace_with_random_player(initial_board, weights):

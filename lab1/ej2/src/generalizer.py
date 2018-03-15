@@ -27,9 +27,12 @@ def gen(training_examples, initial_weights, moderate_constant=0.1):
         # se calculan los nuevos pesos
         for index, wi in enumerate(calculated_weights):
             error = v_train_applied_to_board - v_op_applied_to_board
-            if index == 0 :
+
+            print("LMS error is", error)
+
+            if index == 0:
                 calculated_weights[index] = wi
-            else :
+            else:
                 calculated_weights[index] = wi + moderate_constant * error * current_board_features[index-1] / norm
 
         print(calculated_weights)
