@@ -7,7 +7,7 @@ def gen(training_examples, initial_weights, moderate_constant=0.1):
         :param initial_weights:
         :param moderate_constant: constante de ajuste del algoritmo LMS
 
-        :return: los nuevos parametros de la funcion v, con la forma (weights, board_features)
+        :return: Tupla con los nuevos pesos de la funcion v_op
     """
 
     calculated_weights = initial_weights
@@ -24,12 +24,11 @@ def gen(training_examples, initial_weights, moderate_constant=0.1):
         for board_feature in current_board_features:
             norm = norm + board_feature
 
+        error = v_train_applied_to_board - v_op_applied_to_board
+        print("LMS error is", error)
+
         # se calculan los nuevos pesos
         for index, wi in enumerate(calculated_weights):
-            error = v_train_applied_to_board - v_op_applied_to_board
-
-            print("LMS error is", error)
-
             if index == 0:
                 calculated_weights[index] = wi
             else:
