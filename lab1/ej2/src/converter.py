@@ -1,5 +1,4 @@
 from constants import N, BLACK, WHITE, CLEAN, DIRTY, IGNORE, TOTAL_REQUIRED_ITEMS_IN_LINE
-import numpy as np
 
 
 def convert(board):
@@ -22,8 +21,6 @@ def do_convert(board):
     for x in range(N):
         for y in range(N):
             convert_point(board, (x, y), board_features, visited)
-
-    print(board_features)
 
     return [
         board_features[BLACK][2][CLEAN],

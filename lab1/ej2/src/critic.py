@@ -19,4 +19,6 @@ def get_training_examples(game_trace, weights):
         i += 1
     return training_examples
 
+[1, 2, 3, 4, 5]
+
 

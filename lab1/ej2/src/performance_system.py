@@ -1,6 +1,5 @@
-from lab1.ej2.src.board import move, random_movement
+from lab1.ej2.src.board import Board
 from lab1.ej2.src.converter import convert
-from lab1.ej2.src.utils import isgameover
 
 
 def get_game_trace_with_random_player(initial_board, weights):
@@ -17,15 +16,15 @@ def get_game_trace_with_random_player(initial_board, weights):
     board = initial_board
     while True:
         # Turno del jugador 2 (jugador aleatorio)
-        board = random_movement(board, 2)
+        board.random_movement(board, 2)
         game_trace.append(convert(board))
-        if isgameover(game_trace[-1]):
+        if Board.is_game_over(game_trace[-1]):
             break
         else:
             # Turno del jugador 1 (jugador que busca la funcion v)
-            board = move(board, 1, weights)
+            board = board.best_move(board, 1, weights)
             game_trace.append(convert(board))
-            if isgameover(game_trace[-1]):
+            if Board.is_game_over(game_trace[-1]):
                 break
     return game_trace
 
