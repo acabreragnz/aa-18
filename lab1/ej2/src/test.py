@@ -9,7 +9,9 @@ n = 15
 #WHITE = 2 
 
 #Invento unos pesos para probar
-weights = [0,2,3,3,4,4,5,5,2,3,3,4,4,5,5] 
+#weights = [0,1,2,2,3,3,4,4,1,2,2,3,3,4,4] 
+weights = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1] 
+
 
 def printTraining(training_examples):
 	for i in range(len(training_examples)):
@@ -31,10 +33,14 @@ for i in range(1):
 
 	while not end:
 		if turn == 1 :
-			(board, board_features) = move(board, turn, weights, game_trace)
+			t = move(board, turn, weights, game_trace)
+			board = t[0]
+			board_features = t[1]
 			turn = 2		
 		elif turn == 2 :
-			(board, board_features) = random_movement(board, turn, game_trace)
+			t = random_movement(board, turn, game_trace)
+			board = t[0]
+			board_features = t[1]
 			turn = 1
 		
 		end = isgameover(board_features)
@@ -44,7 +50,7 @@ for i in range(1):
 #print(game_trace)
 training_examples = get_training_examples(game_trace, weights) 
 
-printTraining(training_examples)  
+#printTraining(training_examples)  
      
 weights1 = gen(training_examples, weights, 0.7)
 print(weights1)
