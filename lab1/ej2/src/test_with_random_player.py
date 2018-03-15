@@ -12,7 +12,7 @@ class TestWithRandomPlayer(unittest.TestCase):
     NOTAS:
 
         - La cantidad de tuplas de entrenamiento obtenidas al normalizar los pesos en la funcion gen de
-        lab1/ejr2/src/generalizer.py es mucho mayor que sin normalizar.
+        lab1/ejr2/src/generalizer.py es mucho mayor que sin normalizar (probar los dos primeros tests con 5 iteraciones)
     """
 
     def test_squared_errors_1(self):
@@ -57,5 +57,32 @@ class TestWithRandomPlayer(unittest.TestCase):
 
         for i in range(iterations-1):
             self.assertGreaterEqual(errors[i], errors[i+1],
+                                    f'El error {i} no es mayor o igual que el error {i+1}, los errores deben decrecer')
+
+    def test_squared_errors_3(self):
+        """
+        Tupla obtenida de los test anteriores con un error relativamente bajo ( < 2 )
+        """
+
+        weights = [1.0, 0.9999999898725264, -1.0, 0.9999999941226553, 0.7789066176302455, 0.9999999976272673,
+                   0.7685086147538794, 1.0, 0.7789465050493634, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+        moderate_constant = 0.01
+        iterations = 30
+        errors = []
+        for i in range(iterations):
+            board = experiment_generator()
+            print('Obteniendo traza del juego...')
+            game_trace = get_game_trace_with_random_player(board, weights)
+            print(f'Se obtuvieron {game_trace.__len__()} tuplas')
+            training_examples = get_training_examples(game_trace, weights)
+            print('Ajustando pesos...')
+            weights = gen(training_examples, weights, moderate_constant)
+            errors.append(squared_error(training_examples, weights))
+
+        for i in range(iterations):
+            print('Error {}: {}'.format(i, errors[i]))
+
+        for i in range(iterations - 1):
+            self.assertGreaterEqual(errors[i], errors[i + 1],
                                     f'El error {i} no es mayor o igual que el error {i+1}, los errores deben decrecer')
 
