@@ -27,6 +27,11 @@ def apply_v(v_params):
     for index, board_feature in enumerate(board_features):
         sum_weight_features += weights[index + 1] * board_features[index]
 
+    if sum_weight_features > 100 :
+        return sum_weight_features / 100
+    elif sum_weight_features < -100 :
+        return sum_weight_features / 100
+
     return sum_weight_features
 
 

@@ -59,6 +59,32 @@ def get_game_trace_with_human_player(initial_board, weights):
     return game_trace
 
 
+def get_game_trace_with_old_vesion(initial_board, weights, old_weights):
+    """
+    Genera una traza de un juego maquina vs maquina hasta el final en donde la ultima es una version menos entrenada.
+
+    :param initial_board: Instancia de Board
+    :param weights: Tupla con los pesos de la funcion v_op que se tienen actualmente
+    :return: Lista de tuplas representando el estado del juego luego de cada movimiento de cada jugador
+    """
+
+    # El movimiento del juagdor 1 ya fue hecho en initial_board
+    board = initial_board
+    game_trace = [board.to_features()]
+    while True:
+        # Turno del jugador 2 (jugador menos entrenado)
+        board.best_move(Board.BLACK_PIECE, old_weights, game_trace)
+        if Board.is_game_over_from_features(game_trace[-1]):
+            break
+        else:
+            # Turno del jugador 1 (jugador que busca la funcion v)
+            board.best_move(Board.BLACK_PIECE, weights, game_trace)
+            if Board.is_game_over_from_features(game_trace[-1]):
+                break
+
+    return game_trace
+
+
 def human_select_square(board):
     while True:
         try:

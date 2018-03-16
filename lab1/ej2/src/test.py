@@ -9,7 +9,7 @@ n = N
 
 # Invento unos pesos para probar
 #weights = [0,1,2,2,3,3,4,4,1,2,2,3,3,4,4]
-weights = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+weights = [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 weights_old = weights
 
 def print_training(training_examples):
@@ -32,7 +32,8 @@ for i in range(iter):
             board.best_move(turn, weights, game_trace)
             turn = Board.WHITE_PIECE
         elif turn == board.WHITE_PIECE:
-            board.best_move(turn, weights_old, game_trace)
+            board.random_movement(turn, game_trace)
+            #board.best_move(turn, weights_old, game_trace)
             turn = Board.BLACK_PIECE
 
 
@@ -42,4 +43,4 @@ for i in range(iter):
     training_examples = get_training_examples(game_trace, weights)
     weights = generalizer.gen(training_examples, weights, u)
     print(weights)
-    print_training(training_examples)
+    #print_training(training_examples)

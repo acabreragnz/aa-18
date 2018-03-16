@@ -22,13 +22,13 @@ def get_training_examples(game_trace, weights):
         training_examples.append((board_features, v_ent_value_for_current_board_features))
         i += 1
 
-
+    board_features = game_trace[game_trace.__len__()-1]
     black_won_index = 6#(5 - 2) * 2
     white_won_index = 13#len(board_features) - 1
 
     won = board_features[black_won_index] >= 1
     lost = board_features[white_won_index] >= 1
-    board_features = game_trace[game_trace.__len__()-1]
+    
     if won:
         training_examples.append((board_features, 100))
     elif lost:
