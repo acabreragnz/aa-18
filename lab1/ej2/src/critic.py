@@ -20,9 +20,9 @@ def get_training_examples(game_trace, weights):
         v_ent_value_for_current_board_features = apply_v((weights, my_next_turn_board_features))
 
         training_examples.append((board_features, v_ent_value_for_current_board_features))
-        i += 1
+        i += 2
 
-    board_features = game_trace[game_trace.__len__()-1]
+    board_features = game_trace[-1]
     black_won_index = 6#(5 - 2) * 2
     white_won_index = 13#len(board_features) - 1
 
@@ -30,11 +30,16 @@ def get_training_examples(game_trace, weights):
     lost = board_features[white_won_index] >= 1
     
     if won:
-        training_examples.append((board_features, 100))
+        training_examples.append((game_trace[-1], 100))
     elif lost:
-        training_examples.append((board_features, -100))
+        training_examples.append((game_trace[-2], -100))
     else:
-        training_examples.append((board_features, 0))
+        modulo = game_trace.__len__() % 2
+
+        if modulo == 0:
+            training_examples.append((game_trace[-2], 0))
+        else:
+            training_examples.append((game_trace[-1], 0))
 
     return training_examples
 
