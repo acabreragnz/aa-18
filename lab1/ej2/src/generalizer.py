@@ -11,11 +11,14 @@ def normalize(v):
 
     min_val = min(v)
     max_val = max(v)
-    # Centra los valores en 0
-    _average = (min_val + max_val) / 2
-    # Los lleva al rango [-1,1]
-    _range = (max_val - min_val) / 2
-    return [(x - _average)/_range for x in v]
+    if min_val < -1 or max_val > 1:
+        # Centra los valores en 0
+        _average = (min_val + max_val) / 2
+        # Los lleva al rango [-1,1]
+        _range = (max_val - min_val) / 2
+        return [(x - _average)/_range for x in v]
+    else:
+        return v
 
 
 def gen(training_examples, initial_weights, moderate_constant=0.1):
