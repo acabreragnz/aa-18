@@ -48,6 +48,9 @@ class Board:
         :param last_square
         """
 
+        print("--------------------------------------------------------------------")
+        print("--------------------------------------------------------------------")
+
         last_square = self._last_square
         if mapping is not None:
             m = Board.do_copy_board(self._board)
