@@ -29,6 +29,8 @@ class TestWithRandomPlayer(unittest.TestCase):
             print('Ajustando pesos...')
             weights = gen(training_examples, weights, moderate_constant)
             errors.append(squared_error(training_examples, weights))
+            print(f'Pesos obtenidos : {weights}')
+            print(f'Error cuadratico : {errors[-1]}')
 
         for i in range(iterations):
             print('Error {}: {}'.format(i, errors[i]))
@@ -51,6 +53,8 @@ class TestWithRandomPlayer(unittest.TestCase):
             print('Ajustando pesos...')
             weights = gen(training_examples, weights, moderate_constant)
             errors.append(squared_error(training_examples, weights))
+            print(f'Pesos obtenidos : {weights}')
+            print(f'Error cuadratico : {errors[-1]}')
 
         for i in range(iterations):
             print('Error {}: {}'.format(i, errors[i]))
@@ -78,6 +82,8 @@ class TestWithRandomPlayer(unittest.TestCase):
             print('Ajustando pesos...')
             weights = gen(training_examples, weights, moderate_constant)
             errors.append(squared_error(training_examples, weights))
+            print(f'Pesos obtenidos : {weights}')
+            print(f'Error cuadratico : {errors[-1]}')
 
         for i in range(iterations):
             print('Error {}: {}'.format(i, errors[i]))
