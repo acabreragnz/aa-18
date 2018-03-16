@@ -117,3 +117,6 @@ class TestWithRandomPlayer(unittest.TestCase):
             self.assertGreaterEqual(errors[i], errors[i+1],
                                     f'El error {i} no es mayor o igual que el error {i+1}, los errores deben decrecer')
 
+
+if __name__ == '__main__':
+    unittest.main()

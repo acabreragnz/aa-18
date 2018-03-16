@@ -1,3 +1,6 @@
+import sys
+
+
 def apply_v(v_params):
     """
     :param v_params: tupla con la forma (weights, board_features)
@@ -8,13 +11,23 @@ def apply_v(v_params):
     weights = v_params[0]
     board_features = v_params[1]
 
-    base_weight = weights[0]
-    sum_weight_features = 0
+    # black_won_index = (5 - 2) * 2
+    # white_won_index = len(board_features) - 1
+    #
+    # won = board_features[black_won_index] >= 1
+    # lost = board_features[white_won_index] >= 1
+    #
+    # if won:
+    #     sum_weight_features = sys.float_info.max
+    # elif lost:
+    #     sum_weight_features = sys.float_info.max * -1
+    # else:
+    sum_weight_features = weights[0]
 
     for index, board_feature in enumerate(board_features):
         sum_weight_features += weights[index + 1] * board_features[index]
 
-    return base_weight + sum_weight_features
+    return sum_weight_features
 
 
 def squared_error(training_examples, weights):

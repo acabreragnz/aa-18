@@ -13,6 +13,7 @@ class Board:
 
     def __init__(self, board=None):
         self._board = Board.do_copy_board(board)
+        self._last_square = None
 
         if self._board is None:
             self._board = Board.new_board()
@@ -21,6 +22,7 @@ class Board:
         self.put_piece(Board.select_random_square(), turn)
 
     def put_piece(self, square, turn):
+        self._last_square = square
         self._board[square[0]][square[1]] = turn
 
         return self
@@ -42,12 +44,18 @@ class Board:
                         bp es el string que se usara para representar una ficha negra y
                         wp es el string que se usara para representar una ficha blanca
                         v es el string que se usara para representar un lugar vacio
+        :param last_square
         """
+
+        last_square = self._last_square
         if mapping is not None:
             m = Board.do_copy_board(self._board)
             for i in range(N):
                 for j in range(N):
-                    m[i][j] = mapping[self._board[i][j]]
+                    if last_square is not None and last_square[0] == i and last_square[1] == j:
+                        m[i][j] = mapping[self._board[i][j]] + "*"
+                    else:
+                        m[i][j] = mapping[self._board[i][j]]
             print(np.matrix(m))
         else:
             print(np.matrix(self._board))

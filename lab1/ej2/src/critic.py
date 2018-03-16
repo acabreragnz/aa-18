@@ -14,9 +14,12 @@ def get_training_examples(game_trace, weights):
     i = 0
     while i < game_trace.__len__() - 2:
         board_features = game_trace[i]
+
         # game_trace[i + 2] representa el estado de juego luego de la respuesta del oponente al estado game_trace[i]
-        v_op_value_for_board_features = apply_v((weights, game_trace[i + 2]))
-        training_examples.append((board_features, v_op_value_for_board_features))
+        my_next_turn_board_features = game_trace[i + 2]
+        v_ent_value_for_current_board_features = apply_v((weights, my_next_turn_board_features))
+
+        training_examples.append((board_features, v_ent_value_for_current_board_features))
         i += 1
     return training_examples
 
