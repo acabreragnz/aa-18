@@ -73,7 +73,7 @@ def get_game_trace_with_old_vesion(initial_board, weights, old_weights):
     game_trace = [board.to_features()]
     while True:
         # Turno del jugador 2 (jugador menos entrenado)
-        board.best_move(Board.BLACK_PIECE, old_weights, game_trace)
+        board.best_move(Board.WHITE_PIECE, old_weights, game_trace)
         if Board.is_game_over_from_features(game_trace[-1]):
             break
         else:
