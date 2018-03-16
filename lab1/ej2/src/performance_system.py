@@ -1,5 +1,6 @@
 from board import Board
 from converter import convert
+from constants import N
 
 
 def get_game_trace_with_random_player(initial_board, weights):
@@ -35,25 +36,46 @@ def get_game_trace_with_human_player(initial_board, weights):
     :return: Lista de tuplas representando el estado del juego luego de cada movimiento de cada jugador
     """
 
+    print_mapping = {Board.BLACK_PIECE: 'X', Board.WHITE_PIECE: 'O', Board.EMPTY_SQUARE: ' '}
+
     # El movimiento del juagdor 1 ya fue hecho en initial_board
     board = initial_board
     game_trace = [board.to_features()]
     while True:
-        board.do_print({board.BLACK_PIECE: 'O', board.WHITE_PIECE: 'X', board.EMPTY_SQUARE: ' '})
-        print('Ingresar posicion de ficha')
-        i = int(input('Fila: '))
-        j = int(input('Columna: '))
-        board.put_piece((i, j), board.WHITE_PIECE)
+        board.do_print(print_mapping)
+        square = human_select_square(board)
+        board.put_piece(square, board.WHITE_PIECE)
         game_trace.append(board.to_features())
         if board.is_game_over_from_features(game_trace[-1]):
             break
         else:
+            board.do_print(print_mapping)
             board.best_move(Board.BLACK_PIECE, weights, game_trace)
             if board.is_game_over_from_features(game_trace[-1]):
                 break
 
+    board.do_print({board.BLACK_PIECE: 'O', board.WHITE_PIECE: 'X', board.EMPTY_SQUARE: ' '})
+
     return game_trace
 
+
+def human_select_square(board):
+    while True:
+        try:
+            print('Ingresar posicion de ficha')
+            i = int(input('Fila: '))
+            j = int(input('Columna: '))
+
+            outbound_i = i not in range(N)
+            outbound_j = j not in range(N)
+
+            if outbound_i or outbound_j or not board.is_empty_square((i, j)):
+                raise ValueError
+            break
+        except ValueError:
+            print('Error: La posicion no esta vacia, intente nuevamente')
+
+    return i, j
 
 
 def get_game_trace_with_previous_version():
