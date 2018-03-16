@@ -4,6 +4,7 @@ from converter import convert
 from utils import apply_v
 from constants import N, TOTAL_REQUIRED_ITEMS_IN_LINE
 import numpy as np
+import sys
 
 
 class Board:
@@ -107,9 +108,10 @@ class Board:
 
         # En game_trace guardo board_features para generar la traza para critics
 
-        v_max = self.apply_v(weights)
+        #v_max = self.apply_v(weights)
+        v_max = sys.float_info.max * -1
         board_next = Board(self._board)
-        best_square = (0, 0)
+        best_square = (-1, -1)
 
         for i in range(N):
             for j in range(N):
@@ -122,6 +124,7 @@ class Board:
                         v_max = v_result
                         best_square = current_square
 
+        # print(best_square)
         self.put_piece(best_square, turn)
 
         game_trace.append(self.to_features())
