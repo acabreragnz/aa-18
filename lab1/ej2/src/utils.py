@@ -28,9 +28,9 @@ def apply_v(v_params):
         sum_weight_features += weights[index + 1] * board_features[index]
 
     if sum_weight_features > 100 :
-        return sum_weight_features / 100
+        return sum_weight_features % 100
     elif sum_weight_features < -100 :
-        return sum_weight_features / 100
+        return (sum_weight_features % 100)*-1
 
     return sum_weight_features
 
