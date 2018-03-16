@@ -11,3 +11,7 @@ class TestPerformanceSystem(unittest.TestCase):
         board = experiment_generator()
         game_trace = get_game_trace_with_random_player(board, weights)
         self.assertTrue(Board.is_game_over_from_features(game_trace[-1]), 'El juego debe estar terminado')
+
+
+if __name__ == '__main__':
+    unittest.main()

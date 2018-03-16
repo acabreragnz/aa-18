@@ -23,6 +23,10 @@ def do_convert(board):
         for y in range(N):
             convert_point(board, (x, y), board_features, visited)
 
+    # print("-------------------------------")
+    # print(np.matrix(board))
+    # print("-------------------------------")
+
     return [
         board_features[BLACK][2][CLEAN],
         board_features[BLACK][2][DIRTY],
