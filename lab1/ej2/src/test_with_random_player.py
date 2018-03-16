@@ -86,3 +86,34 @@ class TestWithRandomPlayer(unittest.TestCase):
             self.assertGreaterEqual(errors[i], errors[i + 1],
                                     f'El error {i} no es mayor o igual que el error {i+1}, los errores deben decrecer')
 
+    def test_squared_errors_4(self):
+        """
+        Solo actualizo los pesos si el error es menor que el ultimo error obtenido
+        """
+        weights = [0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0]
+        moderate_constant = 0.3
+        iterations = 30
+        errors = []
+        for i in range(iterations):
+            board = experiment_generator()
+            print('Obteniendo traza del juego...')
+            game_trace = get_game_trace_with_random_player(board, weights)
+            print(f'Se obtuvieron {game_trace.__len__()} tuplas')
+            training_examples = get_training_examples(game_trace, weights)
+            new_weights = gen(training_examples, weights, moderate_constant)
+            error = squared_error(training_examples, new_weights)
+            if i == 0:
+                weights = new_weights
+                errors.append(error)
+            elif error < errors[-1]:
+                print('Ajustando pesos...')
+                errors.append(error)
+                weights = new_weights
+
+        for i in range(errors.__len__()):
+            print('Error {}: {}'.format(i, errors[i]))
+
+        for i in range(errors.__len__()-1):
+            self.assertGreaterEqual(errors[i], errors[i+1],
+                                    f'El error {i} no es mayor o igual que el error {i+1}, los errores deben decrecer')
+
