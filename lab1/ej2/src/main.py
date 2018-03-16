@@ -2,10 +2,10 @@
 Orquesta los cuatro modulos para aprender la funcion v: performance_system, critic, generalizer y experiment_generator
 """
 
-from lab1.ej2.src.experiment_generator import experiment_generator
-from lab1.ej2.src.performance_system import get_game_trace_with_random_player
-from lab1.ej2.src.critic import get_training_examples
-from lab1.ej2.src.generalizer import gen
+from experiment_generator import experiment_generator
+from performance_system import get_game_trace_with_random_player
+from critic import get_training_examples
+from generalizer import gen
 
 
 def train_with_random_player(moderate_constant):

@@ -11,7 +11,7 @@ Tareas del curso Aprendizaje Automático 2018
 - crear directorio para las dependencias
 
 
-    $ virtualenv deps
+    $ virtualenv -p /usr/bin/python3 deps
     
 - activar virtualenv
     
