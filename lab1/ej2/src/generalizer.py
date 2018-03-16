@@ -37,7 +37,7 @@ def gen(training_examples, initial_weights, moderate_constant=0.1):
         v_train_applied_to_board = training_example[1]
 
         # calculo V utilizando el board de entrenamiento actual y los pesos que voy calculando
-        v_op_applied_to_board = apply_v((initial_weights, current_board_features))
+        v_op_applied_to_board = apply_v((calculated_weights, current_board_features))
 
         error = v_train_applied_to_board - v_op_applied_to_board
         #print("LMS error is", error)
