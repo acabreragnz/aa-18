@@ -3,9 +3,10 @@ Orquesta los cuatro modulos para aprender la funcion v: performance_system, crit
 """
 
 from experiment_generator import experiment_generator
-from performance_system import get_game_trace_with_random_player
+from performance_system import get_game_trace_with_human_player
 from critic import get_training_examples
 from generalizer import gen
+from utils import squared_error
 
 
 def train_with_random_player(moderate_constant):
@@ -13,10 +14,8 @@ def train_with_random_player(moderate_constant):
     Aproxima la funcion v con v_op simulando un juego contra la maquina vs maquina
     en donde la ultima realiza movimientos aleatorios.
 
-    :return: Tupla con los pesos de la funcion v_op obtenida
     """
     return (1,) * 15
-
 
 
 def train_with_human_player(moderate_constant):
@@ -24,9 +23,20 @@ def train_with_human_player(moderate_constant):
     Aproxima la funcion v con v_op a mediante un juego maquina vs persona.
     Obtiene los movimientos de la persona desde la entrada estandar.
 
-    :return: Tupla con los pesos de la funcion v_op obtenida
     """
-    return (1,)*15
+
+    weights= [1.0, -9.027615919032555e+43, -7.216580031077561e+42, -1.0882976719563002e+43, 0.7993138669654459,
+                -3.6087531247376515e+42, 0.7689605641251939, 1.0, -3.2704196174734924e+42, -1.0995376288765555e+42,
+                -3.6087389205619e+42, -2.6501676081804828e+42, -1.0431510905642082e+42, -1.0431510905642082e+42, 1.0]
+
+    board = experiment_generator()
+    game_trace = get_game_trace_with_human_player(board, weights)
+    training_examples = get_training_examples(game_trace, weights)
+    weights = gen(training_examples, weights, moderate_constant)
+    error = squared_error(training_examples, weights)
+    print(f'Pesos obtenidos: {weights}')
+    print(f'Error cuadratico: {error}')
+
 
 
 def train_with_previous_version(moderate_constant):
@@ -35,7 +45,6 @@ def train_with_previous_version(moderate_constant):
     en donde la ultima obtiene los movimientos utilizando otra funcion de valoracion v_op_prev.
     Obtiene los pesos de v_op_prev de la entrada estandar.
 
-    :return: Tupla con los pesos de la funcion v_op obtenida
     """
     return (1,) * 15
 
@@ -62,11 +71,8 @@ while True:
     except ValueError:
         print('Debe ser un valor real entre 0 y 1')
 if op == 1:
-    weights = train_with_random_player(moderate_constant)
-    print('Pesos de la funcion v_op obtenida: {}'.format(weights))
+    train_with_random_player(moderate_constant)
 elif op == 2:
-    weights = train_with_human_player(moderate_constant)
-    print('Pesos de la funcion v_op obtenida: {}'.format(weights))
+    train_with_human_player(moderate_constant)
 elif op == 3:
-    weights = train_with_previous_version(moderate_constant)
-    print('Pesos de la funcion v_op obtenida: {}'.format(weights))
+    train_with_previous_version(moderate_constant)

@@ -40,7 +40,7 @@ def gen(training_examples, initial_weights, moderate_constant=0.1):
         v_op_applied_to_board = apply_v((calculated_weights, current_board_features))
 
         error = v_train_applied_to_board - v_op_applied_to_board
-        print("LMS error is", error)
+        #print("LMS error is", error)
 
         # se calculan los nuevos pesos
         for index, wi in enumerate(calculated_weights):
@@ -50,4 +50,4 @@ def gen(training_examples, initial_weights, moderate_constant=0.1):
                 calculated_weights[index] = wi + moderate_constant * error * current_board_features[index-1]
 
         #print(calculated_weights)
-    return normalize(calculated_weights)
+    return calculated_weights

@@ -27,7 +27,7 @@ def get_game_trace_with_random_player(initial_board, weights):
     return game_trace
 
 
-def get_game_trace_with_human_player():
+def get_game_trace_with_human_player(initial_board, weights):
     """
     Genera una traza de un juego maquina vs humano hasta el final.
     Obtiene los movimientos de la persona desde la entrada estandar.
@@ -35,7 +35,25 @@ def get_game_trace_with_human_player():
     :return: Lista de tuplas representando el estado del juego luego de cada movimiento de cada jugador
     """
 
-    pass
+    # El movimiento del juagdor 1 ya fue hecho en initial_board
+    board = initial_board
+    game_trace = [board.to_features()]
+    while True:
+        board.do_print({board.BLACK_PIECE: 'O', board.WHITE_PIECE: 'X', board.EMPTY_SQUARE: ' '})
+        print('Ingresar posicion de ficha')
+        i = int(input('Fila: '))
+        j = int(input('Columna: '))
+        board.put_piece((i, j), board.WHITE_PIECE)
+        game_trace.append(board.to_features())
+        if board.is_game_over_from_features(game_trace[-1]):
+            break
+        else:
+            board.best_move(Board.BLACK_PIECE, weights, game_trace)
+            if board.is_game_over_from_features(game_trace[-1]):
+                break
+
+    return game_trace
+
 
 
 def get_game_trace_with_previous_version():

@@ -34,8 +34,23 @@ class Board:
     def apply_v(self, weights):
         return apply_v((weights, self.to_features()))
 
-    def do_print(self):
-        print(np.matrix(self._board))
+    def do_print(self, mapping=None):
+        """
+        Imprime una representacion del tablero en la salida estandar
+
+        :param mapping: Diccionario {board.BLACK_PIECE: bp, board.WHITE_PIECE: wp, board.EMPTY_SQUARE: v } en donde :
+                        bp es el string que se usara para representar una ficha negra y
+                        wp es el string que se usara para representar una ficha blanca
+                        v es el string que se usara para representar un lugar vacio
+        """
+        if mapping is not None:
+            m = Board.do_copy_board(self._board)
+            for i in range(N):
+                for j in range(N):
+                    m[i][j] = mapping[self._board[i][j]]
+            print(np.matrix(m))
+        else:
+            print(np.matrix(self._board))
 
     def is_game_over(self):
         return Board.is_game_over_from_features(self.to_features())
