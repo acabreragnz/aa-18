@@ -1,4 +1,4 @@
-from utils import apply_v
+from utils import apply_v, max_v_if_won, min_v_if_lost
 from random import randint
 
 
@@ -30,16 +30,22 @@ def get_training_examples(game_trace, weights):
     lost = board_features[white_won_index] >= 1
     
     if won:
-        training_examples.append((game_trace[-1], 100))
+        training_examples.append((game_trace[-1], max_v_if_won(weights)))
     elif lost:
-        training_examples.append((game_trace[-2], -100))
+        min_v_lost = min_v_if_lost(weights)
+        one_perc = abs(min_v_lost / 100)
+
+        training_examples.append((game_trace[-2], min_v_if_lost(weights) + one_perc))
+        training_examples.append((game_trace[-1], min_v_if_lost(weights)))
     else:
         modulo = game_trace.__len__() % 2
 
+        middle_v = max_v_if_won(weights) + min_v_if_lost(weights) / 2
+
         if modulo == 0:
-            training_examples.append((game_trace[-2], 0))
+            training_examples.append((game_trace[-2], middle_v))
         else:
-            training_examples.append((game_trace[-1], 0))
+            training_examples.append((game_trace[-1], middle_v))
 
     return training_examples
 
