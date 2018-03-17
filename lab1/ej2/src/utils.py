@@ -10,7 +10,10 @@ def apply_v(v_params):
     """
 
     weights = v_params[0]
-    board_features = v_params[1]
+    #Agrego un uno en el primer lugar de board_features para que los dos vectores queden del mismo largo
+    board_features = [1]
+    for board_feature in v_params[1]:
+        board_features.append(board_feature)
 
     n_weights = 0
     for w in weights:
@@ -38,10 +41,12 @@ def apply_v(v_params):
     # elif lost:
     #     sum_weight_features = sys.float_info.max * -1
     # else:
-    sum_weight_features = weights[0]/n_weights
 
+    #sum_weight_features = weights[0]/n_weights
+
+    sum_weight_features = 0
     for index, board_feature in enumerate(board_features):
-        sum_weight_features += (weights[index + 1]/n_weights) * (board_features[index]/n_board_features)
+        sum_weight_features += (weights[index]/n_weights) * (board_features[index]/n_board_features)
 
     return sum_weight_features
 
@@ -53,3 +58,12 @@ def squared_error(training_examples, weights):
         v_op = apply_v((weights, t[0]))
         error += (v_train - v_op)**2
     return error
+
+
+def descending_error(errors, n):
+    #Se fija si los ultimos n errores son desendentes
+    #errors[len - 1]<= errors[len - 2] <= ... <=errors[ len - n]
+    if n > len(errors):
+        n = len(errors)
+
+    return 1
