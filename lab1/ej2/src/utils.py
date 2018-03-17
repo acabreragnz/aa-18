@@ -1,4 +1,5 @@
 import sys
+import math
 
 
 def apply_v(v_params):
@@ -11,6 +12,21 @@ def apply_v(v_params):
     weights = v_params[0]
     board_features = v_params[1]
 
+    n_weights = 0
+    for w in weights:
+        n_weights = n_weights + w*w
+    n_weights = math.sqrt(n_weights)
+    if n_weights == 0:
+        n_weights = 1
+
+    n_board_features = 0
+    for x in board_features:
+        n_board_features = n_board_features + x*x
+    n_board_features = math.sqrt(n_board_features)
+    if n_board_features == 0:
+        n_board_features = 1
+
+
     # black_won_index = (5 - 2) * 2
     # white_won_index = len(board_features) - 1
     #
@@ -22,15 +38,10 @@ def apply_v(v_params):
     # elif lost:
     #     sum_weight_features = sys.float_info.max * -1
     # else:
-    sum_weight_features = weights[0]
+    sum_weight_features = weights[0]/n_weights
 
     for index, board_feature in enumerate(board_features):
-        sum_weight_features += weights[index + 1] * board_features[index]
-
-    if sum_weight_features > 100 :
-        return 100 - (sum_weight_features % 100)
-    elif sum_weight_features < -100 :
-        return 100 -(-1*sum_weight_features % 100)
+        sum_weight_features += (weights[index + 1]/n_weights) * (board_features[index]/n_board_features)
 
     return sum_weight_features
 

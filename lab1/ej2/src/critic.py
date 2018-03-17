@@ -30,16 +30,10 @@ def get_training_examples(game_trace, weights):
     lost = board_features[white_won_index] >= 1
     
     if won:
-        training_examples.append((game_trace[-1], 100))
+        training_examples.append((board_features, 1))
     elif lost:
-        training_examples.append((game_trace[-2], -100))
-    else:
-        modulo = game_trace.__len__() % 2
-
-        if modulo == 0:
-            training_examples.append((game_trace[-2], 0))
-        else:
-            training_examples.append((game_trace[-1], 0))
+        training_examples.append((game_trace[-1], -0.9))
+        training_examples.append((board_features, -1))
 
     return training_examples
 
