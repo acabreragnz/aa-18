@@ -94,34 +94,44 @@ class TestWithRandomPlayer(unittest.TestCase):
 
     def test_squared_errors_4(self):
         """
-        Solo actualizo los pesos si el error es menor que el ultimo error obtenido
+        Probar : a mayor cantidad de iteraciones, menor constante de entrenamiento
         """
-        weights = [0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0]
-        moderate_constant = 0.3
-        iterations = 30
+        weights = [0, 1, -1, 2, -1, 3, -1, 2, -1, 1, -1, 1, -1, 1, -2]
+
+
+        moderate_constant = 0.001
+        iterations = 100
         errors = []
-        for i in range(iterations):
+
+        board = experiment_generator()
+        game_trace = get_game_trace_with_random_player(board, weights)
+        training_examples = get_training_examples(game_trace, weights)
+        weights = gen(training_examples, weights, moderate_constant)
+        best_weights = weights
+        best_game_trace = game_trace
+        error = squared_error(training_examples, best_weights)
+        errors.append(error)
+        for i in range(iterations-1):
             board = experiment_generator()
-            print('Obteniendo traza del juego...')
-            game_trace = get_game_trace_with_random_player(board, weights)
-            print(f'Se obtuvieron {game_trace.__len__()} tuplas')
-            training_examples = get_training_examples(game_trace, weights)
-            new_weights = gen(training_examples, weights, moderate_constant)
-            error = squared_error(training_examples, new_weights)
-            if i == 0:
-                weights = new_weights
+            game_trace = get_game_trace_with_random_player(board, best_weights)
+            training_examples = get_training_examples(game_trace, best_weights)
+            weights = gen(training_examples, best_weights, moderate_constant)
+            error = squared_error(training_examples, best_weights)
+            print(f'Error : {error}')
+            # Solo actualizo los pesos si la cantidad de jugadas realizadas para ganar
+            # es menor igual que lo que se tiene hasta el momento como minimo.
+            if game_trace.__len__() <= best_game_trace.__len__():
+                best_weights = weights
+                best_game_trace = game_trace
+                error = squared_error(training_examples, best_weights)
                 errors.append(error)
-            elif error < errors[-1]:
-                print('Ajustando pesos...')
-                errors.append(error)
-                weights = new_weights
+                print(f'Tuplas obtenidas en traza de juego : {best_game_trace.__len__()}')
+                print(f'Error cuadratico : {error}')
 
         for i in range(errors.__len__()):
             print('Error {}: {}'.format(i, errors[i]))
 
-        for i in range(errors.__len__()-1):
-            self.assertGreaterEqual(errors[i], errors[i+1],
-                                    f'El error {i} no es mayor o igual que el error {i+1}, los errores deben decrecer')
+        print(f'Pesos obtenidos: {best_weights}')
 
 
 if __name__ == '__main__':
