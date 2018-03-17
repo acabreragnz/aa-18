@@ -7,6 +7,7 @@ from performance_system import get_game_trace_with_human_player
 from critic import get_training_examples
 from generalizer import gen
 from utils import squared_error
+from display_board import DisplayBoard, start_game
 
 
 def train_with_random_player(moderate_constant):
@@ -29,14 +30,7 @@ def train_with_human_player(moderate_constant):
                 -3.6087531247376515e+42, 0.7689605641251939, 1.0, -3.2704196174734924e+42, -1.0995376288765555e+42,
                 -3.6087389205619e+42, -2.6501676081804828e+42, -1.0431510905642082e+42, -1.0431510905642082e+42, 1.0]
 
-    board = experiment_generator()
-    game_trace = get_game_trace_with_human_player(board, weights)
-    training_examples = get_training_examples(game_trace, weights)
-    weights = gen(training_examples, weights, moderate_constant)
-    error = squared_error(training_examples, weights)
-    print(f'Pesos obtenidos: {weights}')
-    print(f'Error cuadratico: {error}')
-
+    start_game(weights, moderate_constant)
 
 
 def train_with_previous_version(moderate_constant):

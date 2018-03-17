@@ -15,6 +15,7 @@ class Board:
     def __init__(self, board=None):
         self._board = Board.do_copy_board(board)
         self._last_square = None
+        self._last_turn = None
 
         if self._board is None:
             self._board = Board.new_board()
@@ -23,6 +24,7 @@ class Board:
         self.put_piece(Board.select_random_square(), turn)
 
     def put_piece(self, square, turn):
+        self._last_turn = turn
         self._last_square = square
         self._board[square[0]][square[1]] = turn
 
@@ -83,16 +85,21 @@ class Board:
         """
 
         board = self
-        random_square = board.select_random_square()
 
-        while not board.is_empty_square(random_square):
-            random_square = board.select_random_square()
+        random_square = self.get_random_movement()
 
         board.put_piece(random_square, piece)
         board_features = board.to_features()
         game_trace.append(board_features)
 
-        return board_features
+        return board_features, random_square
+
+    def get_random_movement(self):
+        random_square = self.select_random_square()
+        while not self.is_empty_square(random_square):
+            random_square = self.select_random_square()
+
+        return random_square
 
     def do_copy(self):
         return Board(self._board)
@@ -111,7 +118,13 @@ class Board:
 
         # En game_trace guardo board_features para generar la traza para critics
 
-        #v_max = self.apply_v(weights)
+        best_square = self.get_best_move(turn, weights)
+        self.put_piece(best_square, turn)
+        game_trace.append(self.to_features())
+
+        return best_square
+
+    def get_best_move(self, turn, weights):
         v_max = sys.float_info.max * -1
         board_next = Board(self._board)
         best_square = (-1, -1)
@@ -127,10 +140,7 @@ class Board:
                         v_max = v_result
                         best_square = current_square
 
-        # print(best_square)
-        self.put_piece(best_square, turn)
-
-        game_trace.append(self.to_features())
+        return best_square
 
     def test_v_for_simulate_put_of_piece(self, square, turn, weights):
         self.put_piece(square, turn)
@@ -170,3 +180,15 @@ class Board:
         white_won = features[white_won_index] >= 1
 
         return black_won or white_won
+
+    def won_black(self):
+
+        first_and_last = 2
+        clean_and_dirty = 2
+
+        black_won_index = (TOTAL_REQUIRED_ITEMS_IN_LINE - first_and_last) * clean_and_dirty
+
+        return self.to_features()[black_won_index] >= 1
+
+    def won_white(self):
+        return self.to_features()[-1] >= 1
