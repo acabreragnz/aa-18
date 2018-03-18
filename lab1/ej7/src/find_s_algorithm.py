@@ -9,10 +9,6 @@
 #3. Outputhypothesish
 
 from constants import NO_VALUE, ANY_VALUE
-from training_examples import example1, random_training_examples
-
-ex1 = example1()
-ex2 = random_training_examples(100);
 
 
 def find_s(training_examples):
@@ -31,20 +27,6 @@ def find_s(training_examples):
 
 
 
-#<?, Alta, Nocturno, Media, ?>
-#h = find_s(ex1)
-#print(h)	
 
 
-#<?, Media, ?, ?, ?>
-h = find_s(ex2[1])
-print(ex2[0])
-print(h)
 
-#constanzas-mbp:src constanza$ python find_s_algorithm.py 200
-#137
-#['?', <Dificultad.MEDIA: 2>, '?', '?', '?']
-
-#constanzas-mbp:src constanza$ python find_s_algorithm.py 500
-#328
-#['?', <Dificultad.MEDIA: 2>, '?', '?', '?']

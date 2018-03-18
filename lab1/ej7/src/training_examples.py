@@ -18,18 +18,18 @@ def example1():
 	];
 
 
-def random_training_examples(n):
+def random_training_examples(n, cant_pos):
 	
 	list = []
-	cant_pos = 0
-	for i in range(1,n):
+	while n > 0 and cant_pos > 0:
 		instance = (Dedicacion(randint(1,3)), Dificultad(randint(1,3)), Horario(randint(1,2)), Humedad(randint(1,3)), HumorDoc(randint(1,2)))
 		c = target(instance)
-		if c == 0 :
-			cant_pos = cant_pos + 1
 		if instance not in list:
 			list.append((instance, c))
-	return (cant_pos, list)	
+			if c == 0 :
+				cant_pos = cant_pos - 1
+				n = n - 1
+	return list
 
 
 
