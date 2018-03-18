@@ -26,9 +26,9 @@ def random_training_examples(n, cant_pos):
 		c = target(instance)
 		if instance not in list:
 			list.append((instance, c))
-			if c == 0 :
+			if c == 1 :
 				cant_pos = cant_pos - 1
-				n = n - 1
+			n = n - 1
 	return list
 
 
