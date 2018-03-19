@@ -79,7 +79,7 @@ def update_board_features_for_direction(direction_result, turn, board_features):
     total_direction_result = direction_result[0]
 
     if total_direction_result > TOTAL_REQUIRED_ITEMS_IN_LINE:
-        logging.warning("Error: you have made a line with more than the required")
+        #logging.warning("Error: you have made a line with more than the required")
 
         # puede pasar que queden mas de 5 XXXX_X
         total_direction_result = 5
