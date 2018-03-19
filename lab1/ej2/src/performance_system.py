@@ -102,13 +102,3 @@ def human_select_square(board):
             print('Error: La posicion no esta vacia, intente nuevamente')
 
     return i, j
-
-
-def get_game_trace_with_previous_version():
-    """
-    Genera una traza de un juego maquina vs maquina hasta el final en donde la ultima obtiene los movimientos
-    utilizando otra funcion de valoracion v_op_prev. Obtiene los pesos de v_op_prev de la entrada estandar.
-
-    :return: Lista de tuplas representando el estado del juego luego de cada movimiento de cada jugador
-    """
-    pass
