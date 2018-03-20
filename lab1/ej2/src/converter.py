@@ -34,15 +34,15 @@ def do_convert(board):
         board_features[BLACK][3][DIRTY],
         board_features[BLACK][4][CLEAN],
         board_features[BLACK][4][DIRTY],
-        board_features[BLACK][5][DIRTY] + board_features[BLACK][5][CLEAN],
+        board_features[BLACK][5][CLEAN] + board_features[BLACK][5][DIRTY],
 
         board_features[WHITE][2][CLEAN],
         board_features[WHITE][2][DIRTY],
         board_features[WHITE][3][CLEAN],
         board_features[WHITE][3][DIRTY],
+        board_features[WHITE][4][CLEAN],
         board_features[WHITE][4][DIRTY],
-        board_features[WHITE][4][DIRTY],
-        board_features[WHITE][5][DIRTY] + board_features[WHITE][5][CLEAN],
+        board_features[WHITE][5][CLEAN] + board_features[WHITE][5][DIRTY],
     ]
 
 
