@@ -1,9 +1,10 @@
 from copy import copy
 import math
-from board import Board
 
 
 def apply_v(board_features, weights, turn):
+    from board import Board
+
     """
     :param board_features: Tupla que representa el estado del juego
     :param weights: Pesos de la funcion v_op
