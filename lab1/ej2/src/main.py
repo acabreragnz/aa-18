@@ -2,11 +2,6 @@
 Orquesta los cuatro modulos para aprender la funcion v: performance_system, critic, generalizer y experiment_generator
 """
 
-from experiment_generator import experiment_generator
-from performance_system import get_game_trace_with_human_player
-from critic import get_training_examples
-from generalizer import gen
-from utils import squared_error
 from display_board import DisplayBoard, start_game
 
 
@@ -26,9 +21,25 @@ def train_with_human_player(moderate_constant):
 
     """
 
-    weights= [1.0, -9.027615919032555e+43, -7.216580031077561e+42, -1.0882976719563002e+43, 0.7993138669654459,
-                -3.6087531247376515e+42, 0.7689605641251939, 1.0, -3.2704196174734924e+42, -1.0995376288765555e+42,
-                -3.6087389205619e+42, -2.6501676081804828e+42, -1.0431510905642082e+42, -1.0431510905642082e+42, 1.0]
+
+
+    weights = [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+    ]
 
     start_game(weights, moderate_constant)
 

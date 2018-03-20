@@ -12,10 +12,15 @@ class Board:
     BLACK_PIECE = 1
     WHITE_PIECE = 2
 
-    def __init__(self, board=None):
+    def __init__(self, board=None, trace=True):
         self._board = Board.do_copy_board(board)
         self._last_square = None
         self._last_turn = None
+
+        self._has_to_trace = trace
+
+        if self._has_to_trace:
+            self._game_trace = []
 
         if self._board is None:
             self._board = Board.new_board()
@@ -24,9 +29,13 @@ class Board:
         self.put_piece(Board.select_random_square(), turn)
 
     def put_piece(self, square, turn):
+
         self._last_turn = turn
         self._last_square = square
         self._board[square[0]][square[1]] = turn
+
+        if self._has_to_trace:
+            self._game_trace.append(self.to_features())
 
         return self
 
@@ -105,7 +114,6 @@ class Board:
         return Board(self._board)
 
     def best_move(self, turn, weights, game_trace):
-
         # V es una funcion de evaluacion que asigna una puntuacion numerica a cualquier estado de tablero.
         # Pretendemos que esta funcion objetivo V asigne puntuaciones mas altas a mejores estados de tablero.
         # Obtener la mejor jugada se puede lograr
@@ -118,7 +126,7 @@ class Board:
 
         # En game_trace guardo board_features para generar la traza para critics
 
-        best_square = self.get_best_move(turn, weights)
+        (best_square, v_max) = self.get_best_move(turn, weights)
         self.put_piece(best_square, turn)
         game_trace.append(self.to_features())
 
@@ -126,7 +134,8 @@ class Board:
 
     def get_best_move(self, turn, weights):
         v_max = sys.float_info.max * -1
-        board_next = Board(self._board) # Tiene sentido copiar?
+        trace = False
+        board_next = Board(self._board, trace) # Tiene sentido copiar?
         best_square = (-1, -1)
 
         for i in range(N):
@@ -139,7 +148,7 @@ class Board:
                         v_max = v_result
                         best_square = current_square
 
-        return best_square
+        return best_square, v_max
 
     def test_v_for_simulate_put_of_piece(self, square, turn, weights):
         self.put_piece(square, turn)
