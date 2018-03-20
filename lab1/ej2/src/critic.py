@@ -1,5 +1,5 @@
 from utils import apply_v
-from random import randint
+from board import Board
 
 
 def get_training_examples(game_trace, weights):
@@ -12,26 +12,23 @@ def get_training_examples(game_trace, weights):
 
     training_examples = []
     i = 0
-
     while i < game_trace.__len__() - 2:
+        board_features = game_trace[i]
+
         # game_trace[i + 1] representa el estado de juego luego de la respuesta del oponente al estado game_trace[i]
         my_next_turn_board_features = game_trace[i + 1]
-        v_ent_value_for_current_board_features = apply_v((weights, my_next_turn_board_features)) * 0.1
-        training_examples.append((game_trace[i], v_ent_value_for_current_board_features))
 
+        v_ent_value_for_current_board_features = apply_v(my_next_turn_board_features, weights, Board.BLACK_PIECE) * 0.1
+
+        training_examples.append((board_features, v_ent_value_for_current_board_features))
         i += 2
 
-    board_features = game_trace[game_trace.__len__()-1]
-    black_won_index = 6
-    white_won_index = 13
+    # Se agrega el ultimo estado con un valor fijo (solo si hubo ganador)
 
-    won = board_features[black_won_index] >= 1
-    lost = board_features[white_won_index] >= 1
-
-    if won:
-        training_examples.append((board_features, 1))
-    elif lost:
-        training_examples.append((board_features, -1))
+    if Board.won_black_from_features(game_trace[-1]):
+        training_examples.append((game_trace[-1], 1))
+    elif Board.won_white_from_features(game_trace[-1]):
+        training_examples.append((game_trace[-1], -1))
 
     return training_examples
 

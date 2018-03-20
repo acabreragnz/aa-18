@@ -36,8 +36,8 @@ class Board:
     def remove_piece(self, square):
         self.put_piece(square, Board.EMPTY_SQUARE)
 
-    def apply_v(self, weights):
-        return apply_v((weights, self.to_features()))
+    def apply_v(self, weights, turn):
+        return apply_v(self.to_features(), weights, turn)
 
     def do_print(self, mapping=None):
         """
@@ -126,13 +126,12 @@ class Board:
 
     def get_best_move(self, turn, weights):
         v_max = sys.float_info.max * -1
-        board_next = Board(self._board)
+        board_next = Board(self._board) # Tiene sentido copiar?
         best_square = (-1, -1)
 
         for i in range(N):
             for j in range(N):
                 current_square = (i, j)
-
                 if board_next.is_empty_square(current_square):
                     v_result = board_next.test_v_for_simulate_put_of_piece(current_square, turn, weights)
 
@@ -144,10 +143,16 @@ class Board:
 
     def test_v_for_simulate_put_of_piece(self, square, turn, weights):
         self.put_piece(square, turn)
-        v_result = self.apply_v(weights)
+        v_result = self.apply_v(weights, turn)
         self.remove_piece(square)
 
         return v_result
+
+    def won_black(self):
+        return Board.won_black_from_features(self.to_features())
+
+    def won_white(self):
+        return Board.won_white_from_features(self.to_features())
 
     @staticmethod
     def new_board():
@@ -181,14 +186,15 @@ class Board:
 
         return black_won or white_won
 
-    def won_black(self):
-
+    @staticmethod
+    def won_black_from_features(features):
         first_and_last = 2
         clean_and_dirty = 2
 
         black_won_index = (TOTAL_REQUIRED_ITEMS_IN_LINE - first_and_last) * clean_and_dirty
 
-        return self.to_features()[black_won_index] >= 1
+        return features[black_won_index] >= 1
 
-    def won_white(self):
-        return self.to_features()[-1] >= 1
+    @staticmethod
+    def won_white_from_features(features):
+        return features[-1] >= 1

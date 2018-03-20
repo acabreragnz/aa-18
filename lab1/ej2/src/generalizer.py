@@ -1,24 +1,5 @@
 from utils import apply_v
-
-
-def normalize(v):
-    """
-    Normaliza los valores de v en un rango de -1 a 1
-    
-    :param v: Lista con los valores sin normalizar
-    :return: Lista con los valores normalizados
-    """
-
-    min_val = min(v)
-    max_val = max(v)
-    if min_val < -1 or max_val > 1:
-        # Centra los valores en 0
-        _average = (min_val + max_val) / 2
-        # Los lleva al rango [-1,1]
-        _range = (max_val - min_val) / 2
-        return [(x - _average)/_range for x in v]
-    else:
-        return v
+from board import Board
 
 
 def gen(training_examples, initial_weights, moderate_constant=0.1):
@@ -36,11 +17,17 @@ def gen(training_examples, initial_weights, moderate_constant=0.1):
         current_board_features = training_example[0]
         v_train_applied_to_board = training_example[1]
 
+        # Todos los estados corresponden al jugador negro, menos el ultimo para el cual se obtiene el turno aqui
+
+        if Board.won_white_from_features(current_board_features):
+            turn = Board.WHITE_PIECE
+        else:
+            turn = Board.BLACK_PIECE
+
         # calculo V utilizando el board de entrenamiento actual y los pesos que voy calculando
-        v_op_applied_to_board = apply_v((calculated_weights, current_board_features))
+        v_op_applied_to_board = apply_v(current_board_features, calculated_weights, turn)
 
         error = v_train_applied_to_board - v_op_applied_to_board
-        #print("LMS error is", error)
 
         # se calculan los nuevos pesos
         for index, wi in enumerate(calculated_weights):
@@ -49,5 +36,4 @@ def gen(training_examples, initial_weights, moderate_constant=0.1):
             else:
                 calculated_weights[index] = wi + moderate_constant * error * current_board_features[index-1]
 
-        #print(calculated_weights)
     return calculated_weights

@@ -1,19 +1,27 @@
-import sys
+from copy import copy
 import math
 
 
-def apply_v(v_params):
+def apply_v(board_features, weights, turn):
     """
-    :param v_params: tupla con la forma (weights, board_features)
+    :param board_features: Tupla que representa el estado del juego
+    :param weights: Pesos de la funcion v_op
+    :param turn: Entero para indicar respecto a que jugador se esta evaluando v_op
 
     :return: la funcion V aplicada
     """
 
-    weights = v_params[0]
+    # Intercambio los valores del tablero para evaluar v_op respecto al segundo jugador (Board.WHITE_PIECE)
+    board_features = copy(board_features)
+    if turn == 2:
+        aux = [0 for _ in range(14)]
+        aux[0:7] = board_features[7:14]
+        aux[7:14] = board_features[0:7]
+        board_features = aux
+
     #Agrego un uno en el primer lugar de board_features para que los dos vectores queden del mismo largo
-    board_features = [1]
-    for board_feature in v_params[1]:
-        board_features.append(board_feature)
+    board_features.insert(0, 1)
+
 
     n_weights = 0
     for w in weights:
@@ -29,21 +37,6 @@ def apply_v(v_params):
     if n_board_features == 0:
         n_board_features = 1
 
-
-    # black_won_index = (5 - 2) * 2
-    # white_won_index = len(board_features) - 1
-    #
-    # won = board_features[black_won_index] >= 1
-    # lost = board_features[white_won_index] >= 1
-    #
-    # if won:
-    #     sum_weight_features = sys.float_info.max
-    # elif lost:
-    #     sum_weight_features = sys.float_info.max * -1
-    # else:
-
-    #sum_weight_features = weights[0]/n_weights
-
     sum_weight_features = 0
     for index, board_feature in enumerate(board_features):
         sum_weight_features += (weights[index]/n_weights) * (board_features[index]/n_board_features)
@@ -54,8 +47,10 @@ def apply_v(v_params):
 def squared_error(training_examples, weights):
     error = 0
     for index, t in enumerate(training_examples):
+        # Siempre evaluo para el jugador negro (jugador 1)
+        turn = 1
         v_train = t[1]
-        v_op = apply_v((weights, t[0]))
+        v_op = apply_v(t[0], weights, turn)
         error += (v_train - v_op)**2
     return error
 
