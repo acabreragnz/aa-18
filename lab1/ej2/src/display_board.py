@@ -81,6 +81,7 @@ class DisplayBoard:
 
                         self.board.put_piece(current_point, self.turn)
                         # self.player1.move(self.board, i / 20, j / 20)
+                        self.game_trace.append(self.board.to_features())
                         self.turn = 1
                         if self.board.won_white():
                             self.label['text'] = ('Human wins')
@@ -163,6 +164,9 @@ class DisplayBoard:
         training_examples = get_training_examples(self.game_trace, self.weights)
         self.weights = gen(training_examples, self.weights, self.moderate_constant)
         self.error = squared_error(training_examples, self.weights)
+
+        for te in training_examples:
+            print(te)
 
         print(f'Moderate constant: {self.moderate_constant}')
         print(f'Game trace: {self.game_trace}')

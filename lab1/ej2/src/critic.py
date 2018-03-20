@@ -30,6 +30,5 @@ def get_training_examples(game_trace, weights):
         if Board.won_white_from_features(game_trace[-1]):
             training_examples.append((game_trace[-2], -1))
 
-
     return training_examples
 
