@@ -11,22 +11,24 @@ def get_training_examples(game_trace, weights):
     """
 
     training_examples = []
-    n = game_trace.__len__()
-    for i in range(1, n-2, 2):
+    i = 0
+    while i < game_trace.__len__() - 2:
         board_features = game_trace[i]
 
-        # game_trace[i + 2] representa el estado de juego luego de la respuesta del oponente al estado game_trace[i]
-        my_next_turn_board_features = game_trace[i + 2]
+        # game_trace[i + 1] representa el estado de juego luego de la respuesta del oponente al estado game_trace[i]
+        my_next_turn_board_features = game_trace[i + 1]
 
-        v_ent_value_for_current_board_features = apply_v(my_next_turn_board_features, weights, Board.BLACK_PIECE)
+        v_ent_value_for_current_board_features = apply_v(my_next_turn_board_features, weights, Board.BLACK_PIECE) * 0.1
 
         training_examples.append((board_features, v_ent_value_for_current_board_features))
+        i += 2
 
     # Se agrega el ultimo estado con un valor fijo (solo si hubo ganador)
+
     if Board.won_black_from_features(game_trace[-1]):
-            training_examples.append((game_trace[-2], 0.9))
-            training_examples.append((game_trace[-1], 1))
+        training_examples.append((game_trace[-1], 1))
     elif Board.won_white_from_features(game_trace[-1]):
-            training_examples.append((game_trace[-1], -1))
+        training_examples.append((game_trace[-1], -1))
 
     return training_examples
+

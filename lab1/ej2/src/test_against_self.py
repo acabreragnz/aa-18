@@ -4,6 +4,7 @@ from performance_system import get_game_trace_with_old_vesion
 from critic import get_training_examples
 from generalizer import gen
 from utils import squared_error
+from copy import copy
 
 
 class TestAgainstSelf(unittest.TestCase):
@@ -13,10 +14,14 @@ class TestAgainstSelf(unittest.TestCase):
                    3.0705094575762026, -0.9991975157137101, 2.043144099943107, -0.9870750629518908, 1.0670734683991607,
                    -1.0, 1.0040921087448977, -1.0, 1.0, -2.0]
         moderate_constant = 0.3
-        iterations = 200
+        iterations = 50
         errors = []
+        old_weights = weights
+        (weights, _) = train_1(weights, moderate_constant)
         for i in range(iterations):
-            (weights, error) = train_1(weights, moderate_constant)
+            weights_aux = copy(weights)
+            (new_weights, error) = train_1(weights, old_weights, moderate_constant)
+            old_weights = copy(weights_aux)
             errors.append(error)
 
         for i in range(iterations):
@@ -41,10 +46,27 @@ class TestAgainstSelf(unittest.TestCase):
             print(f'Error cuadratico {i}: {errors[i]}')
         print(f'Pesos obtenidos en el ultimo entrenamiento: {weights}')
 
+    def test_squared_errors_3(self):
+        weights = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        moderate_constant = 0.3
+        max_error = 5
+        iterations = 500
+        errors = []
+        for i in range(iterations):
+            (weights_aux, error, update_weights) = train_3(weights, moderate_constant, max_error)
+            if update_weights:
+                max_error = error
+                weights = weights_aux
+                errors.append(error)
 
-def train_1(weights, moderate_constant):
+        for i in range(errors.__len__()):
+            print(f'Error cuadratico {i}: {errors[i]}')
+        print(f'Pesos obtenidos en el ultimo entrenamiento: {weights}')
+
+
+def train_1(weights, old_weights, moderate_constant):
     board = experiment_generator()
-    game_trace = get_game_trace_with_old_vesion(board, weights, weights)
+    game_trace = get_game_trace_with_old_vesion(board, weights, old_weights)
     training_examples = get_training_examples(game_trace, weights)
     weights = gen(training_examples, weights, moderate_constant)
     error = squared_error(training_examples, weights)
@@ -58,6 +80,15 @@ def train_2(weights, moderate_constant, max_turns):
     weights = gen(training_examples, weights, moderate_constant)
     error = squared_error(training_examples, weights)
     return weights, error, game_trace.__len__() <= max_turns
+
+
+def train_3(weights, moderate_constant, max_error):
+    board = experiment_generator()
+    game_trace = get_game_trace_with_old_vesion(board, weights, weights)
+    training_examples = get_training_examples(game_trace, weights)
+    weights = gen(training_examples, weights, moderate_constant)
+    error = squared_error(training_examples, weights)
+    return weights, error, error <= max_error
 
 
 if __name__ == '__main__':
