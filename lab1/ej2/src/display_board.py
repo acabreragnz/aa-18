@@ -45,7 +45,7 @@ class DisplayBoard:
         self.label['text'] = ('AA - 2018 Gomoku Game')
         self.Start1['text'] = ("Click To Restart")
         self.game_trace = []
-        self.play_best_move()
+        self.play_random_move()
 
     def close(self):
         self._root.destroy()
@@ -116,6 +116,12 @@ class DisplayBoard:
 
         self.canvas.event_generate("<ButtonPress-1>", x=x, y=y)
 
+    def play_random_move(self):
+        (board_features, square) = self.board.random_movement(self.turn, self.game_trace)
+        x = square[0] * 20
+        y = square[1] * 20
+
+        self.canvas.event_generate("<ButtonPress-1>", x=x, y=y)
 
     def check(self):
         # horizontal check

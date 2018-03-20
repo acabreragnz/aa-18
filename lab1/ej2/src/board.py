@@ -1,5 +1,5 @@
 from copy import deepcopy
-from random import randint
+from random import randint, choice
 from converter import convert
 from utils import apply_v
 from constants import N, TOTAL_REQUIRED_ITEMS_IN_LINE
@@ -16,6 +16,7 @@ class Board:
         self._board = Board.do_copy_board(board)
         self._last_square = None
         self._last_turn = None
+        self.total_pieces = 0
 
         self._has_to_trace = trace
 
@@ -29,7 +30,7 @@ class Board:
         self.put_piece(Board.select_random_square(), turn)
 
     def put_piece(self, square, turn):
-
+        self.total_pieces += 1
         self._last_turn = turn
         self._last_square = square
         self._board[square[0]][square[1]] = turn
@@ -43,6 +44,7 @@ class Board:
         return self._board[square[0]][square[1]]
 
     def remove_piece(self, square):
+        self.total_pieces += -1
         self.put_piece(square, Board.EMPTY_SQUARE)
 
     def apply_v(self, weights, turn):
@@ -84,12 +86,12 @@ class Board:
     def is_empty_square(self, square):
         return self._board[square[0]][square[1]] == Board.EMPTY_SQUARE
 
-    def random_movement(self, piece, game_trace):
+    def random_movement(self, turn, game_trace):
         """
-        Realiza un movimiento aleatorio para el tipo de pieza indicado en piece.
+        Realiza un movimiento aleatorio para el tipo de pieza indicado en turn.
         Luego de invocarla, modifica la instancia y agrega su representacion en forma de tupla a game_trace
 
-        :param piece: Entero para indicar quien realiza el movimiento, piece in [self.BLACK_PIECE, self.WHITE_PIECE]
+        :param turn: Entero para indicar quien realiza el movimiento, turn in [self.BLACK_PIECE, self.WHITE_PIECE]
         :param game_trace: Lista de tuplas
         """
 
@@ -97,7 +99,7 @@ class Board:
 
         random_square = self.get_random_movement()
 
-        board.put_piece(random_square, piece)
+        board.put_piece(random_square, turn)
         board_features = board.to_features()
         game_trace.append(board_features)
 
@@ -136,7 +138,7 @@ class Board:
         v_max = sys.float_info.max * -1
         trace = False
         board_next = Board(self._board, trace) # Tiene sentido copiar?
-        best_square = (-1, -1)
+        best_squares = []
 
         for i in range(N):
             for j in range(N):
@@ -144,11 +146,13 @@ class Board:
                 if board_next.is_empty_square(current_square):
                     v_result = board_next.test_v_for_simulate_put_of_piece(current_square, turn, weights)
 
-                    if v_result >= v_max:
+                    if v_result > v_max:
                         v_max = v_result
-                        best_square = current_square
+                        best_squares = [current_square]
+                    elif v_result == v_max:
+                        best_squares.append(current_square)
 
-        return best_square, v_max
+        return choice(best_squares), v_max
 
     def test_v_for_simulate_put_of_piece(self, square, turn, weights):
         self.put_piece(square, turn)
