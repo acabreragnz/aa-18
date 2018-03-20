@@ -23,12 +23,10 @@ def get_training_examples(game_trace, weights):
         training_examples.append((board_features, v_ent_value_for_current_board_features))
 
     # Se agrega el ultimo estado con un valor fijo (solo si hubo ganador)
-    if n % 2:
-        if Board.won_black_from_features(game_trace[-1]):
+    if Board.won_black_from_features(game_trace[-1]):
+            training_examples.append((game_trace[-2], 0.9))
             training_examples.append((game_trace[-1], 1))
-    else:
-        if Board.won_white_from_features(game_trace[-1]):
-            training_examples.append((game_trace[-2], -1))
+    elif Board.won_white_from_features(game_trace[-1]):
+            training_examples.append((game_trace[-1], -1))
 
     return training_examples
-

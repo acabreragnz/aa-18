@@ -207,3 +207,17 @@ class Board:
     @staticmethod
     def won_white_from_features(features):
         return features[-1] >= 1
+
+    @staticmethod
+    def won_turn(features, turn):
+        if turn == 1:
+            return Board.won_black_from_features(features)
+        elif turn == 2:
+            return Board.won_white_from_features(features)
+
+    @staticmethod
+    def lost_turn(features, turn):
+        if turn == 1:
+            return Board.won_white_from_features(features)
+        elif turn == 2:
+            return Board.won_black_from_features(features)

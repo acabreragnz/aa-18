@@ -1,5 +1,6 @@
 from copy import copy
 import math
+from board import Board
 
 
 def apply_v(board_features, weights, turn):
@@ -10,6 +11,11 @@ def apply_v(board_features, weights, turn):
 
     :return: la funcion V aplicada
     """
+
+    if Board.won_turn(board_features, turn):
+        return 1
+    elif Board.lost_turn(board_features, turn):
+        return -1
 
     # Intercambio los valores del tablero para evaluar v_op respecto al segundo jugador (Board.WHITE_PIECE)
     board_features = copy(board_features)
