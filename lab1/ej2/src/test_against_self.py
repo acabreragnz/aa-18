@@ -20,7 +20,7 @@ class TestAgainstSelf(unittest.TestCase):
         (weights, _) = train_1(weights, weights, moderate_constant)
         for i in range(iterations):
             weights_aux = copy(weights)
-            (new_weights, error) = train_1(weights, old_weights, moderate_constant)
+            (weights, error) = train_1(weights, old_weights, moderate_constant)
             old_weights = copy(weights_aux)
             errors.append(error)
 
