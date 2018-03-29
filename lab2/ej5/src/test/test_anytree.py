@@ -1,5 +1,7 @@
 from unittest import TestCase
 from anytree import NodeMixin, RenderTree, AnyNode, PreOrderIter, Resolver
+from scipy.io import arff
+import pandas as pd
 
 
 class TestAnyTree(TestCase):
@@ -15,14 +17,14 @@ class TestAnyTree(TestCase):
         # │   ├── Node(root_value = Bueno, value = Si)
         # │   └── Node(root_value = Malo, value = No)
 
-        root = AnyNode(id="root", attribute = "Dedicacion")
-        s0 = AnyNode(id="s0", parent=root, root_value="Media", attribute="Horario")
-        s0_1 = AnyNode(id="s0_1",parent=s0, root_value="Matutino", value="No")
-        s0_2 = AnyNode(id="s0_2",parent=s0, root_value="Nocturno", value="Si")
-        s1 = AnyNode(id="s1",parent=root, root_value="Alta", value="Si")
-        s2 = AnyNode(id="s2",parent=root, root_value="Baja", attribute="Humor_Docente")
-        s1_1 = AnyNode(id="s1_1",parent=s2, root_value="Bueno", value="Si")
-        s1_2 = AnyNode(id="s1_2",parent=s2, root_value="Malo", value="No")
+        root = AnyNode(attribute = "Dedicacion")
+        s0 = AnyNode(parent=root, root_value="Media", attribute="Horario")
+        s0_1 = AnyNode(parent=s0, root_value="Matutino", value="No")
+        s0_2 = AnyNode(parent=s0, root_value="Nocturno", value="Si")
+        s1 = AnyNode(parent=root, root_value="Alta", value="Si")
+        s2 = AnyNode(parent=root, root_value="Baja", attribute="Humor_Docente")
+        s1_1 = AnyNode(parent=s2, root_value="Bueno", value="Si")
+        s1_2 = AnyNode(parent=s2, root_value="Malo", value="No")
 
         print(RenderTree(root))
 
@@ -33,14 +35,14 @@ class TestAnyTree(TestCase):
 
     def test_evaluate_tree(self):
 
-        root = AnyNode(id="root", attribute = "Ded")
-        s0 = AnyNode(id="s0", parent=root, root_value="Media", attribute="Hor")
-        s0_1 = AnyNode(id="s0_1",parent=s0, root_value="Matutino", value="No")
-        s0_2 = AnyNode(id="s0_2",parent=s0, root_value="Nocturno", value="Si")
-        s1 = AnyNode(id="s1",parent=root, root_value="Alta", value="Si")
-        s2 = AnyNode(id="s2",parent=root, root_value="Baja", attribute="Hdoc")
-        s1_1 = AnyNode(id="s1_1",parent=s2, root_value="Bueno", value="Si")
-        s1_2 = AnyNode(id="s1_2",parent=s2, root_value="Malo", value="No")
+        root = AnyNode(attribute = "Ded")
+        s0 = AnyNode(parent=root, root_value="Media", attribute="Hor")
+        s0_1 = AnyNode(parent=s0, root_value="Matutino", value="No")
+        s0_2 = AnyNode(parent=s0, root_value="Nocturno", value="Si")
+        s1 = AnyNode(parent=root, root_value="Alta", value="Si")
+        s2 = AnyNode(parent=root, root_value="Baja", attribute="Hdoc")
+        s1_1 = AnyNode(parent=s2, root_value="Bueno", value="Si")
+        s1_2 = AnyNode(parent=s2, root_value="Malo", value="No")
 
         #<Ded=Media, Dif=Alta, Hor=Noc, Hum=Alta, Hdoc=Malo> -> Si
         #<Ded=Baja, Dif=Alta, Hor=Noc, Hum=Alta, Hdoc=Bueno> -> No
@@ -64,5 +66,21 @@ class TestAnyTree(TestCase):
         print(node)
 
         return 0
+
+    def test_data_Autism_Adult(self):
+        data = arff.loadarff('../../datasets/Autism-Adult-Data.arff')
+
+        print(data.__len__())
+        df = pd.DataFrame(data[0])
+
+        print(df)
+
+    def test_data_tom_mitchell(self):
+        data = arff.loadarff('../../datasets/tom_mitchell_example.arff')
+
+        print(data.__len__())
+        df = pd.DataFrame(data[0])
+
+        print(df)
 
 
