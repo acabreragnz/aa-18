@@ -67,8 +67,8 @@ class Entropy(Strategy):
             # Ejemplos que toman el valor 'v' para el atributo 'a'
             sv = s[s[a] == v]
             sv_entropy = Entropy._entropy(sv, target_attribute)
-            partitions[v.decode('utf-8')] = sv_entropy
-            # partitions[v] = sv_entropy
+            #partitions[v.decode('utf-8')] = sv_entropy
+            partitions[v] = sv_entropy
             g -= ((sv.shape[0]/total)*sv_entropy)
 
         return g, partitions
