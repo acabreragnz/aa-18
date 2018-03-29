@@ -84,6 +84,8 @@ def id3(examples: DataFrame, strategy: Strategy, targetattribute: str, attribute
     root = AnyNode(id="root", attribute=A)
     range = get_range_attribute(attributes, A)
 
+    #En esta parte se asume que todos los valores posibles para los atributos son discretos.
+    #Esto hay que extenderlo para manejar valores continuos como en el ejemplo
     for vi in range:
         examples_vi = get_examples_vi(examples, A, vi)
         if len(examples_vi) == 0:

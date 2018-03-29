@@ -73,6 +73,17 @@ class TestAnyTree(TestCase):
         df = pd.DataFrame(data['data'])
         print(data)
 
+        attributes = data["attributes"]
+        print(attributes)
+
+        columns = [x[0] for x in attributes]
+        print(columns)
+        df = pd.DataFrame(data=data['data'],columns=columns)
+        print(df)
+
+        tree = id3(examples=df, strategy=Dumy(df), targetattribute='Class/ASD', attributes=attributes)
+        print(RenderTree(tree))
+
 
     def test_data_tom_mitchell(self):
         data = arff.load(open('../../datasets/tom_mitchell_example.arff', 'r'))
