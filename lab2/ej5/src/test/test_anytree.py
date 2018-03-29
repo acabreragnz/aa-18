@@ -2,7 +2,7 @@ from unittest import TestCase
 from anytree import NodeMixin, RenderTree, AnyNode, PreOrderIter, Resolver
 import arff
 import pandas as pd
-from lab2.ej5.src.id3 import id3, Dumy
+from lab2.ej5.src.id3 import id3, Dumy,Entropy
 
 class TestAnyTree(TestCase):
 
@@ -96,7 +96,9 @@ class TestAnyTree(TestCase):
         df = pd.DataFrame(data=data['data'],columns=columns)
         print(df)
 
-        tree = id3(examples=df, strategy=Dumy(df), targetattribute='Salva', attributes=attributes)
+        strategy = Entropy(df, AnyNode(entropies = []), 'Salva')
+
+        tree = id3(examples=df, strategy=strategy, target_attribute='Salva', attributes=attributes)
         print(RenderTree(tree))
 
         #print(df.columns.values)

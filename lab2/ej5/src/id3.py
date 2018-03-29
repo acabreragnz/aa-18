@@ -68,6 +68,7 @@ class Entropy(Strategy):
             sv = s[s[a] == v]
             sv_entropy = Entropy._entropy(sv, target_attribute)
             partitions[v.decode('utf-8')] = sv_entropy
+            # partitions[v] = sv_entropy
             g -= ((sv.shape[0]/total)*sv_entropy)
 
         return g, partitions
@@ -197,7 +198,7 @@ def id3(examples: DataFrame, strategy: Strategy, target_attribute: str, attribut
         if len(examples_vi) == 0:
             new_branch = AnyNode(parent=root, attribute=A, value=most_common_value(examples,target_attribute))
         else:
-            new_branch = id3(examples=examples_vi, strategy=strategy, target_attribute=target_attribute, attributes=attributes)
+            new_branch = id3(examples=examples_vi, strategy=Entropy(examples_vi, root, target_attribute), target_attribute=target_attribute, attributes=attributes)
             new_branch.parent = root
             new_branch.__setattr__('root_value', vi)
 
