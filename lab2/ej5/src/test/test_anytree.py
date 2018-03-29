@@ -1,8 +1,8 @@
 from unittest import TestCase
 from anytree import NodeMixin, RenderTree, AnyNode, PreOrderIter, Resolver
-from scipy.io import arff
+import arff
 import pandas as pd
-
+from lab2.ej5.src.id3 import id3, Dumy
 
 class TestAnyTree(TestCase):
 
@@ -68,19 +68,52 @@ class TestAnyTree(TestCase):
         return 0
 
     def test_data_Autism_Adult(self):
-        data = arff.loadarff('../../datasets/Autism-Adult-Data.arff')
+        data = arff.load(open('../../datasets/Autism-Adult-Data.arff', 'r'))
 
-        print(data.__len__())
-        df = pd.DataFrame(data[0])
+        df = pd.DataFrame(data['data'])
+        print(data)
 
+        attributes = data["attributes"]
+        print(attributes)
+
+        columns = [x[0] for x in attributes]
+        print(columns)
+        df = pd.DataFrame(data=data['data'],columns=columns)
         print(df)
+
+        tree = id3(examples=df, strategy=Dumy(df), targetattribute='Class/ASD', attributes=attributes)
+        print(RenderTree(tree))
+
 
     def test_data_tom_mitchell(self):
-        data = arff.loadarff('../../datasets/tom_mitchell_example.arff')
+        data = arff.load(open('../../datasets/tom_mitchell_example.arff', 'r'))
 
-        print(data.__len__())
-        df = pd.DataFrame(data[0])
+        attributes = data["attributes"]
+        print(attributes)
 
+        columns = [x[0] for x in attributes]
+        print(columns)
+        df = pd.DataFrame(data=data['data'],columns=columns)
         print(df)
+
+        tree = id3(examples=df, strategy=Dumy(df), targetattribute='Salva', attributes=attributes)
+        print(RenderTree(tree))
+
+        #print(df.columns.values)
+
+        # dataserie = df.groupby('Salva')['Salva'].count()
+        # print(dataserie)
+        #
+        # print(df['Salva'].unique())
+        # print("YES" in df['Salva'].unique())
+
+        # print(df.groupby('Salva')['Salva'].count()["YES"])
+        # print(df['Salva'].count())
+        #for attribute_values in attributes:
+           #if attribute_values[0] == "Hor":
+               #print(attribute_values[1])
+
+        # print(df.loc[df['Salva'] == "YES"])
+        # print(df.loc[df['Ded'] == "Media"])
 
 
