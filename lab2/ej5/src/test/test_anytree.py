@@ -3,6 +3,7 @@ from anytree import NodeMixin, RenderTree, AnyNode, PreOrderIter, Resolver
 import arff
 import pandas as pd
 from lab2.ej5.src.id3 import id3, Dumy,Entropy
+from lab2.ej5.src.classifier import Classifier
 
 class TestAnyTree(TestCase):
 
@@ -65,6 +66,8 @@ class TestAnyTree(TestCase):
 
         print(node)
 
+
+
         return 0
 
     def test_data_Autism_Adult(self):
@@ -105,21 +108,14 @@ class TestAnyTree(TestCase):
         tree = id3(examples=df, strategy=strategy, target_attribute='Salva', attributes=attributes)
         print(RenderTree(tree))
 
-        #print(df.columns.values)
+        ej1 = {"Ded":"Media", "Dif":"Alta", "Hor":"Nocturno", "Hum":"Alta", "Hdoc":"Malo"}
+        ej2 = {"Ded": "Baja", "Dif": "Alta", "Hor": "Matutino", "Hum": "Alta", "Hdoc": "Bueno"}
 
-        # dataserie = df.groupby('Salva')['Salva'].count()
-        # print(dataserie)
-        #
-        # print(df['Salva'].unique())
-        # print("YES" in df['Salva'].unique())
 
-        # print(df.groupby('Salva')['Salva'].count()["YES"])
-        # print(df['Salva'].count())
-        #for attribute_values in attributes:
-           #if attribute_values[0] == "Hor":
-               #print(attribute_values[1])
+        classifier = Classifier(Entropy(df, None, 'Salva'))
+        print(classifier.predict(tree, ej1))
 
-        # print(df.loc[df['Salva'] == "YES"])
-        # print(df.loc[df['Ded'] == "Media"])
+        classifier = Classifier(Entropy(df, None, 'Salva'))
+        print(classifier.predict(tree, ej2))
 
 

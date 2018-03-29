@@ -1,5 +1,6 @@
 from pandas import DataFrame
-from id3 import Strategy
+from lab2.ej5.src.id3 import Strategy
+from anytree import AnyNode, Resolver
 
 
 class Classifier:
@@ -22,11 +23,24 @@ class Classifier:
         raise Exception('Not implemented :(')
 
     # noinspection PyMethodMayBeStatic,PyUnusedLocal
-    def predict(self, data: list) -> bool:
+    def predict(self, root : AnyNode, data: list) -> bool:
         """
         Clasifica una instancia en un valor booleano
 
+        :param root: árbol que se usa para clasificar la instancia
         :param data: lista de atributos (str) que representan la instancia que se quiere clasificar
         :return: True/False
         """
-        raise Exception('Not implemented :(')
+        node = root
+        while not node.is_leaf:
+            attribute = node.__getattribute__("attribute")
+            value = data[attribute]
+            print(attribute)
+            print(value)
+            r = Resolver('root_value')
+            x = r.get(node, value)
+            node = x
+
+        print(node)
+        return node.__getattribute__("value") == "YES"
+
