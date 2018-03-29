@@ -89,14 +89,18 @@ class TestAnyTree(TestCase):
         data = arff.load(open('../../datasets/tom_mitchell_example.arff', 'r'))
 
         attributes = data["attributes"]
-        print(attributes)
+        #print(attributes)
 
         columns = [x[0] for x in attributes]
         print(columns)
         df = pd.DataFrame(data=data['data'],columns=columns)
         print(df)
 
-        strategy = Entropy(df, AnyNode(entropies = []), 'Salva')
+        #print(df.loc[df["Hdoc"] == "Bueno"])
+
+
+        strategy = Entropy(df, None, 'Salva')
+        #print(strategy.select_attribute())
 
         tree = id3(examples=df, strategy=strategy, target_attribute='Salva', attributes=attributes)
         print(RenderTree(tree))

@@ -86,20 +86,25 @@ class Entropy(Strategy):
         # Hay que hacer esto porque los datos de los arff vienen importados como binario,
         # seria bueno poder tenerlos como categoricos (https://pandas.pydata.org/pandas-docs/stable/categorical.html)
         # o quisa simplemente string
-        yes = bytearray('YES', 'utf-8')
-        no = bytearray('NO', 'utf-8')
+        yes = 'YES'
+        no = 'NO'
 
         # total de ejemplos
         total = s.shape[0]
 
         # ejemplos positivos
         pe = s[s[target_attribute] == yes].shape[0]
+
         if pe == total:
             return 0
 
         # ejemplos negativos
         ne = s[s[target_attribute] == no].shape[0]
+
         if ne == total:
+            return 0
+
+        if total == 0:
             return 0
 
         # proporcion de ejemplos positivos
@@ -108,13 +113,21 @@ class Entropy(Strategy):
         # proporcion de ejemplos negativos
         pn = ne/total
 
+        pp_log2_pp = 0
+        if pp != 0 :
+            pp_log2_pp = -pp * np.log2(pp)
+
+        pn_log2_pn = 0
+        if pp != 0 :
+            pn_log2_pn = -pn * np.log2(pn)
+
         # noinspection PyUnresolvedReferences
-        return (-pp*np.log2(pp)) + (-pn*np.log2(pn))
+        return pp_log2_pp + pn_log2_pn
 
     def select_attribute(self) -> str:
         # si no es el nodo raiz obtengo la entropia del conjunto actual guardada en el nodo padre (al final de
         # este metodo en donde se guardan las entropias)
-        if hasattr(self._node, 'parent') and hasattr(self._node.parent, 'entropies'):
+        if not (self._node is None) and hasattr(self._node, 'parent') and hasattr(self._node.parent, 'entropies'):
             # noinspection PyUnresolvedReferences
             branch_value = self._node.root_value.decode('utf-8')
             s_entropy = self._node.parent.entropies[branch_value]
@@ -127,15 +140,17 @@ class Entropy(Strategy):
         best_attribute = None
         entropies = []
         for a in self._examples.columns.values:
-            (gain, entropies_aux) = Entropy._gain(self._examples, a, self._target_attribute, s_entropy)
-            if gain > max:
-                # noinspection PyShadowingBuiltins
-                max = gain
-                entropies = entropies_aux
-                best_attribute = a
+            if a != self._target_attribute :
+                (gain, entropies_aux) = Entropy._gain(self._examples, a, self._target_attribute, s_entropy)
+                if gain > max:
+                    # noinspection PyShadowingBuiltins
+                    max = gain
+                    entropies = entropies_aux
+                    best_attribute = a
 
         # guardo las entropias obtenidas para las ramas futuras en el nodo actual
-        self._node.entropies = entropies
+        if not (self._node is None):
+            self._node.entropies = entropies
         return best_attribute
 
 
@@ -178,17 +193,17 @@ def id3(examples: DataFrame, strategy: Strategy, target_attribute: str, attribut
     #Return Root
 
     if all_positive(examples,target_attribute):
-        return AnyNode(id="root", attribute= strategy.select_attribute(), value="YES")
+        return AnyNode(attribute= strategy.select_attribute(), value="YES")
 
     if all_negative(examples,target_attribute):
-        return AnyNode(id="root", attribute= strategy.select_attribute(), value="NO")
+        return AnyNode(attribute= strategy.select_attribute(), value="NO")
 
     A = strategy.select_attribute()
 
     if A == "" :
-        return AnyNode(id="root", attribute=A, value=most_common_value(examples, target_attribute))
+        return AnyNode(attribute=A, value=most_common_value(examples, target_attribute))
 
-    root = AnyNode(id="root", attribute=A)
+    root = AnyNode(attribute=A)
     range = get_range_attribute(attributes, A)
 
     #En esta parte se asume que todos los valores posibles para los atributos son discretos.
