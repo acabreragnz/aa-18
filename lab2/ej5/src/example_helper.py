@@ -1,36 +1,24 @@
 from pandas import DataFrame
 
-
-def all_positive(examples: DataFrame, targetattribute: str):
-
-    if "YES" in examples[targetattribute].unique() :
-        return examples.groupby(targetattribute)[targetattribute].count()["YES"] == examples[targetattribute].count()
-    else :
-        return 0
+yes = 'YES'
+no = 'NO'
 
 
-def all_negative(examples: DataFrame, targetattribute: str):
-
-    if "NO" in examples[targetattribute].unique():
-        return examples.groupby(targetattribute)[targetattribute].count()["NO"] == examples[targetattribute].count()
-    else :
-        return 0
+def all_positive(examples: DataFrame, target_attribute: str):
+    return examples[examples[target_attribute] == yes].shape[0] == examples.shape[0]
 
 
-def most_common_value(examples: DataFrame, targetattribute: str):
+def all_negative(examples: DataFrame, target_attribute: str):
+    return examples[examples[target_attribute] == no].shape[0] == examples.shape[0]
 
-    examples_unic = examples[targetattribute].unique()
-    if "YES" in examples_unic and "NO" in examples_unic :
-        cant_yes = examples.groupby(targetattribute)[targetattribute].count()["YES"];
-        cant_no = examples.groupby(targetattribute)[targetattribute].count()["NO"]
-        if cant_yes > cant_no:
-            return "YES"
-        else:
-            return "NO"
-    elif  "YES" in examples_unic:
-        return "YES"
+
+def most_common_value(examples: DataFrame, target_attribute: str):
+    cant_yes = examples[examples[target_attribute] == yes].shape[0]
+    cant_no = examples[examples[target_attribute] == no].shape[0]
+    if cant_yes > cant_no:
+        return yes
     else:
-        return "NO"
+        return no
 
 
 def get_range_attribute(attributes: list, attribute: str):
