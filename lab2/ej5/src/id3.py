@@ -1,8 +1,8 @@
 import numpy as np
 from pandas import DataFrame
 from anytree import AnyNode
-from lab2.ej5.src.example_helper import all_positive, all_negative, most_common_value, get_range_attribute, get_examples_vi
-from random import randint
+from lab2.ej5.src.example_helper import yes, no, all_positive, all_negative, most_common_value, get_range_attribute, get_examples_vi
+# from lab2.ej5.src.missing_attributes import get_value_attribute_1, get_value_attribute_2, get_value_attribute_3
 
 
 class Strategy:
@@ -65,6 +65,9 @@ class Entropy(Strategy):
         total = s.shape[0]
         for v in values:
             # Ejemplos que toman el valor 'v' para el atributo 'a'
+            # if v == '?':
+            #     v = get_value_attribute_3(s,a)
+
             sv = s[s[a] == v]
             sv_entropy = Entropy._entropy(sv, target_attribute)
             #partitions[v.decode('utf-8')] = sv_entropy
@@ -83,9 +86,6 @@ class Entropy(Strategy):
         :return: la entropia del conjunto s
         """
 
-        # Hay que hacer esto porque los datos de los arff vienen importados como binario,
-        # seria bueno poder tenerlos como categoricos (https://pandas.pydata.org/pandas-docs/stable/categorical.html)
-        # o quisa simplemente string
         yes = 'YES'
         no = 'NO'
 
@@ -154,12 +154,6 @@ class Entropy(Strategy):
         return best_attribute
 
 
-class Dumy(Strategy):
-
-    def select_attribute(self) -> str:
-        columns = self.examples.columns.values
-        return columns[randint(0,len(columns)-1)]
-
 
 # noinspection PyUnusedLocal
 def id3(examples: DataFrame, strategy: Strategy, target_attribute: str, attributes: list) -> AnyNode:
@@ -192,22 +186,20 @@ def id3(examples: DataFrame, strategy: Strategy, target_attribute: str, attribut
         #End
     #Return Root
 
-    if all_positive(examples,target_attribute):
-        return AnyNode(attribute= strategy.select_attribute(), value="YES")
-
-    if all_negative(examples,target_attribute):
-        return AnyNode(attribute= strategy.select_attribute(), value="NO")
-
     A = strategy.select_attribute()
 
-    if A == "" :
-        return AnyNode(attribute=A, value=most_common_value(examples, target_attribute))
+    if A is None:
+        return AnyNode(value=most_common_value(examples, target_attribute))
+
+    if all_positive(examples,target_attribute):
+        return AnyNode(attribute= strategy.A, value=yes)
+
+    if all_negative(examples,target_attribute):
+        return AnyNode(attribute= A, value=no)
 
     root = AnyNode(attribute=A)
     range = get_range_attribute(attributes, A)
-
     #En esta parte se asume que todos los valores posibles para los atributos son discretos.
-    #Esto hay que extenderlo para manejar valores continuos como en el ejemplo
     for vi in range:
         examples_vi = get_examples_vi(examples, A, vi)
         if len(examples_vi) == 0:
@@ -218,3 +210,5 @@ def id3(examples: DataFrame, strategy: Strategy, target_attribute: str, attribut
             new_branch.__setattr__('root_value', vi)
 
     return root
+
+
