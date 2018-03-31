@@ -203,7 +203,7 @@ def id3(examples: DataFrame, strategy: Strategy, target_attribute: str, attribut
     for vi in range:
         examples_vi = get_examples_vi(examples, A, vi)
         if len(examples_vi) == 0:
-            new_branch = AnyNode(parent=root, attribute=A, value=most_common_value(examples,target_attribute))
+            new_branch = AnyNode(parent=root, root_value=vi, value=most_common_value(examples,target_attribute))
         else:
             new_branch = id3(examples=examples_vi, strategy=Entropy(examples_vi, root, target_attribute), target_attribute=target_attribute, attributes=attributes)
             new_branch.parent = root
