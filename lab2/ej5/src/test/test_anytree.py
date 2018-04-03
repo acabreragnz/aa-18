@@ -89,7 +89,7 @@ class TestAnyTree(TestCase):
 
 
     def test_data_tom_mitchell(self):
-        data = arff.load(open('../../datasets/tom_mitchell_example.arff', 'r'))
+        data = arff.load(open('../../datasets/dataset_clase.arff', 'r'))
 
         attributes = data["attributes"]
         #print(attributes)

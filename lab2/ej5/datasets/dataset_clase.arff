@@ -1,0 +1,16 @@
+@relation tom_mitchell_example
+
+@attribute Ded {Alta,Media,Baja}
+@attribute Dif {Alta,Media,Baja}
+@attribute Hor {Matutino,Nocturno}
+@attribute Hum {Alta,Media,Baja}
+@attribute Hdoc {Bueno,Malo}
+@attribute Salva {NO,YES}
+
+
+
+@data
+Alta,Alta,Nocturno,Media,Bueno,YES
+Baja,Media,Matutino,Alta,Malo,NO
+Media,Alta,Nocturno,Media,Malo,YES
+Media,Alta,Matutino,Alta,Bueno,NO
