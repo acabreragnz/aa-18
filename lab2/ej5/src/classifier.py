@@ -36,8 +36,8 @@ class Classifier:
         while not node.is_leaf:
             attribute = node.__getattribute__("attribute")
             value = data[attribute]
-            print(attribute)
-            print(value)
+            print("predict", attribute)
+            print("predict2", value)
             r = Resolver('root_value')
             x = r.get(node, value)
             node = x

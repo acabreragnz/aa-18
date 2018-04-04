@@ -89,7 +89,7 @@ def entropy(s: DataFrame, target_attribute: str) -> float:
         pp_log2_pp = -pp * np.log2(pp)
 
     pn_log2_pn = 0
-    if pp != 0:
+    if pn != 0:
         # noinspection PyUnresolvedReferences
         pn_log2_pn = -pn * np.log2(pn)
 
