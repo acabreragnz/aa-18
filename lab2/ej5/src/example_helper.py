@@ -1,5 +1,7 @@
 from pandas import DataFrame
 
+from lab2.ej5.src.continuous_values import get_discrete_values_from_continuous_values
+
 yes = 'YES'
 no = 'NO'
 
@@ -38,14 +40,15 @@ def get_most_common_value(examples: DataFrame, target_attribute: str):
     return most_common_value
 
 
-def get_range_attribute(attributes: list, attribute: str):
+def get_range_attribute(attributes: list, attribute: str, target_attribute : str, df : DataFrame):
     #attributes es de la forma [('Ded', ['Alta', 'Media', 'Baja']), ('Dif', ['Alta', 'Media', 'Baja']), ('Hor', ['Matutino', 'Nocturno']), ('Hum', ['Alta', 'Media', 'Baja']), ('Hdoc', ['Bueno', 'Malo']), ('Salva', ['NO', 'YES'])]
     for attribute_values in attributes:
         if attribute_values[0] == attribute:
 
-            print(attribute_values[1])
+            if isinstance(attribute_values[1], str):
+                return (0, get_discrete_values_from_continuous_values(df, attribute, target_attribute))
 
-            return attribute_values[1]
+            return (1, attribute_values[1])
     return ""
 
 
@@ -59,6 +62,14 @@ def remove_attribute(attributes: list, attribute: str) -> list:
 
 def filter_examples_with_value(examples: DataFrame, attribute: str, value: str, reject_column: str = None):
     filtered_examples = examples.loc[examples[attribute] == value]
+
+    if reject_column is not None:
+        filtered_examples = filtered_examples.drop(reject_column)
+
+    return filtered_examples
+
+def filter_examples_with_less_value(examples: DataFrame, attribute: str, value: str, reject_column: str = None):
+    filtered_examples = examples.loc[examples[attribute] > value]
 
     if reject_column is not None:
         filtered_examples = filtered_examples.drop(reject_column)

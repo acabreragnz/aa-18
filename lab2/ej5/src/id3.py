@@ -4,7 +4,7 @@ from lab2.ej5.src.custom_types import Strategy
 
 from lab2.ej5.src.example_helper \
     import all_same_value, get_most_common_value, get_range_attribute, \
-    filter_examples_with_value, map_to_strings, remove_attribute
+    filter_examples_with_value, map_to_strings, remove_attribute, filter_examples_with_less_value
 
 
 # noinspection PyUnusedLocal
@@ -63,29 +63,56 @@ def id3_recursive_step(examples: DataFrame, select_attribute, target_attribute: 
     root = AnyNode()
     selected_attribute = select_attribute(root, examples, target_attribute, map_to_strings(attributes))
     root.__setattr__('attribute', selected_attribute)
-    possible_values_of_selected_attribute = get_range_attribute(attributes, selected_attribute)
+    (is_discrete_value, possible_values_of_selected_attribute) = get_range_attribute(attributes, selected_attribute,target_attribute,examples)
 
-    for current_value_for_attribute in possible_values_of_selected_attribute:
-        examples_vi = filter_examples_with_value(
-            examples,
-            selected_attribute,
-            current_value_for_attribute
-        )
 
-        if len(examples_vi) == 0:
-            AnyNode(
-                parent=root,
-                root_value=current_value_for_attribute,
-                value=get_most_common_value(examples, target_attribute)
+    if is_discrete_value :
+        for current_value_for_attribute in possible_values_of_selected_attribute:
+            examples_vi = filter_examples_with_value(
+                examples,
+                selected_attribute,
+                current_value_for_attribute
             )
-        else:
-            new_branch = id3(
-                examples_vi,
-                select_attribute,
-                target_attribute,
-                remove_attribute(attributes, select_attribute)
+
+            if len(examples_vi) == 0:
+                AnyNode(
+                    parent=root,
+                    root_value=current_value_for_attribute,
+                    value=get_most_common_value(examples, target_attribute)
+                )
+            else:
+                new_branch = id3(
+                    examples_vi,
+                    select_attribute,
+                    target_attribute,
+                    remove_attribute(attributes, select_attribute)
+                )
+                new_branch.parent = root
+                new_branch.__setattr__('root_value', current_value_for_attribute)
+    else:
+        for current_value_for_attribute in possible_values_of_selected_attribute[1]:
+
+            examples_vi = filter_examples_with_less_value(
+                examples,
+                selected_attribute,
+                possible_values_of_selected_attribute[0]
             )
-            new_branch.parent = root
-            new_branch.__setattr__('root_value', current_value_for_attribute)
+
+            if len(examples_vi) == 0:
+                AnyNode(
+                    parent=root,
+                    root_value=current_value_for_attribute,
+                    value=get_most_common_value(examples, target_attribute)
+                )
+            else:
+                new_branch = id3(
+                    examples_vi,
+                    select_attribute,
+                    target_attribute,
+                    remove_attribute(attributes, select_attribute)
+                )
+                new_branch.parent = root
+                new_branch.__setattr__('root_value', current_value_for_attribute)
 
     return root
+

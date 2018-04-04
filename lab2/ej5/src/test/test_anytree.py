@@ -88,7 +88,7 @@ class TestAnyTree(TestCase):
         tree = id3(examples=df, select_attribute=select_attribute, target_attribute='Class/ASD', attributes=attributes)
         print(RenderTree(tree))
 
-        cv.get_discrete_values_from_continuous_values(df, 'age', 'Class/ASD')
+        #cv.get_discrete_values_from_continuous_values(df, 'age', 'Class/ASD')
 
 
 
