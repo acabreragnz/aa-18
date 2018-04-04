@@ -42,6 +42,9 @@ def get_range_attribute(attributes: list, attribute: str):
     #attributes es de la forma [('Ded', ['Alta', 'Media', 'Baja']), ('Dif', ['Alta', 'Media', 'Baja']), ('Hor', ['Matutino', 'Nocturno']), ('Hum', ['Alta', 'Media', 'Baja']), ('Hdoc', ['Bueno', 'Malo']), ('Salva', ['NO', 'YES'])]
     for attribute_values in attributes:
         if attribute_values[0] == attribute:
+
+            print(attribute_values[1])
+
             return attribute_values[1]
     return ""
 
