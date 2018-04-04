@@ -1,5 +1,5 @@
 from pandas import DataFrame
-from custom_types import Strategy
+from lab2.ej5.src.custom_types import Strategy
 from anytree import AnyNode, Resolver
 
 
@@ -36,8 +36,6 @@ class Classifier:
         while not node.is_leaf:
             attribute = node.__getattribute__("attribute")
             value = data[attribute]
-            print("predict", attribute)
-            print("predict2", value)
             r = Resolver('root_value')
             x = r.get(node, value)
             node = x

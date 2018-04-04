@@ -2,8 +2,8 @@ from unittest import TestCase
 from anytree import NodeMixin, RenderTree, AnyNode, PreOrderIter, Resolver
 import arff
 import pandas as pd
-from id3 import id3
-from strategy.entropy import select_attribute
+from lab2.ej5.src.id3 import id3
+from lab2.ej5.src.strategy.entropy import select_attribute
 from lab2.ej5.src.classifier import Classifier
 
 
@@ -68,8 +68,7 @@ class TestAnyTree(TestCase):
         return 0
 
     def test_data_Autism_Adult(self):
-        #data = arff.load(open('../../datasets/Autism-Adult-Data.arff', 'r'))
-        data = arff.load(open('../../datasets/prueba_atributos_faltantes.arff', 'r'))
+        data = arff.load(open('../../datasets/Autism-Adult-Data.arff', 'r'))
 
         df = pd.DataFrame(data['data'])
         print(data)

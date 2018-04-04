@@ -1,12 +1,10 @@
 from pandas import DataFrame
 from anytree import AnyNode
-from custom_types import Strategy
+from lab2.ej5.src.custom_types import Strategy
 
 from lab2.ej5.src.example_helper \
     import all_same_value, get_most_common_value, get_range_attribute, \
     filter_examples_with_value, map_to_strings, remove_attribute
-
-# from lab2.ej5.src.missing_attributes import get_value_attribute_1, get_value_attribute_2, get_value_attribute_3
 
 
 # noinspection PyUnusedLocal
@@ -46,9 +44,10 @@ def id3(examples: DataFrame, select_attribute: Strategy, target_attribute: str, 
     node = id3_base_step(attributes, examples, target_attribute)
 
     if node is None:
-        root = id3_recursive_step(examples, select_attribute, target_attribute, attributes)
+        node = id3_recursive_step(examples, select_attribute, target_attribute, attributes)
 
-    return root
+    return node
+
 
 def id3_base_step(attributes, examples: DataFrame, target_attribute: str) -> AnyNode:
     if attributes.__len__() == 0:
@@ -82,8 +81,13 @@ def id3_recursive_step(examples: DataFrame, select_attribute, target_attribute: 
                 value=get_most_common_value(examples, target_attribute)
             )
         else:
-            new_branch = id3(examples_vi, select_attribute, target_attribute, remove_attribute(attributes, A))
+            new_branch = id3(
+                examples_vi,
+                select_attribute,
+                target_attribute,
+                remove_attribute(attributes, select_attribute)
+            )
             new_branch.parent = root
-            new_branch.__setattr__('root_value', vi)
+            new_branch.__setattr__('root_value', current_value_for_attribute)
 
     return root
