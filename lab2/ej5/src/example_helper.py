@@ -29,6 +29,14 @@ def get_range_attribute(attributes: list, attribute: str):
     return ""
 
 
+def map_to_strings(attributes: list) -> list:
+    return [a[0] for a in attributes]
+
+
+def remove_attribute(attributes: list, attribute: str) -> list:
+    return [a for a in attributes if a[0] != attribute]
+
+
 def get_examples_vi(examples: DataFrame, attribute:str, value):
     #Examples_vi be the subset of Examples that have value vi for attribute
     return examples.loc[examples[attribute] == value]

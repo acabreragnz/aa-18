@@ -2,10 +2,10 @@ from unittest import TestCase
 from anytree import NodeMixin, RenderTree, AnyNode, PreOrderIter, Resolver
 import arff
 import pandas as pd
-from lab2.ej5.src.id3 import id3,Entropy
+from id3 import id3
+from strategy.entropy import select_attribute
 from lab2.ej5.src.classifier import Classifier
 
-import numpy as np
 
 class TestAnyTree(TestCase):
 
@@ -32,9 +32,6 @@ class TestAnyTree(TestCase):
         print(RenderTree(root))
 
         return root
-
-
-
 
     def test_evaluate_tree(self):
 
@@ -68,8 +65,6 @@ class TestAnyTree(TestCase):
 
         print(node)
 
-
-
         return 0
 
     def test_data_Autism_Adult(self):
@@ -87,8 +82,7 @@ class TestAnyTree(TestCase):
         df = pd.DataFrame(data=data['data'],columns=columns)
         #print(df)
 
-        strategy = Entropy(df, None, 'Class/ASD')
-        tree = id3(examples=df, strategy=strategy, target_attribute='Class/ASD', attributes=attributes)
+        tree = id3(examples=df, select_attribute=select_attribute, target_attribute='Class/ASD', attributes=attributes)
         print(RenderTree(tree))
 
         #age
@@ -123,22 +117,18 @@ class TestAnyTree(TestCase):
         print(df)
 
         #print(df.loc[df["Hdoc"] == "Bueno"])
-
-
-        strategy = Entropy(df, None, 'Salva')
         #print(strategy.select_attribute())
 
-        tree = id3(examples=df, strategy=strategy, target_attribute='Salva', attributes=attributes)
+        tree = id3(examples=df, select_attribute=select_attribute, target_attribute='Salva', attributes=attributes)
         print(RenderTree(tree))
 
         ej1 = {"Ded":"Media", "Dif":"Alta", "Hor":"Nocturno", "Hum":"Alta", "Hdoc":"Malo"}
         ej2 = {"Ded": "Baja", "Dif": "Alta", "Hor": "Matutino", "Hum": "Alta", "Hdoc": "Bueno"}
 
-
-        classifier = Classifier(Entropy(df, None, 'Salva'))
+        classifier = Classifier(select_attribute)
         print(classifier.predict(tree, ej1))
 
-        classifier = Classifier(Entropy(df, None, 'Salva'))
+        classifier = Classifier(select_attribute)
         print(classifier.predict(tree, ej2))
 
 

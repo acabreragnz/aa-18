@@ -1,6 +1,7 @@
 from unittest import TestCase
 from anytree import RenderTree
-from lab2.ej5.src.id3 import id3, Entropy
+from id3 import id3
+from strategy.entropy import select_attribute
 from lab2.ej5.src.classifier import Classifier
 import arff
 import pandas as pd
@@ -25,9 +26,8 @@ class TestBasic(TestCase):
         target_attribute = 'PlayTennis'
 
         # noinspection PyTypeChecker
-        strategy = Entropy(df, None, target_attribute)
-        tree = id3(df, strategy, target_attribute, attributes)
-        classifier = Classifier(strategy)
+        tree = id3(df, select_attribute, target_attribute, attributes)
+        classifier = Classifier(select_attribute)
 
         print(RenderTree(tree))
 

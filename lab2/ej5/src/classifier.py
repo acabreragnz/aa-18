@@ -1,17 +1,18 @@
 from pandas import DataFrame
-from lab2.ej5.src.id3 import Strategy
+from custom_types import Strategy
 from anytree import AnyNode, Resolver
 
 
 class Classifier:
 
     # noinspection PyUnusedLocal
-    def __init__(self, strategy: Strategy):
+    def __init__(self, select_attribute: Strategy):
         """
         Constructor
-        :param strategy: estrategia utilizada por el algoritmo para obtener el mejor atributo
+
+        :param strategy: estrategia utilizada por el algoritmo para obtener el mejor atributo.
         """
-        self._strategy = strategy
+        self._select_attribute = select_attribute
 
     # noinspection PyMethodMayBeStatic
     def fit(self, examples: DataFrame) -> None:
@@ -23,7 +24,7 @@ class Classifier:
         raise Exception('Not implemented :(')
 
     # noinspection PyMethodMayBeStatic,PyUnusedLocal
-    def predict(self, root : AnyNode, data: list) -> bool:
+    def predict(self, root: AnyNode, data: list) -> bool:
         """
         Clasifica una instancia en un valor booleano
 
