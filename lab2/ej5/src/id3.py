@@ -66,8 +66,6 @@ def id3_recursive_step(examples: DataFrame, select_attribute, target_attribute: 
     possible_values_of_selected_attribute = get_range_attribute(attributes, selected_attribute)
 
     for current_value_for_attribute in possible_values_of_selected_attribute:
-        # examples_vi = get_examples_vi(examples, selected_attribute, current_value_for_attribute)
-
         examples_vi = filter_examples_with_value(
             examples,
             selected_attribute,
