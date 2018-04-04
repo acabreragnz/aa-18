@@ -38,8 +38,7 @@ def get_discrete_values_from_continuous_values(examples: DataFrame, a:str, targe
         entropies.append(entropy(sv, target_attribute))
 
     c = get_point_with_max_gain(examples, a, points, entropies)
-    print(c)
-    return (c, ["YES","NO"])
+    return (c, a+" > "+str(c),["YES","NO"])
 
 
 def get_point_with_max_gain(s: DataFrame, a: str, points:list, entropies: list ) -> tuple:

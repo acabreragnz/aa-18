@@ -57,7 +57,12 @@ def map_to_strings(attributes: list) -> list:
 
 
 def remove_attribute(attributes: list, attribute: str) -> list:
-    return [a for a in attributes if a[0] != attribute]
+
+    print(attributes.__len__())
+    print(attribute)
+    result = [a for a in attributes if a[0] != attribute]
+    print(result.__len__())
+    return result
 
 
 def filter_examples_with_value(examples: DataFrame, attribute: str, value: str, reject_column: str = None):
