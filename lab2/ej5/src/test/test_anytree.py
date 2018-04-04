@@ -2,8 +2,10 @@ from unittest import TestCase
 from anytree import NodeMixin, RenderTree, AnyNode, PreOrderIter, Resolver
 import arff
 import pandas as pd
-from lab2.ej5.src.id3 import id3, Dumy,Entropy
+from lab2.ej5.src.id3 import id3,Entropy
 from lab2.ej5.src.classifier import Classifier
+
+import numpy as np
 
 class TestAnyTree(TestCase):
 
@@ -71,21 +73,42 @@ class TestAnyTree(TestCase):
         return 0
 
     def test_data_Autism_Adult(self):
-        data = arff.load(open('../../datasets/Autism-Adult-Data.arff', 'r'))
+        #data = arff.load(open('../../datasets/Autism-Adult-Data.arff', 'r'))
+        data = arff.load(open('../../datasets/prueba_atributos_faltantes.arff', 'r'))
 
         df = pd.DataFrame(data['data'])
         print(data)
 
         attributes = data["attributes"]
-        print(attributes)
+        #print(attributes)
 
         columns = [x[0] for x in attributes]
         print(columns)
         df = pd.DataFrame(data=data['data'],columns=columns)
-        print(df)
+        #print(df)
 
-        tree = id3(examples=df, strategy=Dumy(df), targetattribute='Class/ASD', attributes=attributes)
+        strategy = Entropy(df, None, 'Class/ASD')
+        tree = id3(examples=df, strategy=strategy, target_attribute='Class/ASD', attributes=attributes)
         print(RenderTree(tree))
+
+        #age
+        #print(df['age'])
+        #print(df[['age','Class/ASD']].drop_duplicates())
+        # print(df[df['Class/ASD'] == 'YES'])
+
+        #x = df['ethnicity'].value_counts()
+        # x = df[df['Class/ASD'] == 'YES']['ethnicity'].value_counts()
+        # print(x)
+        # print(x.idxmax())
+
+        #w_prizes = [('$1', 300), ('$2', 50), ('$10', 5), ('$100', 1)]
+        #prize_list = [prize for prize, weight in w_prizes for i in range(weight)]
+        #print(prize_list)
+        #o = ['yes', 'no']
+        #print(np.random.choice(5, 3, p=[0.1, 0, 0.3, 0.6, 0]))
+        #print(np.random.choice(o, 1, p=[0.9, 0.1]))
+
+
 
 
     def test_data_tom_mitchell(self):
