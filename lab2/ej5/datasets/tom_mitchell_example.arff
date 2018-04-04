@@ -1,16 +1,25 @@
 @relation tom_mitchell_example
 
-@attribute Ded {Alta,Media,Baja}
-@attribute Dif {Alta,Media,Baja}
-@attribute Hor {Matutino,Nocturno}
-@attribute Hum {Alta,Media,Baja}
-@attribute Hdoc {Bueno,Malo}
-@attribute Salva {NO,YES}
+@attribute Outlook {Sunny, Overcast, Rain}
+@attribute Temperature {Hot, Mild, Cool}
+@attribute Humidity {High, Normal}
+@attribute Wind {Weak, Strong}
+@attribute PlayTennis {No, Yes}
 
 
 
 @data
-Alta,Alta,Nocturno,Media,Bueno,YES
-Baja,Media,Matutino,Alta,Malo,NO
-Media,Alta,Nocturno,Media,Malo,YES
-Media,Alta,Matutino,Alta,Bueno,NO
+Sunny, Hot, High, Weak, No
+Sunny, Hot, High, Strong, No
+Overcast, Hot, High, Weak, Yes
+Rain, Mild, High, Weak, Yes
+Rain, Cool, Normal, Weak, Yes
+Rain, Cool, Normal, Strong, No
+Overcast, Cool, Normal, Strong, Yes
+Sunny, Mild, High, Weak, No
+Sunny, Cool, Normal, Weak, Yes
+Rain, Mild, Normal, Weak, Yes
+Sunny, Mild, Normal, Strong, Yes
+Overcast, Mild, High, Strong, Yes
+Overcast, Hot, Normal, Weak, Yes
+Rain, Mild, High, Strong, No
