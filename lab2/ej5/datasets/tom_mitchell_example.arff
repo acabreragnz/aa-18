@@ -4,22 +4,22 @@
 @attribute Temperature {Hot, Mild, Cool}
 @attribute Humidity {High, Normal}
 @attribute Wind {Weak, Strong}
-@attribute PlayTennis {No, Yes}
+@attribute PlayTennis {NO, YES}
 
 
 
 @data
-Sunny, Hot, High, Weak, No
-Sunny, Hot, High, Strong, No
-Overcast, Hot, High, Weak, Yes
-Rain, Mild, High, Weak, Yes
-Rain, Cool, Normal, Weak, Yes
-Rain, Cool, Normal, Strong, No
-Overcast, Cool, Normal, Strong, Yes
-Sunny, Mild, High, Weak, No
-Sunny, Cool, Normal, Weak, Yes
-Rain, Mild, Normal, Weak, Yes
-Sunny, Mild, Normal, Strong, Yes
-Overcast, Mild, High, Strong, Yes
-Overcast, Hot, Normal, Weak, Yes
-Rain, Mild, High, Strong, No
+Sunny, Hot, High, Weak, NO
+Sunny, Hot, High, Strong, NO
+Overcast, Hot, High, Weak, YES
+Rain, Mild, High, Weak, YES
+Rain, Cool, Normal, Weak, YES
+Rain, Cool, Normal, Strong, NO
+Overcast, Cool, Normal, Strong, YES
+Sunny, Mild, High, Weak, NO
+Sunny, Cool, Normal, Weak, YES
+Rain, Mild, Normal, Weak, YES
+Sunny, Mild, Normal, Strong, YES
+Overcast, Mild, High, Strong, YES
+Overcast, Hot, Normal, Weak, YES
+Rain, Mild, High, Strong, NO

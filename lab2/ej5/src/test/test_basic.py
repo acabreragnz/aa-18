@@ -1,6 +1,7 @@
 from unittest import TestCase
-from id3 import id3, Entropy
-from classifier import Classifier
+from anytree import RenderTree
+from lab2.ej5.src.id3 import id3, Entropy
+from lab2.ej5.src.classifier import Classifier
 import arff
 import pandas as pd
 
@@ -28,10 +29,12 @@ class TestBasic(TestCase):
         tree = id3(df, strategy, target_attribute, attributes)
         classifier = Classifier(strategy)
 
+        print(RenderTree(tree))
+
         for i in range(df.shape[0]):
             instance = df.loc[i]
             v = classifier.predict(tree, instance)
-            if instance[target_attribute] == 'Yes':
+            if instance[target_attribute] == 'YES':
                 self.assertTrue(v, f'Para la instancia {i+1}, el valor predecido no coincide con el valor conocido')
             else:
                 self.assertFalse(v, f'Para la instancia {i+1}, el valor predecido no coincide con el valor conocido')
