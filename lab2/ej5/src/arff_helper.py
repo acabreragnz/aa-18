@@ -48,6 +48,19 @@ class DataSet:
 
         self._loaded = True
 
+    def copy(self):
+        """
+        Copia un DataSet
+
+        :return: un nuevo DataSet
+        """
+        ds_new = DataSet()
+        ds_new._pandas_df = self._pandas_df
+        ds_new._loaded = self._loaded
+        ds_new._attribute_info = deepcopy(self._attribute_info)
+        ds_new._attribute_list = deepcopy(self._attribute_list)
+        return ds_new
+
     def remove_attribute(self, name: str):
         """
         Remueve un atributo completamente (de pandas_df, attribute_list y attribute_info)
@@ -65,7 +78,7 @@ class DataSet:
         :param attribute: el atributo por el que se quiere filtrar
         :param value: el valor
         :param reject_column: si esta definido, quita el atributo de pandas_df, attribute_list y attribute_info
-        :return: una nueva instancia ds de DataSet con los datos filtrados
+        :return: un nuevo DataSet con los datos filtrados
         """
         filtered_examples = self.pandas_df.loc[self.pandas_df[attribute] == value]
         attribute_list = deepcopy(self.attribute_list)
@@ -101,3 +114,7 @@ class DataSet:
         if not self._loaded:
             raise Exception('No se cargo archivo ARFF')
         return self._pandas_df
+
+    @pandas_df.setter
+    def pandas_df(self, df):
+        self._pandas_df = df

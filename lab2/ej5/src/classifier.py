@@ -30,11 +30,10 @@ class Classifier:
 
 
     # noinspection PyMethodMayBeStatic,PyUnusedLocal
-    def predict(self, data: list) -> bool:
+    def predict(self, data) -> bool:
         """
         Clasifica una instancia en un valor booleano
 
-        :param root: árbol que se usa para clasificar la instancia
         :param data: lista de atributos (str) que representan la instancia que se quiere clasificar
         :return: True/False
         """
@@ -44,12 +43,12 @@ class Classifier:
 
         node = self._decision_tree
         while not node.is_leaf:
-            attribute = node.__getattribute__("attribute")
-            value = data[attribute]
-            r = Resolver('root_value')
-            x = r.get(node, value)
-            node = x
+            # se busca en los hijos el que cumpla la condicion
+            for child in node.children:
+                if child.cond.eval(data):
+                    break
+            # noinspection PyUnboundLocalVariable
+            node = child
 
-        print(node)
-        return node.__getattribute__("value") == "YES"
+        return node.value == "YES"
 

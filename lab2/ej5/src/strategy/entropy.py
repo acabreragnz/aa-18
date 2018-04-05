@@ -7,7 +7,9 @@ atributos basada en el calculo de ganancia segun entropia. No soporta atributos 
 import numpy as np
 from arff_helper import DataSet
 from pandas import DataFrame
-from anytree import AnyNode
+from node import Node
+from strategy import StrategyResult
+from condition import DiscreteCondition
 
 
 def gain(s: DataFrame, a: str, target_attribute: str, s_entropy: float = None) -> tuple:
@@ -96,7 +98,7 @@ def entropy(s: DataFrame, target_attribute: str) -> float:
     return pp_log2_pp + pn_log2_pn
 
 
-def select_attribute(examples: DataSet, target_attribute: str, node: AnyNode) -> str:
+def select_attribute(examples: DataSet, target_attribute: str, node: Node) -> StrategyResult:
     """
     Implementa una estrategia de seleccion de atributos basada en el calculo de ganancia segun entropia.
     No soporta atributos que tomen valores nulos.
@@ -132,6 +134,10 @@ def select_attribute(examples: DataSet, target_attribute: str, node: AnyNode) ->
     # guardo las entropias obtenidas para las ramas futuras en el nodo actual
     node.entropies = entropies
 
-    return best_attribute
+    r = StrategyResult(best_attribute, [])
+    for v in examples.attribute_info[best_attribute].domain:
+        r.partitions.append(DiscreteCondition(best_attribute, v))
+
+    return r
 
 

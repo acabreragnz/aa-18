@@ -1,11 +1,11 @@
-from anytree import AnyNode
+from node import Node, LeafNode
 from arff_helper import DataSet
 from lab2.ej5.src.custom_types import Strategy
 from lab2.ej5.src.example_helper import all_same_value, get_most_common_value
 
 
 # noinspection PyUnusedLocal
-def id3(examples: DataSet, select_attribute: Strategy, target_attribute: str) -> AnyNode:
+def id3(examples: DataSet, select_attribute: Strategy, target_attribute: str) -> Node:
     """
     Devuelve el arbol de decision generado con los ejemplos de entrenamiento
 
@@ -43,39 +43,30 @@ def id3(examples: DataSet, select_attribute: Strategy, target_attribute: str) ->
     return node
 
 
-def id3_base_step(examples: DataSet, target_attribute: str) -> AnyNode:
+def id3_base_step(examples: DataSet, target_attribute: str) -> Node:
     if examples.attribute_list.__len__() == 0:
-        return AnyNode(value=get_most_common_value(examples, target_attribute))
+        return LeafNode(get_most_common_value(examples, target_attribute))
 
     all_examples_with_same_value = all_same_value(examples, target_attribute)
 
     if all_examples_with_same_value is not None:
-        return AnyNode(value=all_examples_with_same_value[0])
+        return LeafNode(all_examples_with_same_value[0])
 
 
-def id3_recursive_step(examples: DataSet, select_attribute: Strategy, target_attribute: str) -> AnyNode:
-    root = AnyNode()
-    selected_attribute = select_attribute(examples, target_attribute, root)
-    root.__setattr__('attribute', selected_attribute)
-    # falta codigo para valores continuos (en ese caso possible_values_of_selected_attribute = None)
-    possible_values_of_selected_attribute = examples.attribute_info[selected_attribute].domain
+def id3_recursive_step(examples: DataSet, select_attribute: Strategy, target_attribute: str) -> Node:
+    root = Node()
+    strategy_result = select_attribute(examples, target_attribute, root)
 
-    for current_value_for_attribute in possible_values_of_selected_attribute:
-        examples_vi = examples.filter_with_value(selected_attribute, current_value_for_attribute, selected_attribute)
+    for condition in strategy_result.partitions:
+        examples_vi = condition.filter(examples)
+        examples_vi.remove_attribute(condition.attribute)
 
+        # no se si esta bien poner len(examples_vi.pandas_df)
         if len(examples_vi.pandas_df) == 0:
-            AnyNode(
-                parent=root,
-                root_value=current_value_for_attribute,
-                value=get_most_common_value(examples, target_attribute)
-            )
+            LeafNode(get_most_common_value(examples, target_attribute), condition, parent=root)
         else:
-            new_branch = id3(
-                examples_vi,
-                select_attribute,
-                target_attribute,
-            )
+            new_branch = id3(examples_vi, select_attribute, target_attribute)
             new_branch.parent = root
-            new_branch.__setattr__('root_value', current_value_for_attribute)
+            new_branch.cond = condition
 
     return root

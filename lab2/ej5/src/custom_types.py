@@ -1,5 +1,6 @@
-from anytree import AnyNode
+from node import Node
 from arff_helper import DataSet
+from strategy import StrategyResult
 from typing import Callable
 
 """
@@ -10,4 +11,4 @@ Segundo parametro: nombre del atributo que se quiere predecir.
 Tercer parametro: nodo para el cual se quiere seleccionar el atributo.
 Devuelve atributo elegido
 """
-Strategy = Callable[[DataSet, str, AnyNode], str]
+Strategy = Callable[[DataSet, str, Node], StrategyResult]

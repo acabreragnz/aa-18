@@ -33,6 +33,7 @@ def equal_tree_structure(built_tree, expected_tree):
     return comparable_built_tree == comparable_expected_tree
 
 
+# cambia la forma de comparar el arbol
 def get_comparable_node_info(node):
     if node.is_root:
         candidate = (node.__getattribute__("attribute"), None, None)
@@ -44,7 +45,7 @@ def get_comparable_node_info(node):
     return candidate
 
 
-class TestAnyTree(TestCase):
+class TestBookPlayTennis(TestCase):
     def test_id3_structure(self):
         ds = DataSet()
         ds.load_from_arff('../../datasets/tom_mitchell_example.arff')
