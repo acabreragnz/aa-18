@@ -1,15 +1,16 @@
 from pandas import DataFrame
+from arff_helper import DataSet
 
 yes = 'YES'
 no = 'NO'
 
 
-def all_same_value(examples: DataFrame, target_attribute: str):
+def all_same_value(examples: DataSet, target_attribute: str):
     candidate = None
 
-    total_examples = examples.shape[0]
-    gb = examples.groupby(target_attribute)
-    existing_unique_values = examples[target_attribute].unique()
+    total_examples = examples.pandas_df.shape[0]
+    gb = examples.pandas_df.groupby(target_attribute)
+    existing_unique_values = examples.pandas_df[target_attribute].unique()
 
     list_including_all_the_same_value = \
         [(item, gb.get_group(item).shape[0])
@@ -23,12 +24,13 @@ def all_same_value(examples: DataFrame, target_attribute: str):
 
     return candidate
 
-def get_most_common_value(examples: DataFrame, target_attribute: str):
-    if examples.empty:
+
+def get_most_common_value(examples: DataSet, target_attribute: str):
+    if examples.pandas_df.empty:
         raise ValueError("df cannot be empty!")
 
-    gb = examples.groupby(target_attribute)
-    existing_unique_values = len(examples[target_attribute].unique())
+    gb = examples.pandas_df.groupby(target_attribute)
+    existing_unique_values = len(examples.pandas_df[target_attribute].unique())
 
     # we sample (to randomize when we have more than one largest) and then we select one of them
     most_common_example = gb.size().sample(existing_unique_values).nlargest(1)
@@ -44,20 +46,3 @@ def get_range_attribute(attributes: list, attribute: str):
         if attribute_values[0] == attribute:
             return attribute_values[1]
     return ""
-
-
-def map_to_strings(attributes: list) -> list:
-    return [a[0] for a in attributes]
-
-
-def remove_attribute(attributes: list, attribute: str) -> list:
-    return [a for a in attributes if a[0] != attribute]
-
-
-def filter_examples_with_value(examples: DataFrame, attribute: str, value: str, reject_column: str = None):
-    filtered_examples = examples.loc[examples[attribute] == value]
-
-    if reject_column is not None:
-        filtered_examples = filtered_examples.drop(reject_column)
-
-    return filtered_examples

@@ -1,7 +1,7 @@
-from pandas import DataFrame
 from custom_types import Strategy
 from anytree import Resolver
 from id3 import id3
+from arff_helper import DataSet
 
 
 class Classifier:
@@ -20,14 +20,13 @@ class Classifier:
 
 
     # noinspection PyMethodMayBeStatic
-    def fit(self, examples: DataFrame, attributes: list) -> None:
+    def fit(self, examples: DataSet) -> None:
         """
         Ajusta el clasificador con un conjunto de entrenamiento mediante el algoritmo ID3
 
         :param examples: conjunto de entrenamiento
-        :param attributes:
         """
-        self._decision_tree = id3(examples, self._select_attribute, self._target_attribute, attributes)
+        self._decision_tree = id3(examples, self._select_attribute, self._target_attribute)
 
 
     # noinspection PyMethodMayBeStatic,PyUnusedLocal

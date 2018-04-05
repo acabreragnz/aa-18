@@ -1,10 +1,11 @@
 from unittest import TestCase
-from anytree import NodeMixin, RenderTree, AnyNode, PreOrderIter, Resolver
+from anytree import RenderTree, AnyNode, Resolver
 import arff
 import pandas as pd
 from lab2.ej5.src.id3 import id3
 from lab2.ej5.src.strategy.entropy import select_attribute
 from lab2.ej5.src.classifier import Classifier
+from arff_helper import DataSet
 
 
 class TestAnyTree(TestCase):
@@ -68,20 +69,10 @@ class TestAnyTree(TestCase):
         return 0
 
     def test_data_Autism_Adult(self):
-        data = arff.load(open('../../datasets/Autism-Adult-Data.arff', 'r'))
+        ds = DataSet()
+        ds.load_from_arff('../../datasets/Autism-Adult-Data.arff')
 
-        df = pd.DataFrame(data['data'])
-        print(data)
-
-        attributes = data["attributes"]
-        #print(attributes)
-
-        columns = [x[0] for x in attributes]
-        print(columns)
-        df = pd.DataFrame(data=data['data'],columns=columns)
-        #print(df)
-
-        tree = id3(examples=df, select_attribute=select_attribute, target_attribute='Class/ASD', attributes=attributes)
+        tree = id3(examples=ds, select_attribute=select_attribute, target_attribute='Class/ASD')
         print(RenderTree(tree))
 
         #age
@@ -105,15 +96,6 @@ class TestAnyTree(TestCase):
 
 
     def test_data_tom_mitchell(self):
-        data = arff.load(open('../../datasets/dataset_clase.arff', 'r'))
-
-        attributes = data["attributes"]
-        #print(attributes)
-
-        columns = [x[0] for x in attributes]
-        print(columns)
-        df = pd.DataFrame(data=data['data'],columns=columns)
-        print(df)
 
         #print(df.loc[df["Hdoc"] == "Bueno"])
         #print(strategy.select_attribute())
@@ -121,8 +103,10 @@ class TestAnyTree(TestCase):
         ej1 = {"Ded":"Media", "Dif":"Alta", "Hor":"Nocturno", "Hum":"Alta", "Hdoc":"Malo"}
         ej2 = {"Ded": "Baja", "Dif": "Alta", "Hor": "Matutino", "Hum": "Alta", "Hdoc": "Bueno"}
 
+        ds = DataSet()
+        ds.load_from_arff('../../datasets/dataset_clase.arff')
         classifier = Classifier(select_attribute, 'Salva')
-        classifier.fit(df, attributes)
+        classifier.fit(ds)
 
         print(f'Predict {ej1}: {classifier.predict(ej1)}')
         print(f'Predict {ej2}: {classifier.predict(ej2)}')

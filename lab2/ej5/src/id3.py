@@ -1,21 +1,17 @@
-from pandas import DataFrame
 from anytree import AnyNode
+from arff_helper import DataSet
 from lab2.ej5.src.custom_types import Strategy
-
-from lab2.ej5.src.example_helper \
-    import all_same_value, get_most_common_value, get_range_attribute, \
-    filter_examples_with_value, map_to_strings, remove_attribute
+from lab2.ej5.src.example_helper import all_same_value, get_most_common_value
 
 
 # noinspection PyUnusedLocal
-def id3(examples: DataFrame, select_attribute: Strategy, target_attribute: str, attributes: list) -> AnyNode:
+def id3(examples: DataSet, select_attribute: Strategy, target_attribute: str) -> AnyNode:
     """
     Devuelve el arbol de decision generado con los ejemplos de entrenamiento
 
     :param examples: ejemplos de entrenamiento
     :param select_attribute: estrategia utilizada por el algoritmo para obtener el mejor atributo.
     :param target_attribute: es el atributo cuyo valor debe ser pronosticado por el arbol
-    :param attributes: lista de atributos con sus respectivos rangos
     :return: devuelve el arbol generado
     """
 
@@ -39,18 +35,16 @@ def id3(examples: DataFrame, select_attribute: Strategy, target_attribute: str, 
         #End
     #Return Root
 
-    # se quita target_attribute
-    attributes = remove_attribute(attributes, target_attribute)
-    node = id3_base_step(attributes, examples, target_attribute)
+    node = id3_base_step(examples, target_attribute)
 
     if node is None:
-        node = id3_recursive_step(examples, select_attribute, target_attribute, attributes)
+        node = id3_recursive_step(examples, select_attribute, target_attribute)
 
     return node
 
 
-def id3_base_step(attributes, examples: DataFrame, target_attribute: str) -> AnyNode:
-    if attributes.__len__() == 0:
+def id3_base_step(examples: DataSet, target_attribute: str) -> AnyNode:
+    if examples.attribute_list.__len__() == 0:
         return AnyNode(value=get_most_common_value(examples, target_attribute))
 
     all_examples_with_same_value = all_same_value(examples, target_attribute)
@@ -59,20 +53,17 @@ def id3_base_step(attributes, examples: DataFrame, target_attribute: str) -> Any
         return AnyNode(value=all_examples_with_same_value[0])
 
 
-def id3_recursive_step(examples: DataFrame, select_attribute, target_attribute: str, attributes: list) -> AnyNode:
+def id3_recursive_step(examples: DataSet, select_attribute: Strategy, target_attribute: str) -> AnyNode:
     root = AnyNode()
-    selected_attribute = select_attribute(root, examples, target_attribute, map_to_strings(attributes))
+    selected_attribute = select_attribute(examples, target_attribute, root)
     root.__setattr__('attribute', selected_attribute)
-    possible_values_of_selected_attribute = get_range_attribute(attributes, selected_attribute)
+    # falta codigo para valores continuos (en ese caso possible_values_of_selected_attribute = None)
+    possible_values_of_selected_attribute = examples.attribute_info[selected_attribute].domain
 
     for current_value_for_attribute in possible_values_of_selected_attribute:
-        examples_vi = filter_examples_with_value(
-            examples,
-            selected_attribute,
-            current_value_for_attribute
-        )
+        examples_vi = examples.filter_with_value(selected_attribute, current_value_for_attribute, selected_attribute)
 
-        if len(examples_vi) == 0:
+        if len(examples_vi.pandas_df) == 0:
             AnyNode(
                 parent=root,
                 root_value=current_value_for_attribute,
@@ -83,7 +74,6 @@ def id3_recursive_step(examples: DataFrame, select_attribute, target_attribute: 
                 examples_vi,
                 select_attribute,
                 target_attribute,
-                remove_attribute(attributes, select_attribute)
             )
             new_branch.parent = root
             new_branch.__setattr__('root_value', current_value_for_attribute)

@@ -1,6 +1,5 @@
 from unittest import TestCase
-from anytree import RenderTree
-from id3 import id3
+from arff_helper import DataSet
 from strategy.entropy import select_attribute
 from lab2.ej5.src.classifier import Classifier
 import arff
@@ -18,19 +17,17 @@ class TestBasic(TestCase):
         """
         Para todos los ejemplos de entrenamiento se debe cumplir que el valor predecido coincida con el valor dado
         """
-        data = arff.load(open('../../datasets/tom_mitchell_example.arff', 'r'))
-        attributes = data["attributes"]
-        columns = [x[0] for x in attributes]
-        df = pd.DataFrame(data=data['data'], columns=columns)
+        ds = DataSet()
+        ds.load_from_arff('../../datasets/tom_mitchell_example.arff')
 
         target_attribute = 'PlayTennis'
 
         # noinspection PyTypeChecker
         classifier = Classifier(select_attribute, target_attribute)
-        classifier.fit(df, attributes)
+        classifier.fit(ds)
 
-        for i in range(df.shape[0]):
-            instance = df.loc[i]
+        for i in range(ds.pandas_df.shape[0]):
+            instance = ds.pandas_df.loc[i]
             v = classifier.predict(instance)
             if instance[target_attribute] == 'YES':
                 self.assertTrue(v, f'Para la instancia {i+1}, el valor predecido no coincide con el valor conocido')

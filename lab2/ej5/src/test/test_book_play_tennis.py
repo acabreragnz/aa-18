@@ -1,16 +1,10 @@
 from unittest import TestCase
 from anytree import RenderTree, AnyNode, PreOrderIter
-import arff
-import pandas as pd
 from lab2.ej5.src.id3 import id3
 from lab2.ej5.src.strategy.entropy import select_attribute
-
-
-def load_file(path):
-    data = arff.load(open(path, 'r'))
-    attributes = data["attributes"]
-    columns = [x[0] for x in attributes]
-    return pd.DataFrame(data=data['data'], columns=columns), attributes
+from arff_helper import DataSet
+import arff
+import pandas as pd
 
 
 def load_expected_tree_structure():
@@ -52,8 +46,10 @@ def get_comparable_node_info(node):
 
 class TestAnyTree(TestCase):
     def test_id3_structure(self):
-        (df, attributes) = load_file('../../datasets/tom_mitchell_example.arff')
+        ds = DataSet()
+        ds.load_from_arff('../../datasets/tom_mitchell_example.arff')
+
         expected_tree_structure = load_expected_tree_structure()
-        built_tree = id3(examples=df, select_attribute=select_attribute, target_attribute='PlayTennis', attributes=attributes)
+        built_tree = id3(examples=ds, select_attribute=select_attribute, target_attribute='PlayTennis')
 
         assert equal_tree_structure(built_tree, expected_tree_structure)
