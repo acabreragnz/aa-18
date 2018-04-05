@@ -118,16 +118,13 @@ class TestAnyTree(TestCase):
         #print(df.loc[df["Hdoc"] == "Bueno"])
         #print(strategy.select_attribute())
 
-        tree = id3(examples=df, select_attribute=select_attribute, target_attribute='Salva', attributes=attributes)
-        print(RenderTree(tree))
-
         ej1 = {"Ded":"Media", "Dif":"Alta", "Hor":"Nocturno", "Hum":"Alta", "Hdoc":"Malo"}
         ej2 = {"Ded": "Baja", "Dif": "Alta", "Hor": "Matutino", "Hum": "Alta", "Hdoc": "Bueno"}
 
-        classifier = Classifier(select_attribute)
-        print(classifier.predict(tree, ej1))
+        classifier = Classifier(select_attribute, 'Salva')
+        classifier.fit(df, attributes)
 
-        classifier = Classifier(select_attribute)
-        print(classifier.predict(tree, ej2))
+        print(f'Predict {ej1}: {classifier.predict(ej1)}')
+        print(f'Predict {ej2}: {classifier.predict(ej2)}')
 
 

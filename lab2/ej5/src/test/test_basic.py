@@ -26,14 +26,12 @@ class TestBasic(TestCase):
         target_attribute = 'PlayTennis'
 
         # noinspection PyTypeChecker
-        tree = id3(df, select_attribute, target_attribute, attributes)
-        classifier = Classifier(select_attribute)
-
-        print(RenderTree(tree))
+        classifier = Classifier(select_attribute, target_attribute)
+        classifier.fit(df, attributes)
 
         for i in range(df.shape[0]):
             instance = df.loc[i]
-            v = classifier.predict(tree, instance)
+            v = classifier.predict(instance)
             if instance[target_attribute] == 'YES':
                 self.assertTrue(v, f'Para la instancia {i+1}, el valor predecido no coincide con el valor conocido')
             else:
