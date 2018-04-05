@@ -4,8 +4,7 @@ from lab2.ej5.src.custom_types import Strategy
 
 from lab2.ej5.src.example_helper \
     import all_same_value, get_most_common_value, get_range_attribute, \
-    filter_examples_with_value, map_to_strings, remove_attribute, filter_examples_with_less_value
-
+    filter_examples_with_value, map_to_strings, remove_attribute
 
 # noinspection PyUnusedLocal
 def id3(examples: DataFrame, select_attribute: Strategy, target_attribute: str, attributes: list) -> AnyNode:
@@ -64,27 +63,27 @@ def id3_recursive_step(examples: DataFrame, select_attribute, target_attribute: 
     selected_attribute = select_attribute(root, examples, target_attribute, map_to_strings(attributes))
     root.__setattr__('attribute', selected_attribute)
     (is_discrete_value, possible_values_of_selected_attribute) = get_range_attribute(attributes, selected_attribute,target_attribute,examples)
+    root.__setattr__('is_discrete_value', is_discrete_value)
 
     if not is_discrete_value:
         aux = possible_values_of_selected_attribute
         possible_values_of_selected_attribute = aux[2]
-        root.__setattr__('attribute', aux[1])
-        c_continue_value = aux[0]
+        root.__setattr__('attribute_label', aux[1])
+        root.__setattr__('c_continue_value', aux[0])
 
 
     for current_value_for_attribute in possible_values_of_selected_attribute:
-        if is_discrete_value:
-            examples_vi = filter_examples_with_value(
-                examples,
-                selected_attribute,
-                current_value_for_attribute
-            )
-        else:
-            examples_vi = filter_examples_with_less_value(
-                examples,
-                selected_attribute,
-                c_continue_value
-            )
+
+        current_value = current_value_for_attribute
+        if not is_discrete_value:
+            current_value = aux[0]
+
+        examples_vi = filter_examples_with_value(
+            examples,
+            selected_attribute,
+            current_value,
+            is_discrete_value
+        )
 
         if len(examples_vi) == 0:
             AnyNode(

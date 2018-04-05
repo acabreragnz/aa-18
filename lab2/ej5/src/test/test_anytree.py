@@ -88,10 +88,7 @@ class TestAnyTree(TestCase):
         tree = id3(examples=df, select_attribute=select_attribute, target_attribute='Class/ASD', attributes=attributes)
         print(RenderTree(tree))
 
-        #cv.get_discrete_values_from_continuous_values(df, 'age', 'Class/ASD')
-
-
-
+        print(df['ethnicity'].value_counts())
 
 
     def test_data_tom_mitchell(self):
@@ -115,9 +112,9 @@ class TestAnyTree(TestCase):
         ej2 = {"Ded": "Baja", "Dif": "Alta", "Hor": "Matutino", "Hum": "Alta", "Hdoc": "Bueno"}
 
         classifier = Classifier(select_attribute)
-        print(classifier.predict(tree, ej1))
+        print(classifier.predict(tree, ej1,'Salva'))
 
         classifier = Classifier(select_attribute)
-        print(classifier.predict(tree, ej2))
+        print(classifier.predict(tree, ej2,'Salva'))
 
 

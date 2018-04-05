@@ -25,13 +25,10 @@ def get_discrete_values_from_continuous_values(examples: DataFrame, a:str, targe
     points = []
     for row in values.as_matrix():
         if not (prev_row is None) and row[1] != prev_row[1]:
-            print(prev_row)
-            print(row)
             c = (row[0] + prev_row[0]) / 2
             points.append(c)
         prev_row = row
 
-    print(points)
     entropies = []
     for c in points:
         sv = examples[examples[a] > c]

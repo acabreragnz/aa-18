@@ -1,6 +1,10 @@
 from pandas import DataFrame
+
+from lab2.ej5.src.continuous_values import get_discrete_values_from_continuous_values
 from lab2.ej5.src.custom_types import Strategy
 from anytree import AnyNode, Resolver
+
+from lab2.ej5.src.missing_attributes import get_value_attribute_3
 
 
 class Classifier:
@@ -24,7 +28,7 @@ class Classifier:
         raise Exception('Not implemented :(')
 
     # noinspection PyMethodMayBeStatic,PyUnusedLocal
-    def predict(self, root: AnyNode, data: list) -> bool:
+    def predict(self, root: AnyNode, data: list, df:DataFrame, target_attribute: str) -> bool:
         """
         Clasifica una instancia en un valor booleano
 
@@ -36,10 +40,20 @@ class Classifier:
         while not node.is_leaf:
             attribute = node.__getattribute__("attribute")
             value = data[attribute]
+
+            if value == '?':
+                value = get_value_attribute_3(df, attribute)
+
+            if not node.__getattribute__("is_discrete_value"):
+                result = get_discrete_values_from_continuous_values(df, attribute, target_attribute)
+                if value > node.__getattribute__("c_continue_value"):
+                    value = "YES"
+                else:
+                    value = "NO"
+
             r = Resolver('root_value')
             x = r.get(node, value)
             node = x
 
-        print(node)
         return node.__getattribute__("value") == "YES"
 

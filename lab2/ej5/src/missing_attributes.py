@@ -22,21 +22,19 @@ def get_value_attribute_2(df: DataFrame, a: str, target_attribute: str, value_ta
     value_counts = df[df[target_attribute] == value_target_attribute][a].value_counts()
     return value_counts.idxmax()
 
-def get_value_attribute_3(df: DataFrame, a: str, target_attribute: str):
+def get_value_attribute_3(df: DataFrame, a: str):
 
     total = df.shape[0]
     if total == 0:
         return 0
 
-    pe = df[df[target_attribute] == yes].shape[0]
-    ne = df[df[target_attribute] == no].shape[0]
+    p=[]
 
-    # proporcion de ejemplos positivos
-    pp = pe / total
-
-    # proporcion de ejemplos negativos
-    pn = ne / total
+    value_counts = df[a].value_counts()
+    for row in value_counts.as_matrix():
+        pv = df[df[a] == row[1]].shape[0] / total
+        p.append(pv)
 
     options = [yes, no]
 
-    return np.random.choice(options, 1, p=[pp, pn])
+    return np.random.choice(options, 1, p)

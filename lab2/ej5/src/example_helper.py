@@ -57,26 +57,19 @@ def map_to_strings(attributes: list) -> list:
 
 
 def remove_attribute(attributes: list, attribute: str) -> list:
-
-    print(attributes.__len__())
-    print(attribute)
-    result = [a for a in attributes if a[0] != attribute]
-    print(result.__len__())
-    return result
+    return [a for a in attributes if a[0] != attribute]
 
 
-def filter_examples_with_value(examples: DataFrame, attribute: str, value: str, reject_column: str = None):
-    filtered_examples = examples.loc[examples[attribute] == value]
+def filter_examples_with_value(examples: DataFrame, attribute: str, value: str, is_discrete_value:int, reject_column: str = None):
 
-    if reject_column is not None:
-        filtered_examples = filtered_examples.drop(reject_column)
-
-    return filtered_examples
-
-def filter_examples_with_less_value(examples: DataFrame, attribute: str, value: str, reject_column: str = None):
-    filtered_examples = examples.loc[examples[attribute] > value]
+    if is_discrete_value:
+        filtered_examples = examples.loc[examples[attribute] == value]
+    else :
+        filtered_examples = examples.loc[examples[attribute] > value]
 
     if reject_column is not None:
         filtered_examples = filtered_examples.drop(reject_column)
 
     return filtered_examples
+
+
