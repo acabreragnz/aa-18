@@ -4,21 +4,38 @@ yes = 'YES'
 no = 'NO'
 
 
-def all_positive(examples: DataFrame, target_attribute: str):
-    return examples[examples[target_attribute] == yes].shape[0] == examples.shape[0]
+def all_same_value(examples: DataFrame, target_attribute: str):
+    candidate = None
 
+    total_examples = examples.shape[0]
+    gb = examples.groupby(target_attribute)
+    existing_unique_values = examples[target_attribute].unique()
 
-def all_negative(examples: DataFrame, target_attribute: str):
-    return examples[examples[target_attribute] == no].shape[0] == examples.shape[0]
+    list_including_all_the_same_value = \
+        [(item, gb.get_group(item).shape[0])
+         for item in existing_unique_values
+         if gb.get_group(item).shape[0] == total_examples]
 
+    if len(list_including_all_the_same_value) > 0:
+        value = list_including_all_the_same_value[0][0]
+        count = list_including_all_the_same_value[0][1]
+        candidate = (value, count)
 
-def most_common_value(examples: DataFrame, target_attribute: str):
-    cant_yes = examples[examples[target_attribute] == yes].shape[0]
-    cant_no = examples[examples[target_attribute] == no].shape[0]
-    if cant_yes > cant_no:
-        return yes
-    else:
-        return no
+    return candidate
+
+def get_most_common_value(examples: DataFrame, target_attribute: str):
+    if examples.empty:
+        raise ValueError("df cannot be empty!")
+
+    gb = examples.groupby(target_attribute)
+    existing_unique_values = len(examples[target_attribute].unique())
+
+    # we sample (to randomize when we have more than one largest) and then we select one of them
+    most_common_example = gb.size().sample(existing_unique_values).nlargest(1)
+
+    most_common_value = most_common_example.keys()[0]
+
+    return most_common_value
 
 
 def get_range_attribute(attributes: list, attribute: str):
@@ -37,6 +54,10 @@ def remove_attribute(attributes: list, attribute: str) -> list:
     return [a for a in attributes if a[0] != attribute]
 
 
-def get_examples_vi(examples: DataFrame, attribute:str, value):
-    #Examples_vi be the subset of Examples that have value vi for attribute
-    return examples.loc[examples[attribute] == value]
+def filter_examples_with_value(examples: DataFrame, attribute: str, value: str, reject_column: str = None):
+    filtered_examples = examples.loc[examples[attribute] == value]
+
+    if reject_column is not None:
+        filtered_examples = filtered_examples.drop(reject_column)
+
+    return filtered_examples
