@@ -5,9 +5,13 @@ atributos basada en el calculo de ganancia segun entropia. No soporta atributos 
 """
 
 import numpy as np
+from arff_helper import DataSet
 from pandas import DataFrame
-from anytree import AnyNode
-from typing import List
+from node import Node
+from strategy import StrategyResult
+from condition import DiscreteCondition, ContinuousCondition
+from continuous_values import get_discrete_values_from_continuous_values
+import operator
 
 
 def gain(s: DataFrame, a: str, target_attribute: str, s_entropy: float = None) -> tuple:
@@ -40,7 +44,6 @@ def gain(s: DataFrame, a: str, target_attribute: str, s_entropy: float = None) -
 
         sv = s[s[a] == v]
         sv_entropy = entropy(sv, target_attribute)
-        #partitions[v.decode('utf-8')] = sv_entropy
         partitions[v] = sv_entropy
         g -= ((sv.shape[0]/total)*sv_entropy)
 
@@ -97,7 +100,7 @@ def entropy(s: DataFrame, target_attribute: str) -> float:
     return pp_log2_pp + pn_log2_pn
 
 
-def select_attribute(node: AnyNode, examples: DataFrame, target_attribute: str, attributes: List[str]) -> str:
+def select_attribute(examples: DataSet, target_attribute: str, node: Node) -> StrategyResult:
     """
     Implementa una estrategia de seleccion de atributos basada en el calculo de ganancia segun entropia.
     No soporta atributos que tomen valores nulos.
@@ -105,7 +108,6 @@ def select_attribute(node: AnyNode, examples: DataFrame, target_attribute: str, 
     :param node: es el nodo para el cual se quiere seleccionar el atributo
     :param examples: conjunto de ejemplos de entrenamiento que se tienen al momento
     :param target_attribute: el atributo que se quiere predecir
-    :param attributes: lista con los nombres de los posibles atributos para elegir (no debe contener target_attribute)
     :return: devuelve el atributo seleccionado
     """
 
@@ -123,8 +125,8 @@ def select_attribute(node: AnyNode, examples: DataFrame, target_attribute: str, 
     max = 0
     best_attribute = None
     entropies = []
-    for a in attributes:
-        (g, entropies_aux) = gain(examples, a, target_attribute, s_entropy)
+    for a in [a for a in examples.attribute_list if a != target_attribute]:
+        (g, entropies_aux) = gain(examples.pandas_df, a, target_attribute, s_entropy)
         if g > max:
             # noinspection PyShadowingBuiltins
             max = g
@@ -134,6 +136,30 @@ def select_attribute(node: AnyNode, examples: DataFrame, target_attribute: str, 
     # guardo las entropias obtenidas para las ramas futuras en el nodo actual
     node.entropies = entropies
 
-    return best_attribute
+    return build_select_attribute_result(examples, best_attribute, target_attribute)
+
+
+def build_select_attribute_result(examples, best_attribute, target_attribute):
+    if examples.is_continuous_attribute(best_attribute):
+        return result_for_continuos_attribute(examples, best_attribute, target_attribute)
+    else:
+        return result_for_discrete_attribute(examples, best_attribute)
+
+
+def result_for_continuos_attribute(examples, best_attribute, target_attribute):
+    discrete = get_discrete_values_from_continuous_values(examples.pandas_df, best_attribute, target_attribute)
+
+    return StrategyResult(best_attribute, [
+        ContinuousCondition(best_attribute, operator.lt, discrete),
+        ContinuousCondition(best_attribute, operator.ge, discrete)
+    ])
+
+
+def result_for_discrete_attribute(examples, best_attribute):
+    r = StrategyResult(best_attribute, [])
+    for v in examples.attribute_info[best_attribute].domain:
+        r.partitions.append(DiscreteCondition(best_attribute, v))
+
+    return r
 
 

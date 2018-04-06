@@ -1,11 +1,11 @@
 from unittest import TestCase
-from anytree import NodeMixin, RenderTree, AnyNode, PreOrderIter, Resolver
+from anytree import RenderTree, AnyNode, Resolver
 import arff
 import pandas as pd
-from lab2.ej5.src.id3 import id3
-from lab2.ej5.src.strategy.entropy import select_attribute
-from lab2.ej5.src.classifier import Classifier
-
+from strategy.entropy import select_attribute
+from classifier import Classifier
+from arff_helper import DataSet
+from missing_attributes import get_value_attribute_1
 
 class TestAnyTree(TestCase):
 
@@ -50,9 +50,6 @@ class TestAnyTree(TestCase):
         ej1 = {"Ded":"Media", "Dif":"Alta", "Hor":"Nocturno", "Hum":"Alta", "Hdoc":"Malo"}
         ej2 = {"Ded": "Baja", "Dif": "Alta", "Hor": "Nocturno", "Hum": "Alta", "Hdoc": "Bueno"}
 
-        # result = [node for node in PreOrderIter(root, filter_=lambda n: 1)]
-        # print(result)
-
         node = root
         while not node.is_leaf:
             attribute = node.__getattribute__("attribute")
@@ -67,67 +64,32 @@ class TestAnyTree(TestCase):
 
         return 0
 
-    def test_data_Autism_Adult(self):
-        data = arff.load(open('../../datasets/Autism-Adult-Data.arff', 'r'))
-
-        df = pd.DataFrame(data['data'])
-        print(data)
-
-        attributes = data["attributes"]
-        #print(attributes)
-
-        columns = [x[0] for x in attributes]
-        print(columns)
-        df = pd.DataFrame(data=data['data'],columns=columns)
-        #print(df)
-
-        tree = id3(examples=df, select_attribute=select_attribute, target_attribute='Class/ASD', attributes=attributes)
-        print(RenderTree(tree))
-
-        #age
-        #print(df['age'])
-        #print(df[['age','Class/ASD']].drop_duplicates())
-        # print(df[df['Class/ASD'] == 'YES'])
-
-        #x = df['ethnicity'].value_counts()
-        # x = df[df['Class/ASD'] == 'YES']['ethnicity'].value_counts()
-        # print(x)
-        # print(x.idxmax())
-
-        #w_prizes = [('$1', 300), ('$2', 50), ('$10', 5), ('$100', 1)]
-        #prize_list = [prize for prize, weight in w_prizes for i in range(weight)]
-        #print(prize_list)
-        #o = ['yes', 'no']
-        #print(np.random.choice(5, 3, p=[0.1, 0, 0.3, 0.6, 0]))
-        #print(np.random.choice(o, 1, p=[0.9, 0.1]))
-
-
-
-
-    def test_data_tom_mitchell(self):
-        data = arff.load(open('../../datasets/dataset_clase.arff', 'r'))
-
-        attributes = data["attributes"]
-        #print(attributes)
-
-        columns = [x[0] for x in attributes]
-        print(columns)
-        df = pd.DataFrame(data=data['data'],columns=columns)
-        print(df)
-
-        #print(df.loc[df["Hdoc"] == "Bueno"])
-        #print(strategy.select_attribute())
-
-        tree = id3(examples=df, select_attribute=select_attribute, target_attribute='Salva', attributes=attributes)
-        print(RenderTree(tree))
-
-        ej1 = {"Ded":"Media", "Dif":"Alta", "Hor":"Nocturno", "Hum":"Alta", "Hdoc":"Malo"}
+    def test_data_clase(self):
+        ej1 = {"Ded": "Media", "Dif": "Alta", "Hor": "Nocturno", "Hum": "Alta", "Hdoc": "Malo"}
         ej2 = {"Ded": "Baja", "Dif": "Alta", "Hor": "Matutino", "Hum": "Alta", "Hdoc": "Bueno"}
 
-        classifier = Classifier(select_attribute)
-        print(classifier.predict(tree, ej1))
+        ds = DataSet()
+        ds.load_from_arff('../../datasets/dataset_clase.arff')
+        classifier = Classifier(select_attribute, 'Salva')
+        classifier.fit(ds)
 
-        classifier = Classifier(select_attribute)
-        print(classifier.predict(tree, ej2))
+        print(f'Predict {ej1}: {classifier.predict(ej1)}')
+        print(f'Predict {ej2}: {classifier.predict(ej2)}')
 
+    def test_data_Autism_Adult(self):
+        ds = DataSet()
+        ds.load_from_arff('../../datasets/Autism-Adult-Data.arff')
+        target_attribute = 'Class/ASD'
 
+        classifier = Classifier(select_attribute, target_attribute, get_value_attribute_1)
+        classifier.fit(ds)
+
+        print(RenderTree(classifier._decision_tree))
+
+        for i in range(ds.pandas_df.shape[0]):
+            instance = ds.pandas_df.loc[i]
+            v = classifier.predict(instance)
+            if instance[target_attribute] == 'YES':
+                self.assertTrue(v, f'Para la instancia {i+1}, el valor predecido no coincide con el valor conocido')
+            else:
+                self.assertFalse(v, f'Para la instancia {i+1}, el valor predecido no coincide con el valor conocido')
