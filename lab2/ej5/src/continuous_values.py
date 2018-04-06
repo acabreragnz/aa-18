@@ -1,5 +1,4 @@
 from pandas import DataFrame
-from lab2.ej5.src.strategy.entropy import entropy
 
 #Valores continuos
 #Esto puede lograrse definiendo dinámicamente nuevos atributos con valores discretos que particionen el
@@ -18,6 +17,7 @@ from lab2.ej5.src.strategy.entropy import entropy
 
 
 def get_discrete_values_from_continuous_values(examples: DataFrame, a:str, target_attribute: str):
+    from strategy.entropy import entropy
 
     values = examples[[a, target_attribute]].drop_duplicates()
 
@@ -35,7 +35,7 @@ def get_discrete_values_from_continuous_values(examples: DataFrame, a:str, targe
         entropies.append(entropy(sv, target_attribute))
 
     c = get_point_with_max_gain(examples, a, points, entropies)
-    return (c, a+" > "+str(c),["YES","NO"])
+    return c
 
 
 def get_point_with_max_gain(s: DataFrame, a: str, points:list, entropies: list ) -> tuple:

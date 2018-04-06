@@ -20,7 +20,9 @@ class Node(AnyNode):
         :param kwargs: diccionario de parametros para el constructor de la clase padre (AnyNode)
         """
         super().__init__(**kwargs)
-        self._cond = cond
+
+        self.condition_to_reach = None
+        self.cond = cond
 
     @property
     def cond(self) -> Condition:
@@ -31,6 +33,9 @@ class Node(AnyNode):
         self._cond = cond
         if self.parent:
             self.parent.attribute = cond.attribute
+
+        if cond is not None:
+            self.condition_to_reach = cond.to_string()
 
 
 class LeafNode(Node):

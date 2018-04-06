@@ -9,7 +9,9 @@ from arff_helper import DataSet
 from pandas import DataFrame
 from node import Node
 from strategy import StrategyResult
-from condition import DiscreteCondition
+from condition import DiscreteCondition, ContinuousCondition
+from continuous_values import get_discrete_values_from_continuous_values
+import operator
 
 
 def gain(s: DataFrame, a: str, target_attribute: str, s_entropy: float = None) -> tuple:
@@ -134,6 +136,26 @@ def select_attribute(examples: DataSet, target_attribute: str, node: Node) -> St
     # guardo las entropias obtenidas para las ramas futuras en el nodo actual
     node.entropies = entropies
 
+    return build_select_attribute_result(examples, best_attribute, target_attribute)
+
+
+def build_select_attribute_result(examples, best_attribute, target_attribute):
+    if examples.is_continuous_attribute(best_attribute):
+        return result_for_continuos_attribute(examples, best_attribute, target_attribute)
+    else:
+        return result_for_discrete_attribute(examples, best_attribute)
+
+
+def result_for_continuos_attribute(examples, best_attribute, target_attribute):
+    discrete = get_discrete_values_from_continuous_values(examples.pandas_df, best_attribute, target_attribute)
+
+    return StrategyResult(best_attribute, [
+        ContinuousCondition(best_attribute, operator.lt, discrete),
+        ContinuousCondition(best_attribute, operator.ge, discrete)
+    ])
+
+
+def result_for_discrete_attribute(examples, best_attribute):
     r = StrategyResult(best_attribute, [])
     for v in examples.attribute_info[best_attribute].domain:
         r.partitions.append(DiscreteCondition(best_attribute, v))

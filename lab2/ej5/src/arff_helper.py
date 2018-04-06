@@ -97,6 +97,9 @@ class DataSet:
 
         return ds
 
+    def is_continuous_attribute(self, attribute: str) -> bool:
+        return self.attribute_info[attribute].type == float
+
     @property
     def attribute_list(self) -> List[str]:
         if not self._loaded:
@@ -118,3 +121,4 @@ class DataSet:
     @pandas_df.setter
     def pandas_df(self, df):
         self._pandas_df = df
+

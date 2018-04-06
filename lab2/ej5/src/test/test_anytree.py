@@ -2,11 +2,9 @@ from unittest import TestCase
 from anytree import RenderTree, AnyNode, Resolver
 import arff
 import pandas as pd
-from lab2.ej5.src.id3 import id3
-from lab2.ej5.src.strategy.entropy import select_attribute
-from lab2.ej5.src.classifier import Classifier
+from strategy.entropy import select_attribute
+from classifier import Classifier
 from arff_helper import DataSet
-
 
 class TestAnyTree(TestCase):
 
@@ -51,9 +49,6 @@ class TestAnyTree(TestCase):
         ej1 = {"Ded":"Media", "Dif":"Alta", "Hor":"Nocturno", "Hum":"Alta", "Hdoc":"Malo"}
         ej2 = {"Ded": "Baja", "Dif": "Alta", "Hor": "Nocturno", "Hum": "Alta", "Hdoc": "Bueno"}
 
-        # result = [node for node in PreOrderIter(root, filter_=lambda n: 1)]
-        # print(result)
-
         node = root
         while not node.is_leaf:
             attribute = node.__getattribute__("attribute")
@@ -68,40 +63,8 @@ class TestAnyTree(TestCase):
 
         return 0
 
-    def test_data_Autism_Adult(self):
-        ds = DataSet()
-        ds.load_from_arff('../../datasets/Autism-Adult-Data.arff')
-
-        # no anda hasta no implementar una estrategia para atributos numericos
-        #tree = id3(examples=ds, select_attribute=select_attribute, target_attribute='Class/ASD')
-        #print(RenderTree(tree))
-
-        #age
-        #print(df['age'])
-        #print(df[['age','Class/ASD']].drop_duplicates())
-        # print(df[df['Class/ASD'] == 'YES'])
-
-        #x = df['ethnicity'].value_counts()
-        # x = df[df['Class/ASD'] == 'YES']['ethnicity'].value_counts()
-        # print(x)
-        # print(x.idxmax())
-
-        #w_prizes = [('$1', 300), ('$2', 50), ('$10', 5), ('$100', 1)]
-        #prize_list = [prize for prize, weight in w_prizes for i in range(weight)]
-        #print(prize_list)
-        #o = ['yes', 'no']
-        #print(np.random.choice(5, 3, p=[0.1, 0, 0.3, 0.6, 0]))
-        #print(np.random.choice(o, 1, p=[0.9, 0.1]))
-
-
-
-
-    def test_data_tom_mitchell(self):
-
-        #print(df.loc[df["Hdoc"] == "Bueno"])
-        #print(strategy.select_attribute())
-
-        ej1 = {"Ded":"Media", "Dif":"Alta", "Hor":"Nocturno", "Hum":"Alta", "Hdoc":"Malo"}
+    def test_data_clase(self):
+        ej1 = {"Ded": "Media", "Dif": "Alta", "Hor": "Nocturno", "Hum": "Alta", "Hdoc": "Malo"}
         ej2 = {"Ded": "Baja", "Dif": "Alta", "Hor": "Matutino", "Hum": "Alta", "Hdoc": "Bueno"}
 
         ds = DataSet()
@@ -112,4 +75,12 @@ class TestAnyTree(TestCase):
         print(f'Predict {ej1}: {classifier.predict(ej1)}')
         print(f'Predict {ej2}: {classifier.predict(ej2)}')
 
+    def test_data_Autism_Adult(self):
+        ds = DataSet()
+        ds.load_from_arff('../../datasets/Autism-Adult-Data.arff')
+        target_attribute = 'Class/ASD'
 
+        classifier = Classifier(select_attribute, target_attribute)
+        classifier.fit(ds)
+
+        print(RenderTree(classifier._decision_tree))

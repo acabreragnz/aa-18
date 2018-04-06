@@ -1,11 +1,12 @@
 from node import Node, LeafNode
 from arff_helper import DataSet
-from lab2.ej5.src.custom_types import Strategy
-from lab2.ej5.src.example_helper import all_same_value, get_most_common_value
+from condition import Condition
+from custom_types import Strategy
+from example_helper import all_same_value, get_most_common_value
 
 
 # noinspection PyUnusedLocal
-def id3(examples: DataSet, select_attribute: Strategy, target_attribute: str) -> Node:
+def id3(examples: DataSet, select_attribute: Strategy, target_attribute: str, condition: Condition = None) -> Node:
     """
     Devuelve el arbol de decision generado con los ejemplos de entrenamiento
 
@@ -35,7 +36,7 @@ def id3(examples: DataSet, select_attribute: Strategy, target_attribute: str) ->
         #End
     #Return Root
 
-    node = id3_base_step(examples, target_attribute)
+    node = id3_base_step(examples, target_attribute, condition)
 
     if node is None:
         node = id3_recursive_step(examples, select_attribute, target_attribute)
@@ -43,14 +44,14 @@ def id3(examples: DataSet, select_attribute: Strategy, target_attribute: str) ->
     return node
 
 
-def id3_base_step(examples: DataSet, target_attribute: str) -> Node:
-    if examples.attribute_list.__len__() == 0:
-        return LeafNode(get_most_common_value(examples, target_attribute))
+def id3_base_step(examples: DataSet, target_attribute: str, condition: Condition) -> Node:
+    if len(examples.attribute_list) == 0:
+        return LeafNode(get_most_common_value(examples, target_attribute), condition, stop_reason="no more attributes")
 
     all_examples_with_same_value = all_same_value(examples, target_attribute)
 
     if all_examples_with_same_value is not None:
-        return LeafNode(all_examples_with_same_value[0])
+        return LeafNode(all_examples_with_same_value[0], condition, stop_reason="all examples with same value")
 
 
 def id3_recursive_step(examples: DataSet, select_attribute: Strategy, target_attribute: str) -> Node:
@@ -61,11 +62,15 @@ def id3_recursive_step(examples: DataSet, select_attribute: Strategy, target_att
         examples_vi = condition.filter(examples)
         examples_vi.remove_attribute(condition.attribute)
 
-        # no se si esta bien poner len(examples_vi.pandas_df)
         if len(examples_vi.pandas_df) == 0:
-            LeafNode(get_most_common_value(examples, target_attribute), condition, parent=root)
+            LeafNode(
+                get_most_common_value(examples, target_attribute),
+                condition,
+                parent=root,
+                stop_reason="no more examples"
+            )
         else:
-            new_branch = id3(examples_vi, select_attribute, target_attribute)
+            new_branch = id3(examples_vi, select_attribute, target_attribute, condition)
             new_branch.parent = root
             new_branch.cond = condition
 
