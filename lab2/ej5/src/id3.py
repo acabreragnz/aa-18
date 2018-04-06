@@ -63,7 +63,7 @@ def id3_recursive_step(examples: DataSet, select_attribute: Strategy, target_att
         examples_vi.remove_attribute(condition.attribute)
 
         if len(examples_vi.pandas_df) == 0:
-            LeafNode(
+            new_branch = LeafNode(
                 get_most_common_value(examples, target_attribute),
                 condition,
                 parent=root,
@@ -71,7 +71,8 @@ def id3_recursive_step(examples: DataSet, select_attribute: Strategy, target_att
             )
         else:
             new_branch = id3(examples_vi, select_attribute, target_attribute, condition)
-            new_branch.parent = root
-            new_branch.cond = condition
+
+        new_branch.parent = root
+        new_branch.cond = condition
 
     return root
