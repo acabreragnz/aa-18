@@ -1,7 +1,6 @@
 from anytree import AnyNode
 from condition import Condition
 
-
 class Node(AnyNode):
 
     def __init__(self, cond: Condition=None, **kwargs):

@@ -5,6 +5,7 @@ import pandas as pd
 from strategy.entropy import select_attribute
 from classifier import Classifier
 from arff_helper import DataSet
+from missing_attributes import get_value_attribute_1
 
 class TestAnyTree(TestCase):
 
@@ -80,7 +81,15 @@ class TestAnyTree(TestCase):
         ds.load_from_arff('../../datasets/Autism-Adult-Data.arff')
         target_attribute = 'Class/ASD'
 
-        classifier = Classifier(select_attribute, target_attribute)
+        classifier = Classifier(select_attribute, target_attribute, get_value_attribute_1)
         classifier.fit(ds)
 
         print(RenderTree(classifier._decision_tree))
+
+        for i in range(ds.pandas_df.shape[0]):
+            instance = ds.pandas_df.loc[i]
+            v = classifier.predict(instance)
+            if instance[target_attribute] == 'YES':
+                self.assertTrue(v, f'Para la instancia {i+1}, el valor predecido no coincide con el valor conocido')
+            else:
+                self.assertFalse(v, f'Para la instancia {i+1}, el valor predecido no coincide con el valor conocido')
