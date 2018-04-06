@@ -86,11 +86,13 @@ class ContinuousCondition(Condition):
         super().__init__(attribute, value)
         self._operator = op
 
-    def eval(self, instance: Series, fn_on_empty_value: callable=None) -> bool:
-        if isnull(instance[self.attribute]):
-            None
+    def eval(self, instance: Series, predictor_on_empty_value: callable=None) -> bool:
+        instance_value = instance[self.attribute]
 
-        return self._operator(instance[self.attribute], self._value)
+        if isnull(instance_value):
+            instance_value = predictor_on_empty_value.fill_value_for_attribute(self.attribute)
+
+        return self._operator(instance_value, self._value)
 
     def filter(self, ds: DataSet):
         ds_new = ds.copy()
