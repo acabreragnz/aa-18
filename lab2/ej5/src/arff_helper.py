@@ -48,6 +48,11 @@ class DataSet:
 
         self._loaded = True
 
+    def load_from_pandas_df(self, df : DataFrame, attribute_info : AttributeInfo, attribute_list : list):
+        self._pandas_df = df
+        self._attribute_info = attribute_info
+        self._attribute_list = attribute_list
+
     def copy(self):
         """
         Copia un DataSet
