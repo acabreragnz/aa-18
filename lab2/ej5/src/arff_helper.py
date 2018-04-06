@@ -51,6 +51,12 @@ class DataSet:
 
         self._original_shape = self._pandas_df.shape
 
+    def load_from_pandas_df(self, df: DataFrame, attribute_info: AttributeInfo, attribute_list: list):
+        self._pandas_df = df
+        self._attribute_info = attribute_info
+        self._attribute_list = attribute_list
+        self._loaded = True
+
     def copy(self):
         """
         Copia un DataSet
