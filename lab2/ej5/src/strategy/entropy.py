@@ -5,13 +5,13 @@ atributos basada en el calculo de ganancia segun entropia. No soporta atributos 
 """
 
 import numpy as np
+import operator
 from arff_helper import DataSet
 from pandas import DataFrame
 from node import Node
 from strategy import StrategyResult
 from condition import DiscreteCondition, ContinuousCondition
 from continuous_values import get_discrete_values_from_continuous_values
-import operator
 
 
 def gain(s: DataFrame, a: str, target_attribute: str, s_entropy: float = None) -> tuple:
@@ -147,7 +147,7 @@ def build_select_attribute_result(examples, best_attribute, target_attribute):
 
 
 def result_for_continuos_attribute(examples, best_attribute, target_attribute):
-    discrete = get_discrete_values_from_continuous_values(examples.pandas_df, best_attribute, target_attribute)
+    discrete = get_discrete_values_from_continuous_values(examples, best_attribute, target_attribute, entropy)
 
     return StrategyResult(best_attribute, [
         ContinuousCondition(best_attribute, operator.lt, discrete),

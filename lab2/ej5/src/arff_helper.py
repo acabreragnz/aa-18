@@ -17,8 +17,9 @@ class DataSet:
 
     def __init__(self):
         self._arff = None
-        self._attribute_info: Dict[str, self.AttributeInfo] = {}
-        self._attribute_list: List[str] = []
+        self._attribute_info = {}
+        self._attribute_list = []
+        self._original_shape = None
         self._pandas_df: DataFrame = None
         self._loaded = False
 
@@ -48,6 +49,8 @@ class DataSet:
 
         self._loaded = True
 
+        self._original_shape = self._pandas_df.shape
+
     def copy(self):
         """
         Copia un DataSet
@@ -57,6 +60,7 @@ class DataSet:
         ds_new = DataSet()
         ds_new._pandas_df = self._pandas_df
         ds_new._loaded = self._loaded
+        ds_new._original_shape = self._original_shape
         ds_new._attribute_info = deepcopy(self._attribute_info)
         ds_new._attribute_list = deepcopy(self._attribute_list)
         return ds_new
@@ -111,6 +115,12 @@ class DataSet:
         if not self._loaded:
             raise Exception('No se cargo archivo ARFF')
         return self._attribute_info
+
+    @property
+    def original_shape(self) -> list:
+        if not self._loaded:
+            raise Exception('No se cargo archivo ARFF')
+        return self._original_shape
 
     @property
     def pandas_df(self) -> DataFrame:

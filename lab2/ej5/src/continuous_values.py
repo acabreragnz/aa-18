@@ -1,3 +1,5 @@
+from arff_helper import DataSet
+from typing import Callable
 from pandas import DataFrame
 
 #Valores continuos
@@ -16,43 +18,51 @@ from pandas import DataFrame
 # posibles valores discretos { Temperatura > c, Temperatura <= c }
 
 
-def get_discrete_values_from_continuous_values(examples: DataFrame, a:str, target_attribute: str):
-    from strategy.entropy import entropy
+def get_discrete_values_from_continuous_values(examples: DataSet, a: str, target_attribute: str,
+                                               entropy: Callable[[DataFrame, str], float]):
 
-    values = examples[[a, target_attribute]].drop_duplicates()
+    values = examples.pandas_df[[a, target_attribute]].drop_duplicates()\
+        .sort_values([a])
 
     prev_row = None
     points = []
-    for row in values.as_matrix():
-        if not (prev_row is None) and row[1] != prev_row[1]:
-            c = (row[0] + prev_row[0]) / 2
+    for i in range(values.shape[0]):
+        if not (prev_row is None) and values.iloc[i][target_attribute] != prev_row[target_attribute]:
+            c = (values.iloc[i][a] + prev_row[a]) / 2
             points.append(c)
-        prev_row = row
+        prev_row = values.iloc[i]
 
-    entropies = []
+    partitions = {}
     for c in points:
-        sv = examples[examples[a] > c]
-        entropies.append(entropy(sv, target_attribute))
+        s_under_c = examples.pandas_df[examples.pandas_df[a] < c]
+        s_above_c = examples.pandas_df[examples.pandas_df[a] >= c]
+        partitions[c] = (s_under_c, s_above_c)
 
-    c = get_point_with_max_gain(examples, a, points, entropies)
-    return c
+    if points.__len__() > 1:
+        return get_point_with_max_gain(examples, target_attribute, points, partitions, entropy)
+    else:
+        c = points[0]
+        min_subset_proportion = 0.25
+        portion_under_c = (examples.pandas_df[examples.pandas_df[a] < c].shape[0])/examples.original_shape[0]
+        portion_above_c = (examples.pandas_df[examples.pandas_df[a] >= c].shape[0]) / examples.original_shape[0]
+        if portion_under_c <= min_subset_proportion and portion_above_c <= min_subset_proportion:
+            return c
+        else:
+            return 0
 
 
-def get_point_with_max_gain(s: DataFrame, a: str, points:list, entropies: list ) -> tuple:
-
+def get_point_with_max_gain(s: DataSet, target_attribute: str, points: list, partitions: dict,
+                            entropy: Callable[[DataFrame, str], float]) -> float:
     c = None
-    total = s.shape[0]
+    total = s.pandas_df.shape[0]
     gain_max = 0
     for p in points:
-        gain = 0
-        for index, c in enumerate(points):
-            if p != c :
-                sv = s[s[a] > c]
-                sv_entropy = entropies[index]
-                gain -= ((sv.shape[0]/total)*sv_entropy)
-
+        gain = entropy(s.pandas_df, target_attribute)
+        s_under_c = partitions[p][0]
+        s_above_c = partitions[p][1]
+        gain -= ((s_under_c.shape[0] / total) * entropy(s_under_c, target_attribute))
+        gain -= ((s_above_c.shape[0] / total) * entropy(s_above_c, target_attribute))
         if gain >= gain_max:
             gain_max = gain
             c = p
-
     return c
