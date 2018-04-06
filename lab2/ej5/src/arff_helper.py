@@ -52,6 +52,7 @@ class DataSet:
         self._pandas_df = df
         self._attribute_info = attribute_info
         self._attribute_list = attribute_list
+        self._loaded = True
 
     def copy(self):
         """
