@@ -19,7 +19,22 @@ from pandas import DataFrame
 
 
 def get_discrete_values_from_continuous_values(examples: DataSet, a: str, target_attribute: str,
-                                               entropy: Callable[[DataFrame, str], float]):
+                                               entropy: Callable[[DataFrame, str], float]) -> tuple:
+    """
+    Permite obtener un umbral c que defina dos subconjuntos s_under_c y s_above_c de instancias:
+        s_under_c : todas las instancias x tales que a(x) < c
+        s_above_c : todas las instancias x tales que a(x) >= c
+
+    :param examples: conjunto de instancias
+    :param a: atributo continuo
+    :param target_attribute: atributo objetivo
+    :param entropy: funcion para calcular entropia respecto a un atributo cualquiera
+    :return: una tupla (c, g, e_s_under_c, e_s_above_c) en donde
+        c es el umbral que define los subconjuntos,
+        g es la ganancia obtenida de realizar la particion en los dos subconjuntos
+        e_s_under_c es la entropia del subconjunto s_under_c
+        e_s_above_c es la entropia del subconjunto s_above_c
+    """
 
     values = examples.pandas_df[[a, target_attribute]].drop_duplicates()\
         .sort_values([a])
@@ -42,27 +57,35 @@ def get_discrete_values_from_continuous_values(examples: DataSet, a: str, target
         return get_point_with_max_gain(examples, target_attribute, points, partitions, entropy)
     else:
         c = points[0]
-        min_subset_proportion = 0.25
-        portion_under_c = (examples.pandas_df[examples.pandas_df[a] < c].shape[0])/examples.original_shape[0]
-        portion_above_c = (examples.pandas_df[examples.pandas_df[a] >= c].shape[0]) / examples.original_shape[0]
-        if portion_under_c <= min_subset_proportion and portion_above_c <= min_subset_proportion:
-            return c
+        min_subset_portion = 0.25
+        portion_under_c = (partitions[c][0].shape[0]) / examples.original_shape[0]
+        portion_above_c = (partitions[c][1].shape[0]) / examples.original_shape[0]
+        if portion_under_c <= min_subset_portion and portion_above_c <= min_subset_portion:
+            return get_point_with_max_gain(examples, target_attribute, points, partitions, entropy)
         else:
-            return 0
+            (c, gain, e_s_under_c, e_s_above_c) = get_point_with_max_gain(examples, target_attribute, points, partitions, entropy)
+            # quisa retornar ganancia 0 no se la mejor opcion
+            return c, 0, e_s_under_c, e_s_above_c
 
 
 def get_point_with_max_gain(s: DataSet, target_attribute: str, points: list, partitions: dict,
-                            entropy: Callable[[DataFrame, str], float]) -> float:
+                            entropy: Callable[[DataFrame, str], float]) -> tuple:
     c = None
     total = s.pandas_df.shape[0]
     gain_max = 0
+    e_s_under_c_min = 0
+    e_s_above_c_min = 0
     for p in points:
         gain = entropy(s.pandas_df, target_attribute)
         s_under_c = partitions[p][0]
         s_above_c = partitions[p][1]
-        gain -= ((s_under_c.shape[0] / total) * entropy(s_under_c, target_attribute))
-        gain -= ((s_above_c.shape[0] / total) * entropy(s_above_c, target_attribute))
+        e_s_under_c = entropy(s_under_c, target_attribute)
+        e_s_above_c = entropy(s_above_c, target_attribute)
+        gain -= ((s_under_c.shape[0] / total) * e_s_under_c)
+        gain -= ((s_above_c.shape[0] / total) * e_s_above_c)
         if gain >= gain_max:
+            e_s_under_c_min = e_s_under_c
+            e_s_above_c_min = e_s_above_c
             gain_max = gain
             c = p
-    return c
+    return c, gain_max, e_s_under_c_min, e_s_above_c_min

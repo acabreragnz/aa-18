@@ -112,53 +112,60 @@ def select_attribute(examples: DataSet, target_attribute: str, node: Node) -> St
     """
 
     # si no es el nodo raiz obtengo la entropia del conjunto actual guardada en el nodo padre (al final de
-    # este metodo en donde se guardan las entropias)
-    if hasattr(node, 'parent') and hasattr(node.parent, 'entropies'):
+    # este metodo en donde se guardan las entropias) (parte de codigo inutilizada)
+    #if hasattr(node, 'parent') and hasattr(node.parent, 'entropies'):
         # noinspection PyUnresolvedReferences
-        branch_value = node.root_value.decode('utf-8')
-        s_entropy = node.parent.entropies[branch_value]
-    else:
-        s_entropy = None
+    #    branch_value = node.root_value.decode('utf-8')
+    #    s_entropy = node.parent.entropies[branch_value]
+    #else:
+    #    s_entropy = None
 
     # busco el atributo que de mayor ganancia
-    # noinspection PyShadowingBuiltins
-    max = 0
-    best_attribute = None
-    entropies = []
+    gain_max = -1
     for a in [a for a in examples.attribute_list if a != target_attribute]:
-        (g, entropies_aux) = gain(examples.pandas_df, a, target_attribute, s_entropy)
-        if g > max:
-            # noinspection PyShadowingBuiltins
-            max = g
-            entropies = entropies_aux
-            best_attribute = a
+        if examples.is_continuous_attribute(a):
+            (c, g, e_s_under_c, e_s_above_c) = get_discrete_values_from_continuous_values(examples, a, target_attribute, entropy)
+            if g > gain_max:
+                gain_max = g
+                best_attribute = a
+                best_attribute_is_continuous = True
+                entropies = {
+                    f'< {c}': e_s_under_c,
+                    f'>= {c}': e_s_above_c
+                }
+        else:
+            (g, entropies_aux) = gain(examples.pandas_df, a, target_attribute)
+            if g > gain_max:
+                gain_max = g
+                best_attribute = a
+                best_attribute_is_continuous = False
+                entropies = entropies_aux
 
     # guardo las entropias obtenidas para las ramas futuras en el nodo actual
+    # noinspection PyUnboundLocalVariable
     node.entropies = entropies
 
-    return build_select_attribute_result(examples, best_attribute, target_attribute)
-
-
-def build_select_attribute_result(examples, best_attribute, target_attribute):
-    if examples.is_continuous_attribute(best_attribute):
-        return result_for_continuos_attribute(examples, best_attribute, target_attribute)
+    # noinspection PyUnboundLocalVariable
+    if best_attribute_is_continuous:
+        # noinspection PyUnboundLocalVariable
+        return result_for_continuos_attribute(best_attribute, c)
     else:
+        # noinspection PyUnboundLocalVariable
         return result_for_discrete_attribute(examples, best_attribute)
 
 
-def result_for_continuos_attribute(examples, best_attribute, target_attribute):
-    discrete = get_discrete_values_from_continuous_values(examples, best_attribute, target_attribute, entropy)
+def result_for_continuos_attribute(attribute, c):
 
-    return StrategyResult(best_attribute, [
-        ContinuousCondition(best_attribute, operator.lt, discrete),
-        ContinuousCondition(best_attribute, operator.ge, discrete)
+    return StrategyResult(attribute, [
+        ContinuousCondition(attribute, operator.lt, c),
+        ContinuousCondition(attribute, operator.ge, c)
     ])
 
 
-def result_for_discrete_attribute(examples, best_attribute):
-    r = StrategyResult(best_attribute, [])
-    for v in examples.attribute_info[best_attribute].domain:
-        r.partitions.append(DiscreteCondition(best_attribute, v))
+def result_for_discrete_attribute(examples, attribute):
+    r = StrategyResult(attribute, [])
+    for v in examples.attribute_info[attribute].domain:
+        r.partitions.append(DiscreteCondition(attribute, v))
 
     return r
 
