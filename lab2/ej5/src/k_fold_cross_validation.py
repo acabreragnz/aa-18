@@ -4,6 +4,7 @@ from classifier import Classifier
 from strategy.entropy import select_attribute
 from example_helper import yes, no
 import pandas as pd
+import logging
 
 
 
@@ -41,7 +42,8 @@ def k_fold_cross_validation(ds : DataSet, target_attribute : str, k : int, fn_on
         classifier = Classifier(select_attribute, target_attribute,fn_on_empty_value)
         classifier.fit(train)
 
-        print(RenderTree(classifier._decision_tree))
+        logging.info(f'Arbol iteracion k = {i}')
+        logging.info(RenderTree(classifier._decision_tree))
 
         errors[i] = get_error(test_df, classifier, target_attribute,k)
 
@@ -49,10 +51,10 @@ def k_fold_cross_validation(ds : DataSet, target_attribute : str, k : int, fn_on
         for i in range(k):
             Error = Error + errors[i]
 
+    logging.info(f'Errores obtenidoes en iteracion k = {i}, Errores: {errors}')
 
-    print(errors)
     Error = (1/k)*Error
-    print(Error)
+    logging.info(f'Error total (1/k)*Error : {Error}')
 
 
 def get_error(test_df: pd.DataFrame, classifier : Classifier, target_attribute : str, k:int):
