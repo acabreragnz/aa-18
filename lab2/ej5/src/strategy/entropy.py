@@ -1,6 +1,6 @@
 """
-La principal funcion que exporta este modulo es select_attributes la cual implementa una estrategia de seleccion de
-atributos basada en el calculo de ganancia segun entropia. No soporta atributos que tomen valores nulos.
+La principal funcion que exporta este modulo es select_attributes la cual implementa una
+estrategia de seleccion de atributos basada en el calculo de ganancia segun entropia.
 
 """
 
@@ -14,7 +14,7 @@ from condition import DiscreteCondition, ContinuousCondition
 from continuous_values import get_discrete_values_from_continuous_values
 
 
-def gain(s: DataFrame, a: str, target_attribute: str, s_entropy: float = None) -> tuple:
+def gain(s: DataSet, a: str, target_attribute: str, s_entropy: float = None) -> tuple:
     """
     Calcula la ganancia de particionar el conjunto s segun el atributo a
 
@@ -28,14 +28,14 @@ def gain(s: DataFrame, a: str, target_attribute: str, s_entropy: float = None) -
         en 's' que toman ese valor.
     """
     if s_entropy is None:
-        s_entropy = entropy(s, target_attribute)
+        s_entropy = entropy(s.pandas_df, target_attribute)
 
     # valores que toma el conjunto de ejemplos 's' para el atributo 'a'
-    values = s[a].unique()\
-        .tolist()
+    values = s.attribute_info[a].domain
 
     g = s_entropy
     partitions = {}
+    s = s.pandas_df
     total = s.shape[0]
     for v in values:
         # Ejemplos que toman el valor 'v' para el atributo 'a'
@@ -134,7 +134,7 @@ def select_attribute(examples: DataSet, target_attribute: str, node: Node) -> St
                     f'>= {c}': e_s_above_c
                 }
         else:
-            (g, entropies_aux) = gain(examples.pandas_df, a, target_attribute)
+            (g, entropies_aux) = gain(examples, a, target_attribute)
             if g > gain_max:
                 gain_max = g
                 best_attribute = a
