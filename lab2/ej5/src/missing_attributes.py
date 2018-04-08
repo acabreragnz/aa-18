@@ -36,10 +36,9 @@ def get_value_attribute_3(ds: DataSet, a: str, _target_attribute: str=None, _val
     p=[]
 
     value_counts = df[a].value_counts()
-    for row in value_counts.as_matrix():
-        pv = df[df[a] == row[1]].shape[0] / total
+    options = value_counts.index.values
+    for value in options:
+        pv = value_counts[value] / total
         p.append(pv)
-
-    options = [yes, no]
 
     return np.random.choice(options, 1, p)
