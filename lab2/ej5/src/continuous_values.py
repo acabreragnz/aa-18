@@ -53,19 +53,7 @@ def get_discrete_values_from_continuous_values(examples: DataSet, a: str, target
         s_above_c = examples.pandas_df[examples.pandas_df[a] >= c]
         partitions[c] = (s_under_c, s_above_c)
 
-    if points.__len__() > 1:
-        return get_point_with_max_gain(examples, target_attribute, points, partitions, entropy)
-    else:
-        c = points[0]
-        min_subset_portion = 0.25
-        portion_under_c = (partitions[c][0].shape[0]) / examples.original_shape[0]
-        portion_above_c = (partitions[c][1].shape[0]) / examples.original_shape[0]
-        if portion_under_c <= min_subset_portion and portion_above_c <= min_subset_portion:
-            return get_point_with_max_gain(examples, target_attribute, points, partitions, entropy)
-        else:
-            (c, gain, e_s_under_c, e_s_above_c) = get_point_with_max_gain(examples, target_attribute, points, partitions, entropy)
-            # quisa retornar ganancia 0 no se la mejor opcion
-            return c, 0, e_s_under_c, e_s_above_c
+    return get_point_with_max_gain(examples, target_attribute, points, partitions, entropy)
 
 
 def get_point_with_max_gain(s: DataSet, target_attribute: str, points: list, partitions: dict,

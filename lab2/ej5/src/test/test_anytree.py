@@ -1,7 +1,5 @@
 from unittest import TestCase
 from anytree import RenderTree, AnyNode, Resolver
-import arff
-import pandas as pd
 from strategy.entropy import select_attribute
 from classifier import Classifier
 from arff_helper import DataSet
@@ -79,6 +77,8 @@ class TestAnyTree(TestCase):
     def test_data_Autism_Adult(self):
         ds = DataSet()
         ds.load_from_arff('../../datasets/Autism-Adult-Data.arff')
+        # Fixed by https: // eva.fing.edu.uy / mod / forum / discuss.php?d = 117656
+        ds.remove_attribute('result')
         target_attribute = 'Class/ASD'
 
         classifier = Classifier(select_attribute, target_attribute, get_value_attribute_1)
