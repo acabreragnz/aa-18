@@ -58,6 +58,6 @@ class TestAustimAdultData(TestCase):
         train = DataSet()
         train.load_from_pandas_df(train_pandas_df, ds.attribute_info, ds.attribute_list)
 
-        k_fold_cross_validation(train, target_attribute, 3)
+        k_fold_cross_validation(train, target_attribute, 3, get_value_attribute_1)
 
 

@@ -56,6 +56,7 @@ class DataSet:
         self._attribute_info = attribute_info
         self._attribute_list = attribute_list
         self._loaded = True
+        self._original_shape = self._pandas_df.shape
 
     def copy(self):
         """
