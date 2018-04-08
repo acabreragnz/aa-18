@@ -17,7 +17,7 @@ class TestAutismAdultData(TestCase):
 
     def test_1(self):
 
-        logging.basicConfig(filename='./logs/test_k_fold_cross_validation.log', level=logging.INFO)
+        logging.basicConfig(filename='./logs/test_k_fold_cross_validation_2.log', level=logging.INFO)
         logging.info('------------------------------------------------------------------------------------------------')
         logging.info('Started')
 
