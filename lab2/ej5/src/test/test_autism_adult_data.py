@@ -21,7 +21,7 @@ class TestAutismAdultData(TestCase):
         logging.info('------------------------------------------------------------------------------------------------')
         logging.info('Started')
 
-        for i in range(50):
+        for i in range(2):
 
             ds = DataSet()
             ds.load_from_arff('../../datasets/Autism-Adult-Data.arff')
@@ -30,7 +30,7 @@ class TestAutismAdultData(TestCase):
 
             target_attribute = 'Class/ASD'
 
-            train_pandas_df = ds.pandas_df.sample(frac=0.8, random_state=99)
+            train_pandas_df = ds.pandas_df.sample(frac=0.8)
             test_pandas_df = ds.pandas_df.loc[~ds.pandas_df.index.isin(train_pandas_df.index), :]
 
             train = DataSet()
@@ -51,19 +51,22 @@ class TestAutismAdultData(TestCase):
         """
         Para todos los ejemplos de entrenamiento se debe cumplir que el valor predecido coincida con el valor dado
         """
-        ds = DataSet()
-        ds.load_from_arff('../../datasets/tom_mitchell_example.arff')
-        # Fixed by https: // eva.fing.edu.uy / mod / forum / discuss.php?d = 117656
-        ds.remove_attribute('result')
+        for i in range(5):
+            ds = DataSet()
+            ds.load_from_arff('../../datasets/tom_mitchell_example.arff')
+            # Fixed by https: // eva.fing.edu.uy / mod / forum / discuss.php?d = 117656
 
-        target_attribute = 'PlayTennis'
+            target_attribute = 'PlayTennis'
 
-        train_pandas_df = ds.pandas_df.sample(frac=0.8, random_state=99)
-        test_pandas_df = ds.pandas_df.loc[~ds.pandas_df.index.isin(train_pandas_df.index), :]
+            train_pandas_df = ds.pandas_df.sample(frac=0.8)
+            test_pandas_df = ds.pandas_df.loc[~ds.pandas_df.index.isin(train_pandas_df.index), :]
 
-        train = DataSet()
-        train.load_from_pandas_df(train_pandas_df, ds.attribute_info, ds.attribute_list)
+            train = DataSet()
+            train.load_from_pandas_df(train_pandas_df, ds.attribute_info, ds.attribute_list)
 
-        k_fold_cross_validation(train, target_attribute, 3, get_value_attribute_1)
+            k_fold_cross_validation(train, target_attribute, 3, get_value_attribute_1)
+
+            print(train_pandas_df)
+            print(test_pandas_df)
 
 
