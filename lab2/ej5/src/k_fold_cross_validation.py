@@ -1,14 +1,13 @@
 from anytree import RenderTree
 from arff_helper import DataSet
 from classifier import Classifier
-from strategy.entropy import select_attribute
 from example_helper import yes, no
 import pandas as pd
 import logging
 
 
 
-def k_fold_cross_validation(ds : DataSet, target_attribute : str, k : int, fn_on_empty_value: callable):
+def k_fold_cross_validation(ds : DataSet, target_attribute : str, k : int, fn_on_empty_value: callable, fn_on_continues_values: callable):
 
     # Se parte al conjunto original en k subconjuntos Ti
     # Se entrena k veces, utilizando a un Ti para validar y a la unión del resto para entrenar
@@ -39,7 +38,7 @@ def k_fold_cross_validation(ds : DataSet, target_attribute : str, k : int, fn_on
         train.load_from_pandas_df(train_df, ds.attribute_info, ds.attribute_list)
 
         # noinspection PyTypeChecker
-        classifier = Classifier(select_attribute, target_attribute,fn_on_empty_value)
+        classifier = Classifier(fn_on_continues_values, target_attribute,fn_on_empty_value)
         classifier.fit(train)
 
         logging.info(f'Arbol iteracion k = {i}')
@@ -55,6 +54,7 @@ def k_fold_cross_validation(ds : DataSet, target_attribute : str, k : int, fn_on
 
     Error = (1/k)*Error
     logging.info(f'Error total (1/k)*Error : {Error}')
+    return Error
 
 
 def get_error(test_df: pd.DataFrame, classifier : Classifier, target_attribute : str, k:int):
