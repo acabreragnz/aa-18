@@ -45,7 +45,7 @@ class TestAutismAdultData(TestCase):
 
 
         logging.info(f'Error train = 4/5, test = 1/5 : {errors}')
-        logging.info(f'Error promedio k fold cross validation : {error_i}')
+        logging.info(f'Error promedio k fold cross validation : {k_fold_errors}')
 
 
 
@@ -74,7 +74,7 @@ class TestAutismAdultData(TestCase):
             errors.append(e)
 
         logging.info(f'Error train = 4/5, test = 1/5 : {errors}')
-        logging.info(f'Error promedio k fold cross validation : {error_i}')
+        logging.info(f'Error promedio k fold cross validation : {k_fold_errors}')
 
 
     def test_3(self):
@@ -102,11 +102,11 @@ class TestAutismAdultData(TestCase):
             errors.append(e)
 
         logging.info(f'Error train = 4/5, test = 1/5 : {errors}')
-        logging.info(f'Error promedio k fold cross validation : {error_i}')
+        logging.info(f'Error promedio k fold cross validation : {k_fold_errors}')
 
 
 
-    def test_2(self):
+    def test_4(self):
 
         logging.basicConfig(filename='./logs/test_k_fold_cross_validation_4.log', level=logging.INFO)
         logging.info('------------------------------------------------------------------------------------------------')
@@ -131,7 +131,7 @@ class TestAutismAdultData(TestCase):
             errors.append(e)
 
         logging.info(f'Error train = 4/5, test = 1/5 : {errors}')
-        logging.info(f'Error promedio k fold cross validation : {error_i}')
+        logging.info(f'Error promedio k fold cross validation : {k_fold_errors}')
 
 
 
