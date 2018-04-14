@@ -1,0 +1,25 @@
+@relation tom_mitchell_example
+
+@attribute Tiempo {Soleado,Nuboso,Lluvioso}
+@attribute Temperatura {Caluroso,Templado,Frio}
+@attribute Humedad {Alta,Normal}
+@attribute Viento {Suave,Fuerte}
+@attribute Juega {NO,YES}
+
+
+
+@data
+Soleado,Caluroso,Alta,Suave,NO
+Soleado,Caluroso,Alta,Fuerte,NO
+Nuboso,Caluroso,Alta,Suave,YES
+Lluvioso,Templado,Alta,Suave,YES
+Lluvioso,Frio,Normal,Suave,YES
+Lluvioso,Frio,Normal,Fuerte,NO
+Nuboso,Frio,Normal,Fuerte,YES
+Soleado,Templado,Alta,Suave,NO
+Soleado,Frio,Normal,Suave,YES
+Lluvioso,Templado,Normal,Suave,YES
+Soleado,Templado,Normal,Fuerte,YES
+Nuboso,Templado,Alta,Fuerte,YES
+Nuboso,Caluroso,Normal,Suave,YES
+Lluvioso,Templado,Alta,Fuerte,NO

@@ -1,0 +1,2 @@
+yes = 'YES'
+no = 'NO'
