@@ -2,6 +2,7 @@ import numpy as np
 from arff_helper import DataSet
 from pandas import DataFrame, isnull
 from constants import yes, no
+from scipy.stats import norm
 
 
 def naive_bayes_classifier(ds: DataSet, data:list, target_attribute: str):
@@ -33,7 +34,17 @@ def estimate_probability_target_attribute(df: DataFrame, target_attribute: str, 
 
 # def estimate_probability_ai_given_target_attribute(ds: DataSet, a:str, a_value, target_attribute: str, target_attribute_value: str):
 #
+#     attributes_info = ds.attribute_info
 #     df = ds.pandas_df
+#
+#     if attributes_info[a].domain is None:
+#         # Cuando se trabaja con valores continuos el algoritmo supone que los valores de los atributos estan normalmente
+#         # distribuidos y a partir del set de entrenamiento simplemente se calcula la media y la desviacion estandar de los valores
+#         # condicionados de los atributos
+#         mu = np.mean(df[a])
+#         sigma = np.std(df[a])
+#         n = norm(mu, sigma)
+#         return n.pdf(a_value)
 #
 #     total = df[df[target_attribute] == target_attribute_value].shape[0]
 #     if total == 0:
@@ -53,16 +64,17 @@ def estimate_probability_ai_given_target_attribute(ds: DataSet, a:str, a_value, 
         # Cuando se trabaja con valores continuos el algoritmo supone que los valores de los atributos estan normalmente
         # distribuidos y a partir del set de entrenamiento simplemente se calcula la media y la desviacion estandar de los valores
         # condicionados de los atributos
-        mu = np.mean(df[a])
-        sigma = np.std(df[a])
-        return np.random.normal(mu, sigma)
+        df_a = df[df[target_attribute] == target_attribute_value]
+        mu = np.mean(df_a[a])
+        sigma = np.std(df_a[a])
+        n = norm(mu, sigma)
+        return n.pdf(a_value)
 
     #m-estimador:
     #   (e + m.p)/(n + m)
     # p es la estimación a priori de la probabilidad buscada y m es el “tamaño equivalente de muestra”.
     # Un método típico para elegir p en ausencia de otra información es asumir prioridades uniformes;
     # es decir, si un atributo tiene k valores posibles, establecemos p = i/k.
-
 
     n = df[df[target_attribute] == target_attribute_value].shape[0]
 
@@ -78,7 +90,7 @@ def estimate_probability_ai_given_target_attribute(ds: DataSet, a:str, a_value, 
 
 
 def get_product_probabilities(ds: DataSet, data: list, target_attribute: str, target_attribute_value: str):
-    v_target_attribute_value = estimate_probability_target_attribute(ds.pandas_df, target_attribute, yes)
+    v_target_attribute_value = estimate_probability_target_attribute(ds.pandas_df, target_attribute, target_attribute_value)
     attributes = ds.attribute_list
     for a in attributes:
         if a != target_attribute:

@@ -5,3 +5,4 @@ pytz==2018.3
 six==1.11.0
 anytree==2.4.3
 liac-arff==2.2.0
+scipy=1.0.1

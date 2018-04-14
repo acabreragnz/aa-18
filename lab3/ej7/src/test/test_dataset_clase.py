@@ -5,6 +5,7 @@ from arff_helper import DataSet
 from naive_bayes_classifier import naive_bayes_classifier
 
 import numpy as np
+from scipy.stats import norm
 
 class Test(TestCase):
 
@@ -46,8 +47,17 @@ class Test(TestCase):
         print(df['age'].max())
 
         mu = np.mean(df['age'])
-        print(mu)
+        print(f'mu: {mu}')
         sigma = np.std(df['age'])
+        print(f'sigma: {sigma}')
+        n = norm(mu, sigma)
+        print(f'norm: {n.pdf(36)}')
+
+        target_attribute = 'Class/ASD'
+
+        df_a = df[df[target_attribute] == 'YES']
+        mu = np.mean(df_a['age'])
+        sigma = np.std(df_a['age'])
+        print(mu)
         print(sigma)
-        distnorm = np.random.normal(mu, sigma)
-        print(distnorm)
+        print(f'norm: {n.pdf(36)}')
