@@ -30,7 +30,7 @@ def k_fold_cross_validation(ds: DataSet, target_attribute: str, k: int, get_erro
         test_df = diff_df_union_ti.sample(n=min(n, len(diff_df_union_ti)))
         union_ti = pd.concat([union_ti, test_df])
 
-        train_df = diff_df_union_ti.loc[~diff_df_union_ti.index.isin(test_df.index), :]
+        train_df = ds.pandas_df.loc[~ds.pandas_df.index.isin(test_df.index), :]
 
         train = DataSet()
         train.load_from_pandas_df(train_df, ds.attribute_info, ds.attribute_list)
