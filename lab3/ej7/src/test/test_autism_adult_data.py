@@ -1,7 +1,9 @@
 from unittest import TestCase
 import logging
 from arff_helper import DataSet
+from constants import yes, no
 from k_fold_cross_validation import k_fold_cross_validation
+from naive_bayes_classifier import naive_bayes_classifier
 
 target_attribute = 'Class/ASD'
 
@@ -29,7 +31,19 @@ class TestAutismAdultDataEj3(TestCase):
 
         k_fold_errors.append(error_i)
 
+        # 2. Con el 1/5 no utilizado en la parte previa evalúe al resultado de entrenar con los 4/5 restantes.
+        error = 0
+        for index, row in test_pandas_df.iterrows():
+            instance = test_pandas_df.loc[index]
+            v = naive_bayes_classifier(train, instance, target_attribute)
+            if (instance[target_attribute] == yes and not v) or (instance[target_attribute] == no and v):
+                error = error + 1
+
+
         logging.info(f'Error promedio k fold cross validation : {k_fold_errors}')
+        logging.info(f'Error 1/5 test, 4/5 train : {error}')
+
+
 
 
 def get_train_test():

@@ -37,7 +37,7 @@ def k_fold_cross_validation(ds : DataSet, target_attribute : str, k : int, fn_on
         test = DataSet()
         test.load_from_pandas_df(test_df, ds.attribute_info, ds.attribute_list)
 
-        errors[i] = get_error(test, target_attribute,k)
+        errors[i] = get_error(train, test, target_attribute,k)
 
         Error = 0
         for i in range(k):
@@ -50,12 +50,12 @@ def k_fold_cross_validation(ds : DataSet, target_attribute : str, k : int, fn_on
     return Error
 
 
-def get_error(test_ds: DataSet, target_attribute : str, k:int):
+def get_error(train: DataSet, test_ds: DataSet, target_attribute : str, k:int):
     Ei = 0
     test_df = test_ds.pandas_df
     for index, row in test_df.iterrows():
         instance = test_df.loc[index]
-        v = naive_bayes_classifier(test_ds, instance, target_attribute)
+        v = naive_bayes_classifier(train, instance, target_attribute)
         if (instance[target_attribute] == yes and not v) or (instance[target_attribute] == no and v):
             Ei = Ei + 1
     return Ei
