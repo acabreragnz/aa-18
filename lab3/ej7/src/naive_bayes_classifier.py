@@ -78,9 +78,10 @@ def get_product_probabilities(ds: DataSet, data: DataFrame, target_attribute: st
     attributes = ds.attribute_list
     for a in attributes:
         if a != target_attribute:
+            a_value = data[a]
             if isnull(data[a]):
-                data.loc[a] = get_value_attribute(ds.pandas_df, a)
-            p = p * m_estimate(m, ds, a, data[a], target_attribute, target_attribute_value)
+                a_value = get_value_attribute(ds.pandas_df, a)
+            p = p * m_estimate(m, ds, a, a_value, target_attribute, target_attribute_value)
     return p
 
 
