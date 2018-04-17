@@ -1,0 +1,22 @@
+@relation simple_distance_example
+
+@attribute humidity numeric
+@attribute age numeric
+@attribute temperature numeric
+@attribute PlayTennis {NO, YES}
+
+@data
+15.3, 15, 30, NO
+20.1, 15, 15, NO
+52, 30, 23, YES
+52, 7, 15.2, YES
+73, 25, 30.3, YES
+71, 23, 2, NO
+50, 8, 20, YES
+10, 71, 15, NO
+5, 17, 33, YES
+90, 22, 35.6, NO
+2, 20, 15, YES
+68, 10, 18, YES
+72, 50, 29, YES
+80, 23, 21.2, NO
