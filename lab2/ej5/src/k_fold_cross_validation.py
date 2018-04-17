@@ -6,7 +6,6 @@ import pandas as pd
 import logging
 
 
-
 def k_fold_cross_validation(ds : DataSet, target_attribute : str, k : int, fn_on_empty_value: callable, fn_on_continues_values: callable):
 
     # Se parte al conjunto original en k subconjuntos Ti

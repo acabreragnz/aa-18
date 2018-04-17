@@ -4,7 +4,8 @@ from arff_helper import DataSet
 from naive_bayes_classifier import naive_bayes_classifier
 from constants import yes, no
 
-def k_fold_cross_validation(ds : DataSet, target_attribute : str, k : int, fn_on_empty_value: callable, fn_on_continues_values: callable):
+
+def k_fold_cross_validation(ds: DataSet, target_attribute: str, k: int, get_error: callable):
 
     # Se parte al conjunto original en k subconjuntos Ti
     # Se entrena k veces, utilizando a un Ti para validar y a la unión del resto para entrenar
@@ -39,23 +40,14 @@ def k_fold_cross_validation(ds : DataSet, target_attribute : str, k : int, fn_on
 
         errors[i] = get_error(train, test, target_attribute,k)
 
-        Error = 0
+        error = 0
         for i in range(k):
-            Error = Error + errors[i]
+            error = error + errors[i]
 
     logging.info(f'Errores obtenidoes en iteracion k = {i}, Errores: {errors}')
 
-    Error = (1/k)*Error
-    logging.info(f'Error total (1/k)*Error : {Error}')
-    return Error
+    error = (1/k)*error
+    logging.info(f'Error total (1/k)*Error : {error}')
+    return error
 
 
-def get_error(train: DataSet, test_ds: DataSet, target_attribute : str, k:int):
-    Ei = 0
-    test_df = test_ds.pandas_df
-    for index, row in test_df.iterrows():
-        instance = test_df.loc[index]
-        v = naive_bayes_classifier(train, instance, target_attribute)
-        if (instance[target_attribute] == yes and not v) or (instance[target_attribute] == no and v):
-            Ei = Ei + 1
-    return Ei

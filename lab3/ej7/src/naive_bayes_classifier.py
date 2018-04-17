@@ -5,18 +5,18 @@ from constants import yes, no
 from scipy.stats import norm
 
 
-def naive_bayes_classifier(ds: DataSet, data:list, target_attribute: str):
+def naive_bayes_classifier(ds: DataSet, data:DataFrame, target_attribute: str, m: int):
 
     #vNB = argmax vj∈V ∏i P(ai|vj).P(vj)
     df = ds.pandas_df
 
-    v_yes = get_product_probabilities(ds, data, target_attribute, yes)
-    v_no = get_product_probabilities(ds, data, target_attribute, no)
+    p_yes = estimate_probability_target_attribute(df, target_attribute, yes)
+    p_no = estimate_probability_target_attribute (df, target_attribute, no)
 
-    print(f'Probabilidad YES: {v_yes}')
-    print(f'Probabilidad NO: {v_no}')
+    p_yes = p_yes * get_product_probabilities(ds, data, target_attribute, yes, m)
+    p_no =  p_no  * get_product_probabilities(ds, data, target_attribute, no, m)
 
-    if v_yes >= v_no:
+    if p_yes >= p_no:
         return 0
     else:
         return 1
@@ -34,18 +34,6 @@ def estimate_probability_target_attribute(df: DataFrame, target_attribute: str, 
 
 # def estimate_probability_ai_given_target_attribute(ds: DataSet, a:str, a_value, target_attribute: str, target_attribute_value: str):
 #
-#     attributes_info = ds.attribute_info
-#     df = ds.pandas_df
-#
-#     if attributes_info[a].domain is None:
-#         # Cuando se trabaja con valores continuos el algoritmo supone que los valores de los atributos estan normalmente
-#         # distribuidos y a partir del set de entrenamiento simplemente se calcula la media y la desviacion estandar de los valores
-#         # condicionados de los atributos
-#         mu = np.mean(df[a])
-#         sigma = np.std(df[a])
-#         n = norm(mu, sigma)
-#         return n.pdf(a_value)
-#
 #     total = df[df[target_attribute] == target_attribute_value].shape[0]
 #     if total == 0:
 #         return 0
@@ -55,15 +43,15 @@ def estimate_probability_target_attribute(df: DataFrame, target_attribute: str, 
 #     return df_a[df_a[target_attribute] == target_attribute_value].shape[0]/total
 
 
-def estimate_probability_ai_given_target_attribute(ds: DataSet, a:str, a_value, target_attribute: str, target_attribute_value: str):
+def m_estimate(m: int, ds: DataSet, a:str, a_value, target_attribute: str, target_attribute_value: str):
 
     attributes_info = ds.attribute_info
     df = ds.pandas_df
 
-    if ds.is_continuous_attribute(a) is None:
+    if ds.is_continuous_attribute(a):
         # Cuando se trabaja con valores continuos el algoritmo supone que los valores de los atributos estan normalmente
         # distribuidos y a partir del set de entrenamiento simplemente se calcula la media y la desviacion estandar de los valores
-        # condicionados de los atributos
+        # condicionados de los atributos para obtener la probablidiad
         df_a = df[df[target_attribute] == target_attribute_value]
         mu = np.mean(df_a[a])
         sigma = np.std(df_a[a])
@@ -77,30 +65,25 @@ def estimate_probability_ai_given_target_attribute(ds: DataSet, a:str, a_value, 
     # es decir, si un atributo tiene k valores posibles, establecemos p = i/k.
 
     n = df[df[target_attribute] == target_attribute_value].shape[0]
-
     df_a = df[df[a] == a_value]
     e = df_a[df_a[target_attribute] == target_attribute_value].shape[0]
-
-    m = df.shape[0]
-
-    attributes_info = ds.attribute_info
-    p = 1/len(attributes_info)
+    p = 1/len(attributes_info[a].domain)
 
     return (e + m*p)/(n + m)
 
 
-def get_product_probabilities(ds: DataSet, data: list, target_attribute: str, target_attribute_value: str):
-    v_target_attribute_value = estimate_probability_target_attribute(ds.pandas_df, target_attribute, target_attribute_value)
+def get_product_probabilities(ds: DataSet, data: DataFrame, target_attribute: str, target_attribute_value: str, m: int):
+
+    p = 1
     attributes = ds.attribute_list
     for a in attributes:
         if a != target_attribute:
             if isnull(data[a]):
-                data[a] = get_value_attribute(ds, a)
-            v_target_attribute_value = v_target_attribute_value * estimate_probability_ai_given_target_attribute(ds, a, data[a], target_attribute, target_attribute_value)
-    return v_target_attribute_value
+                data.loc[a] = get_value_attribute(ds.pandas_df, a)
+            p = p * m_estimate(m, ds, a, data[a], target_attribute, target_attribute_value)
+    return p
 
 
-def get_value_attribute(ds: DataSet, a: str):
-    df = ds.pandas_df
+def get_value_attribute(df: DataFrame, a: str):
     value_counts = df[a].value_counts()
     return value_counts.idxmax()
