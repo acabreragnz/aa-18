@@ -60,7 +60,7 @@ def estimate_probability_ai_given_target_attribute(ds: DataSet, a:str, a_value, 
     attributes_info = ds.attribute_info
     df = ds.pandas_df
 
-    if attributes_info[a].domain is None:
+    if ds.is_continuous_attribute(a) is None:
         # Cuando se trabaja con valores continuos el algoritmo supone que los valores de los atributos estan normalmente
         # distribuidos y a partir del set de entrenamiento simplemente se calcula la media y la desviacion estandar de los valores
         # condicionados de los atributos
