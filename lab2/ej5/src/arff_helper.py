@@ -58,6 +58,8 @@ class DataSet:
         self._loaded = True
         self._original_shape = self._pandas_df.shape
 
+        return self
+
     def copy(self):
         """
         Copia un DataSet
@@ -81,6 +83,8 @@ class DataSet:
         del self._attribute_info[name]
         self._attribute_list.remove(name)
         self._pandas_df = self._pandas_df.drop(name, 1)
+
+        return self
 
     def filter_with_value(self, attribute: str, value: str, reject_column: str = None):
         """
