@@ -32,17 +32,6 @@ def estimate_probability_target_attribute(df: DataFrame, target_attribute: str, 
     return df[df[target_attribute] == target_attribute_value].shape[0] / total
 
 
-# def estimate_probability_ai_given_target_attribute(ds: DataSet, a:str, a_value, target_attribute: str, target_attribute_value: str):
-#
-#     total = df[df[target_attribute] == target_attribute_value].shape[0]
-#     if total == 0:
-#         return 0
-#
-#     df_a = df[df[a] == a_value]
-#
-#     return df_a[df_a[target_attribute] == target_attribute_value].shape[0]/total
-
-
 def m_estimate(m: int, ds: DataSet, a:str, a_value, target_attribute: str, target_attribute_value: str):
 
     attributes_info = ds.attribute_info
@@ -58,18 +47,20 @@ def m_estimate(m: int, ds: DataSet, a:str, a_value, target_attribute: str, targe
         n = norm(mu, sigma)
         return n.pdf(a_value)
 
-    #m-estimador:
-    #   (e + m.p)/(n + m)
-    # p es la estimación a priori de la probabilidad buscada y m es el “tamaño equivalente de muestra”.
-    # Un método típico para elegir p en ausencia de otra información es asumir prioridades uniformes;
-    # es decir, si un atributo tiene k valores posibles, establecemos p = i/k.
-
     n = df[df[target_attribute] == target_attribute_value].shape[0]
     df_a = df[df[a] == a_value]
     e = df_a[df_a[target_attribute] == target_attribute_value].shape[0]
-    p = 1/len(attributes_info[a].domain)
 
-    return (e + m*p)/(n + m)
+    if n == 0 or e == 0:
+        # m-estimador:
+        #   (e + m.p)/(n + m)
+        # p es la estimación a priori de la probabilidad buscada y m es el “tamaño equivalente de muestra”.
+        # Un método típico para elegir p en ausencia de otra información es asumir prioridades uniformes;
+        # es decir, si un atributo tiene k valores posibles, establecemos p = i/k.
+        p = 1 / len(attributes_info[a].domain)
+        return (e + m * p) / (n + m)
+    else:
+        return e/n
 
 
 def get_product_probabilities(ds: DataSet, data: DataFrame, target_attribute: str, target_attribute_value: str, m: int):

@@ -19,7 +19,7 @@ class TestAutismAdultDataEj3(TestCase):
         train = get_train_test()
 
         #Pruebo para distintos m
-        for m in range(2,3):
+        for m in range(10,100,10):
             logging.info(f'm = {m}')
 
             k_fold_error = k_fold_cross_validation(train, target_attribute, 10, get_error)
