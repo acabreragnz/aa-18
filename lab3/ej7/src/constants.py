@@ -1,2 +1,0 @@
-yes = 'YES'
-no = 'NO'

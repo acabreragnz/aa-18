@@ -105,3 +105,18 @@ ENV/
 .DS_Store
 
 deps
+lab1/Lab1.pdf
+venv1/pip-selfcheck.json
+venv1/pyvenv.cfg
+venv1/bin/activate
+venv1/bin/activate.csh
+venv1/bin/activate.fish
+venv1/bin/easy_install
+venv1/bin/easy_install-3.6
+venv1/bin/f2py
+venv1/bin/pip
+venv1/bin/pip3
+venv1/bin/pip3.6
+venv1/bin/python
+venv1/bin/python3
+venv1/bin/python3.6

@@ -1,7 +1,7 @@
 import numpy as np
 from arff_helper import DataSet
 from pandas import DataFrame, isnull
-from constants import yes, no
+from example_helper import yes, no
 from scipy.stats import norm
 
 

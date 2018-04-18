@@ -1,8 +1,7 @@
 import pandas as pd
 import logging
 from arff_helper import DataSet
-from naive_bayes_classifier import naive_bayes_classifier
-from constants import yes, no
+from example_helper import yes, no
 
 
 def k_fold_cross_validation(ds: DataSet, target_attribute: str, k: int, get_error: callable):
@@ -47,7 +46,7 @@ def k_fold_cross_validation(ds: DataSet, target_attribute: str, k: int, get_erro
     logging.info(f'Errores obtenidoes en iteracion k = {i}, Errores: {errors}')
 
     error = (1/k)*error
-    logging.info(f'Error total (1/k)*Error : {error}')
+    logging.info(f'Error total (1/k)*error : {error}')
     return error
 
 
