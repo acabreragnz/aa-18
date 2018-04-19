@@ -1,35 +1,36 @@
 from arff_helper import DataSet
 from example_helper import get_most_common_value
+from pandas import Series, DataFrame
 import pandas as pd
 
 
-def knn(ds: DataSet, instance, target_attribute: str, k: int = 1)-> str:
-    nearest = __nearest_k(ds, instance, k, target_attribute)
+def knn(training_set: DataFrame, instance: Series, target_attribute: str, k: int = 1)-> str:
+    nearest = __nearest_k(training_set, instance, k, target_attribute)
 
     return get_most_common_value(nearest, target_attribute)
 
 
-def __nearest_k(ds: DataSet, instance: DataSet, k: int, target_attribute: str) -> DataSet:
-    ds = ds.copy()
-    df = ds.pandas_df
-
-    first_instance = instance.pandas_df.head(1)
+def __nearest_k(training_set: DataFrame, instance: Series, k: int, target_attribute: str) -> DataFrame:
 
     # replicate the instance df.shape[0] times, so we can do calculations in the entire training df
-    instance = pd.concat([first_instance] * df.shape[0], ignore_index=True)
+    replicated_instance = pd.concat([instance] * training_set.shape[0], ignore_index=True, axis=1)\
+        .transpose()
+    if target_attribute in replicated_instance.columns.values:
+        replicated_instance = replicated_instance.drop(columns=target_attribute)
 
-    distance_col = __euclidean_distance(ds.remove_attribute(target_attribute), instance)
+    # noinspection PyTypeChecker
+    distance_col = __euclidean_distance(training_set.drop(columns=target_attribute), replicated_instance)
 
-    df['distance'] = distance_col
-    sorted_by_distance = df.sort_values(by=['distance'])
+    training_set['distance'] = distance_col
+    sorted_by_distance = training_set.sort_values(by=['distance'])
 
-    nearest_ds = DataSet()
-
-    return nearest_ds.load_from_pandas_df(sorted_by_distance[:k], ds.attribute_info, ds.attribute_list)
+    return sorted_by_distance[:k]
 
 
-def __euclidean_distance(ds: DataSet, instance) -> list:
-    df = ds.pandas_df
+def __euclidean_distance(ds1: DataFrame, ds2: DataFrame) -> Series:
 
-    return ((df.subtract(instance) ** 2).sum(axis=1)) ** 0.5
+    return ds1.subtract(ds2)\
+        .pow(2)\
+        .sum(axis=1)\
+        .pow(0.5)
 
