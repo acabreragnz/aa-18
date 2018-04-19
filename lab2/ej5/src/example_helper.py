@@ -1,4 +1,5 @@
 from pandas import DataFrame
+from typing import Union
 from arff_helper import DataSet
 
 yes = 'YES'
@@ -25,12 +26,18 @@ def all_same_value(examples: DataSet, target_attribute: str):
     return candidate
 
 
-def get_most_common_value(examples: DataSet, target_attribute: str):
-    if examples.pandas_df.empty:
+def get_most_common_value(examples: Union[DataSet, DataFrame], target_attribute: str):
+
+    if examples.__class__ == DataSet:
+        df = examples.pandas_df
+    else:
+        df = examples
+
+    if df.empty:
         raise ValueError("df cannot be empty!")
 
-    gb = examples.pandas_df.groupby(target_attribute)
-    existing_unique_values = len(examples.pandas_df[target_attribute].unique())
+    gb = df.groupby(target_attribute)
+    existing_unique_values = len(df[target_attribute].unique())
 
     # we sample (to randomize when we have more than one largest) and then we select one of them
     most_common_example = gb.size().sample(existing_unique_values).nlargest(1)
