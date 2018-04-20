@@ -21,6 +21,7 @@ def k_fold_cross_validation(ds: DataSet, target_attribute: str, k: int, get_erro
     union_ti = pd.DataFrame()
     n = round(ds.pandas_df.__len__() / k)
     errors = [0 for i in range(k)]
+    training_size = [0 for i in range(k)]
 
     for i in range(k):
 
@@ -30,6 +31,7 @@ def k_fold_cross_validation(ds: DataSet, target_attribute: str, k: int, get_erro
         union_ti = pd.concat([union_ti, test_df])
 
         train_df = ds.pandas_df.loc[~ds.pandas_df.index.isin(test_df.index), :]
+        training_size[i] = len(train_df)
 
         train = DataSet()
         train.load_from_pandas_df(train_df, ds.attribute_info, ds.attribute_list)
@@ -43,6 +45,7 @@ def k_fold_cross_validation(ds: DataSet, target_attribute: str, k: int, get_erro
         for i in range(k):
             error = error + errors[i]
 
+    logging.info(f'Tamaños conjuntos de entrenamiento: {training_size}')
     logging.info(f'Errores obtenidoes en iteracion k = {i}, Errores: {errors}')
 
     error = (1/k)*error

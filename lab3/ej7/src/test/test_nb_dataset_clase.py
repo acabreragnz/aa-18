@@ -34,30 +34,3 @@ class Test(TestCase):
             elif instance[target_attribute] == 'NO' and v:
                 print(f'Para la instancia {i}, el valor predecido no coincide con el valor conocido')
 
-
-    def test_data(self):
-
-        ds = DataSet()
-        ds.load_from_arff('../../datasets/Autism-Adult-Data.arff')
-
-        # print(ds.pandas_df)
-
-        df = ds.pandas_df
-        print(df['age'].tolist())
-        print(df['age'].max())
-
-        mu = np.mean(df['age'])
-        print(f'mu: {mu}')
-        sigma = np.std(df['age'])
-        print(f'sigma: {sigma}')
-        n = norm(mu, sigma)
-        print(f'norm: {n.pdf(36)}')
-
-        target_attribute = 'Class/ASD'
-
-        df_a = df[df[target_attribute] == 'YES']
-        mu = np.mean(df_a['age'])
-        sigma = np.std(df_a['age'])
-        print(mu)
-        print(sigma)
-        print(f'norm: {n.pdf(36)}')
