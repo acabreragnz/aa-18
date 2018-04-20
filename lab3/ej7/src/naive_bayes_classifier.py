@@ -5,7 +5,7 @@ from example_helper import yes, no
 from scipy.stats import norm
 
 
-def naive_bayes_classifier(ds: DataSet, data:DataFrame, target_attribute: str, m: int):
+def naive_bayes_classifier(ds: DataSet, data:DataFrame, target_attribute: str):
 
     #vNB = argmax vj∈V ∏i P(ai|vj).P(vj)
     df = ds.pandas_df
@@ -13,8 +13,8 @@ def naive_bayes_classifier(ds: DataSet, data:DataFrame, target_attribute: str, m
     p_yes = estimate_probability_target_attribute(df, target_attribute, yes)
     p_no = estimate_probability_target_attribute (df, target_attribute, no)
 
-    p_yes = p_yes * get_product_probabilities(ds, data, target_attribute, yes, m)
-    p_no =  p_no  * get_product_probabilities(ds, data, target_attribute, no, m)
+    p_yes = p_yes * get_product_probabilities(ds, data, target_attribute, yes)
+    p_no =  p_no  * get_product_probabilities(ds, data, target_attribute, no)
 
     if p_yes >= p_no:
         return 0
@@ -63,8 +63,9 @@ def m_estimate(m: int, ds: DataSet, a:str, a_value, target_attribute: str, targe
         return e/n
 
 
-def get_product_probabilities(ds: DataSet, data: DataFrame, target_attribute: str, target_attribute_value: str, m: int):
+def get_product_probabilities(ds: DataSet, data: DataFrame, target_attribute: str, target_attribute_value: str):
 
+    m = 3
     p = 1
     attributes = ds.attribute_list
     for a in attributes:
@@ -72,7 +73,7 @@ def get_product_probabilities(ds: DataSet, data: DataFrame, target_attribute: st
             a_value = data[a]
             if isnull(data[a]):
                 a_value = get_value_attribute(ds.pandas_df, a)
-            p = p * m_estimate(m, ds, a, a_value, target_attribute, target_attribute_value)
+            p = p * m_estimate(m, ds, a, data[a], target_attribute, target_attribute_value)
     return p
 
 

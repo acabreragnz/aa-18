@@ -37,7 +37,7 @@ def k_fold_cross_validation(ds: DataSet, target_attribute: str, k: int, get_erro
         test = DataSet()
         test.load_from_pandas_df(test_df, ds.attribute_info, ds.attribute_list)
 
-        errors[i] = get_error(train, test, target_attribute,k)
+        errors[i] = get_error(train, test, target_attribute)
 
         error = 0
         for i in range(k):

@@ -19,10 +19,8 @@ class TestAutismAdultDataEj3(TestCase):
         train = get_train_test()
 
         #Pruebo para distintos m
-        for m in range(10,100,10):
-            logging.info(f'm = {m}')
 
-            k_fold_error = k_fold_cross_validation(train, target_attribute, 10, get_error)
+        k_fold_error = k_fold_cross_validation(train, target_attribute, 10, get_error)
 
         logging.info('End')
         logging.info('------------------------------------------------------------------------------------------------')
@@ -41,12 +39,12 @@ def get_train_test():
     return train
 
 
-def get_error(train: DataSet, test_ds: DataSet, target_attribute: str, m: int):
+def get_error(train: DataSet, test_ds: DataSet, target_attribute: str):
     ei = 0
     test_df = test_ds.pandas_df
     for index, row in test_df.iterrows():
         instance = test_df.loc[index]
-        v = naive_bayes_classifier(train, instance, target_attribute, m)
+        v = naive_bayes_classifier(train, instance, target_attribute)
         if (instance[target_attribute] == yes and not v) or (instance[target_attribute] == no and v):
             ei = ei + 1
     return ei
