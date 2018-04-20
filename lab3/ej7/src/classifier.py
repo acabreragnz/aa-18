@@ -1,4 +1,5 @@
 from pandas import DataFrame, Series
+from typing import Union, Tuple
 from arff_helper import DataSet
 from k_nearest_neighbor import knn
 
@@ -64,16 +65,18 @@ class KNNClassifier(Classifier):
         """
         self._training_examples = training_examples
 
-    def predict(self, instance: Series) -> str:
+    def predict(self, instance: Series, return_neighbours: bool = False) -> Union[str, Tuple[str, DataFrame]]:
         """
         Clasifica una instancia retornando la clase a la que pertenece
 
-        :param instance: lista de atributos (str) que representan la instancia que se quiere clasificar
-
+        :param instance: lista instancia que se quiere clasificar
+        :param return_neighbours: si se define en True, permite retornar una tupla t con dos componentes:
+            t[0] el valor predecido
+            t[1] un DataFrame con las k instancias vecinas
         :return: YES/NO
         """
 
         if self._training_examples is None:
             raise Exception('El clasificador no ha sido entrenado')
 
-        return knn(self._training_examples, instance, self._target_attribute, self._k)
+        return knn(self._training_examples, instance, self._target_attribute, self._k, return_neighbours)

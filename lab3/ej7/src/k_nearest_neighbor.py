@@ -1,13 +1,20 @@
-from arff_helper import DataSet
 from example_helper import get_most_common_value
+from typing import Union, Tuple
 from pandas import Series, DataFrame
 import pandas as pd
 
 
-def knn(training_set: DataFrame, instance: Series, target_attribute: str, k: int = 1)-> str:
+def knn(training_set: DataFrame,
+        instance: Series,
+        target_attribute: str,
+        k: int = 1,
+        return_neighbours: bool = False) -> Union[str, Tuple[str, DataFrame]]:
     nearest = __nearest_k(training_set, instance, k, target_attribute)
 
-    return get_most_common_value(nearest, target_attribute)
+    if not return_neighbours:
+        return get_most_common_value(nearest, target_attribute)
+    else:
+        return get_most_common_value(nearest, target_attribute), nearest
 
 
 def __nearest_k(training_set: DataFrame, instance: Series, k: int, target_attribute: str) -> DataFrame:
