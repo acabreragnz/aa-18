@@ -1,6 +1,8 @@
 from unittest import TestCase
 
 from arff_helper import DataSet
+from lab3.ej7.src.classifier import NBClassifier, KNNClassifier
+from ds_preprocessing import DataSetPreprocessor
 
 from naive_bayes_classifier import naive_bayes_classifier
 
@@ -11,26 +13,37 @@ class Test(TestCase):
 
     def test_data_clase(self):
 
-        data = {"Tiempo": "Soleado", "Temperatura": "Frio", "Humedad": "Alta", "Viento": "Fuerte"}
-
         target_attribute = 'Juega'
+        expected_result = "NO"
 
         ds = DataSet()
         ds.load_from_arff('../../datasets/dataset_clase.arff')
 
-        print(ds.pandas_df)
+        classifier = NBClassifier(target_attribute, ds.attribute_info, ds.attribute_list)
+        classifier.fit (ds.pandas_df)
+        predict_df(ds.pandas_df, target_attribute,classifier)
 
-        expected_result = 0
-        v = naive_bayes_classifier(ds, data, target_attribute)
+        preprocessor = DataSetPreprocessor(ds, target_attribute)
+        df = preprocessor.transform_to_rn()
 
-        self.assertTrue(expected_result != v,
-                        f'Para la instancia {data}, el valor predecido no coincide con el valor conocido')
+        classifier = KNNClassifier (1, target_attribute)
+        classifier.fit(df)
+        predict_df(df, target_attribute,classifier)
 
-        for i in range(ds.pandas_df.shape[0]):
-            instance = ds.pandas_df.loc[i]
-            v = naive_bayes_classifier(ds, instance, target_attribute)
-            if instance[target_attribute] == 'YES' and not v:
-                print(f'Para la instancia {i}, el valor predecido no coincide con el valor conocido')
-            elif instance[target_attribute] == 'NO' and v:
-                print(f'Para la instancia {i}, el valor predecido no coincide con el valor conocido')
+        classifier = KNNClassifier (3, target_attribute)
+        classifier.fit(ds.pandas_df)
+        predict_df (df, target_attribute,classifier)
 
+        classifier = KNNClassifier (7, target_attribute)
+        classifier.fit(ds.pandas_df)
+        predict_df (df, target_attribute,classifier)
+
+
+
+def predict_df(df, target_attribute, classifier):
+    print(classifier.__class__)
+    for i in range (df.shape[0]):
+        instance = df.loc[i]
+        predict_result = classifier.predict(instance)
+        if instance[target_attribute] != predict_result:
+            print (f'Para la instancia {i}, el valor predecido no coincide con el valor conocido')
