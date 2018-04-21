@@ -1,3 +1,4 @@
+from naive_bayes_classifier import naive_bayes_classifier
 from pandas import DataFrame, Series
 from typing import Union, Tuple
 from arff_helper import DataSet
@@ -80,3 +81,42 @@ class KNNClassifier(Classifier):
             raise Exception('El clasificador no ha sido entrenado')
 
         return knn(self._training_examples, instance, self._target_attribute, self._k, return_neighbours)
+
+
+class NBClassifier(Classifier):
+
+    # noinspection PyMissingConstructor
+    def __init__(self, target_attribute: str, attribute_info: list, attribute_list: list):
+        """
+        Constructor
+
+        :param target_attribute: atributo objetivo
+        :param fn_on_empty_value: funcion para completar valores faltantes
+        """
+
+        super().__init__(target_attribute, fn_on_empty_value=None)
+        self._attribute_list = attribute_list
+        self._attribute_info = attribute_info
+
+    def fit(self, training_examples: DataSet) -> None:
+        """
+        Ajusta el clasificador con un conjunto de entrenamiento mediante el algoritmo nb
+
+        :param training_examples: conjunto de entrenamiento
+        """
+        self._training_examples = training_examples
+
+    def predict(self, instance: Series) -> str:
+        """
+        Clasifica una instancia retornando la clase a la que pertenece
+
+        :param instance: lista instancia que se quiere clasificar
+        :return: YES/NO
+        """
+
+        if self._training_examples is None:
+            raise Exception('El clasificador no ha sido entrenado')
+
+        ds = DataSet()
+        ds.load_from_pandas_df(self._training_examples, self._attribute_info, self._attribute_list)
+        return naive_bayes_classifier(ds, instance, self._target_attribute)
