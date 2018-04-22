@@ -1,11 +1,11 @@
 import numpy as np
 from arff_helper import DataSet
-from pandas import DataFrame, isnull
+from pandas import DataFrame, isnull, Series
 from example_helper import yes, no
 from scipy.stats import norm
 
 
-def naive_bayes_classifier(ds: DataSet, data:DataFrame, target_attribute: str):
+def naive_bayes_classifier(ds: DataSet, instance: Series, target_attribute: str):
 
     #vNB = argmax vj∈V ∏i P(ai|vj).P(vj)
     df = ds.pandas_df
@@ -13,13 +13,13 @@ def naive_bayes_classifier(ds: DataSet, data:DataFrame, target_attribute: str):
     p_yes = estimate_probability_target_attribute(df, target_attribute, yes)
     p_no = estimate_probability_target_attribute (df, target_attribute, no)
 
-    p_yes = p_yes * get_product_probabilities(ds, data, target_attribute, yes)
-    p_no =  p_no  * get_product_probabilities(ds, data, target_attribute, no)
+    p_yes = p_yes * get_product_probabilities(ds, instance, target_attribute, yes)
+    p_no =  p_no  * get_product_probabilities(ds, instance, target_attribute, no)
 
     if p_yes >= p_no:
-        return 0
+        return yes
     else:
-        return 1
+        return no
 
 
 def estimate_probability_target_attribute(df: DataFrame, target_attribute: str, target_attribute_value: str):
@@ -32,7 +32,7 @@ def estimate_probability_target_attribute(df: DataFrame, target_attribute: str, 
     return df[df[target_attribute] == target_attribute_value].shape[0] / total
 
 
-def m_estimate(m: int, ds: DataSet, a:str, a_value, target_attribute: str, target_attribute_value: str):
+def m_estimate(ds: DataSet, a:str, a_value, target_attribute: str, target_attribute_value: str):
 
     attributes_info = ds.attribute_info
     df = ds.pandas_df
@@ -47,36 +47,33 @@ def m_estimate(m: int, ds: DataSet, a:str, a_value, target_attribute: str, targe
         n = norm(mu, sigma)
         return n.pdf(a_value)
 
+    # m-estimador:
+    #   (e + m.p)/(n + m)
+    # p es la estimación a priori de la probabilidad buscada y m es el “tamaño equivalente de muestra”.
+    # Un método típico para elegir p en ausencia de otra información es asumir prioridades uniformes;
+    # es decir, si un atributo tiene k valores posibles, establecemos p = i/k.
+
     n = df[df[target_attribute] == target_attribute_value].shape[0]
     df_a = df[df[a] == a_value]
     e = df_a[df_a[target_attribute] == target_attribute_value].shape[0]
+    p = 1 / len (attributes_info[a].domain)
 
     if n == 0 or e == 0:
-        # m-estimador:
-        #   (e + m.p)/(n + m)
-        # p es la estimación a priori de la probabilidad buscada y m es el “tamaño equivalente de muestra”.
-        # Un método típico para elegir p en ausencia de otra información es asumir prioridades uniformes;
-        # es decir, si un atributo tiene k valores posibles, establecemos p = i/k.
-        p = 1 / len(attributes_info[a].domain)
-        return (e + m * p) / (n + m)
+        m = 3
     else:
-        return e/n
+        m = 0
+
+    return (e + m * p) / (n + m)
 
 
 def get_product_probabilities(ds: DataSet, data: DataFrame, target_attribute: str, target_attribute_value: str):
 
-    m = 3
     p = 1
     attributes = ds.attribute_list
     for a in attributes:
         if a != target_attribute:
-            a_value = data[a]
             if isnull(data[a]):
-                a_value = get_value_attribute(ds.pandas_df, a)
-            p = p * m_estimate(m, ds, a, data[a], target_attribute, target_attribute_value)
+                #P(?|c) = 1
+                return 1
+            p = p * m_estimate(ds, a, data[a], target_attribute, target_attribute_value)
     return p
-
-
-def get_value_attribute(df: DataFrame, a: str):
-    value_counts = df[a].value_counts()
-    return value_counts.idxmax()

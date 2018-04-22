@@ -1,10 +1,11 @@
 import pandas as pd
 import logging
 from arff_helper import DataSet
+from lab3.ej7.src.classifier import Classifier
 from example_helper import yes, no
 
 
-def k_fold_cross_validation(ds: DataSet, target_attribute: str, k: int, get_error: callable):
+def k_fold_cross_validation(ds: DataSet, target_attribute: str, k: int, classifier: Classifier):
 
     # Se parte al conjunto original en k subconjuntos Ti
     # Se entrena k veces, utilizando a un Ti para validar y a la unión del resto para entrenar
@@ -31,25 +32,35 @@ def k_fold_cross_validation(ds: DataSet, target_attribute: str, k: int, get_erro
         union_ti = pd.concat([union_ti, test_df])
 
         train_df = ds.pandas_df.loc[~ds.pandas_df.index.isin(test_df.index), :]
-        training_size[i] = len(train_df)
 
         train = DataSet()
         train.load_from_pandas_df(train_df, ds.attribute_info, ds.attribute_list)
+        training_size[i] = len(train_df)
 
         test = DataSet()
         test.load_from_pandas_df(test_df, ds.attribute_info, ds.attribute_list)
 
-        errors[i] = get_error(train, test, target_attribute)
+        classifier.fit(train.pandas_df)
 
-        error = 0
-        for i in range(k):
-            error = error + errors[i]
+        ei = 0
+        test_df = test.pandas_df
+        for index, row in test_df.iterrows ():
+            instance = test_df.loc[index]
+            v = classifier.predict(instance)
+            if instance[target_attribute] != v:
+                ei = ei + 1
+
+        errors[i] = ei
 
     logging.info(f'Tamaños conjuntos de entrenamiento: {training_size}')
     logging.info(f'Errores obtenidoes en iteracion k = {i}, Errores: {errors}')
 
-    error = (1/k)*error
+    error = 0
+    for i in range(k):
+        error = error + errors[i]
+
+    error = (1/k) * error
     logging.info(f'Error total (1/k)*error : {error}')
-    return error
+
 
 
