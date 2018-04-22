@@ -48,8 +48,7 @@ def k_fold_cross_validation(ds: DataSet, target_attribute: str, k: int, classifi
         for index in range(len(metrics)):
             metrics_result[index].append(metrics[index](y_predicted, y_true))
 
-        #evuelve el promedio de las metricas aplicadas en las k iteraciones.
-    return [np.mean(r) for r in metrics_result]
+    return metrics_result
 
 
 
