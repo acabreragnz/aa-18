@@ -1,11 +1,10 @@
 import pandas as pd
-import logging
+import numpy as np
 from arff_helper import DataSet
-from lab3.ej7.src.classifier import Classifier
-from example_helper import yes, no
+from classifier import Classifier
 
 
-def k_fold_cross_validation(ds: DataSet, target_attribute: str, k: int, classifier: Classifier):
+def k_fold_cross_validation(ds: DataSet, target_attribute: str, k: int, classifier: Classifier, metrics: list):
 
     # Se parte al conjunto original en k subconjuntos Ti
     # Se entrena k veces, utilizando a un Ti para validar y a la unión del resto para entrenar
@@ -24,6 +23,7 @@ def k_fold_cross_validation(ds: DataSet, target_attribute: str, k: int, classifi
     errors = [0 for i in range(k)]
     training_size = [0 for i in range(k)]
 
+    metrics_result = [[] for x in range(len(metrics))]
     for i in range(k):
 
         diff_df_union_ti = ds.pandas_df.loc[~ds.pandas_df.index.isin(union_ti.index), :]
@@ -42,25 +42,14 @@ def k_fold_cross_validation(ds: DataSet, target_attribute: str, k: int, classifi
 
         classifier.fit(train.pandas_df)
 
-        ei = 0
-        test_df = test.pandas_df
-        for index, row in test_df.iterrows ():
-            instance = test_df.loc[index]
-            v = classifier.predict(instance)
-            if instance[target_attribute] != v:
-                ei = ei + 1
+        y_predicted = test_df.apply(lambda row: classifier.predict (row), axis=1)
+        y_true = test_df[target_attribute]
 
-        errors[i] = ei
+        for index in range(len(metrics)):
+            metrics_result[index].append(metrics[index](y_predicted, y_true))
 
-    logging.info(f'Tamaños conjuntos de entrenamiento: {training_size}')
-    logging.info(f'Errores obtenidoes en iteracion k = {i}, Errores: {errors}')
-
-    error = 0
-    for i in range(k):
-        error = error + errors[i]
-
-    error = (1/k) * error
-    logging.info(f'Error total (1/k)*error : {error}')
+        #evuelve el promedio de las metricas aplicadas en las k iteraciones.
+    return [np.mean(r) for r in metrics_result]
 
 
 
