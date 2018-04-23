@@ -59,7 +59,9 @@ class Classifier:
             # noinspection PyUnboundLocalVariable
             node = child
 
-        return node.value == "YES"
+        #return node.value == "YES"
+        #Cambio clasificador para facilitar test de lab 3
+        return node.value
 
 
 class PredictorEmptyValue:

@@ -70,3 +70,68 @@ class TestAutismAdultDataEj3(TestCase):
         logging.info('------------------------------------------------------------------------------------------------')
 
 
+    def test2(self):
+
+        training_ds = DataSet ()
+        training_ds.load_from_arff ('../../datasets/Autism-Adult-Training-Subset.arff')
+
+        test_ds = DataSet ()
+        test_ds.load_from_arff ('../../datasets/Autism-Adult-Test-Subset.arff')
+
+        training_df = training_ds.pandas_df
+        test_pandas_df = test_ds.pandas_df
+
+        n = 2
+        k_for_k_fold = 10
+        target_attribute = 'Class/ASD'
+        accuracies = []
+        recall = []
+        classifier =  NBClassifier (target_attribute, training_ds.attribute_info, training_ds.attribute_list)
+
+        table_kfold = []
+        table = []
+        for i in range (n):
+
+            kf = KFold (n_splits=k_for_k_fold, do_shuffle=True)
+            indexes = kf.split (training_df)
+
+            for test_indexes, training_indexes in indexes:
+                df_test = training_df.iloc[test_indexes]
+                df_train = training_df.iloc[training_indexes]
+
+                classifier.fit (df_train)
+                y_predicted = df_test.apply (lambda row: classifier.predict (row), axis=1)
+
+                y_true = df_test[target_attribute]
+
+                accuracies.append (accuracy_score (y_predicted, y_true))
+                recall.append(recall_score(y_predicted, y_true))
+
+            # Presentacion de resultados
+            x = [i + 1 for i in range (k_for_k_fold)]
+            for i in range (k_for_k_fold):
+                table_kfold.append ([x[i], accuracies[i], recall[i]])
+
+            classifier.fit (training_df)
+            y_predicted = test_pandas_df.apply (lambda row: classifier.predict (row), axis=1)
+            y_true = test_pandas_df[target_attribute]
+
+            table.append([i, accuracy_score (y_predicted, y_true), recall_score(y_predicted, y_true)])
+
+
+        print ("K fold validation :\n")
+        print (tabulate (table_kfold, headers=["#", "Accuracy", "Recall"]))
+        print ()
+        print ("T=1/5 S=4/5 :\n")
+        print (tabulate (table, headers=["#", "Accuracy", "Recall"]))
+
+        plt.figure (figsize=(10, 10))
+        plt.ylabel ('Accuracy/Recall')
+        plt.axis ([0, (n * k_for_k_fold) - 1, 0, 1])
+        plt.grid (True)
+
+        plt.plot (accuracies, color='r', label='NB Accuracies')
+        plt.plot (recall, color='g', label='NB Recall')
+
+        plt.legend (loc=0)
+        plt.show ()
