@@ -66,7 +66,9 @@ class KNNClassifier(Classifier):
         """
         self._training_examples = training_examples
 
-    def predict(self, instance: Series, return_neighbours: bool = False) -> Union[str, Tuple[str, DataFrame]]:
+    def predict(self, instance: Series, return_neighbours: bool = False, distance_weighted: bool = False) -> \
+            Union[str, Tuple[str, DataFrame]]:
+
         """
         Clasifica una instancia retornando la clase a la que pertenece
 
@@ -74,13 +76,21 @@ class KNNClassifier(Classifier):
         :param return_neighbours: si se define en True, permite retornar una tupla t con dos componentes:
             t[0] el valor predecido
             t[1] un DataFrame con las k instancias vecinas
+        :param distance_weighted: si se define en True, los mas cercanos pesaran mas a la hora de calcular la clase
         :return: YES/NO
         """
 
         if self._training_examples is None:
             raise Exception('El clasificador no ha sido entrenado')
 
-        return knn(self._training_examples, instance, self._target_attribute, self._k, return_neighbours)
+        return knn(
+            self._training_examples,
+            instance,
+            self._target_attribute,
+            self._k,
+            return_neighbours,
+            distance_weighted
+        )
 
 
 class NBClassifier(Classifier):
