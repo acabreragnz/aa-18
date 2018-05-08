@@ -1,4 +1,5 @@
 from unittest import TestCase
+from pandas import DataFrame
 from lab3.ej7.src.classifier import KNNClassifier
 from arff_helper import DataSet
 from ds_preprocessing import DataSetPreprocessor
@@ -6,6 +7,7 @@ from ds_preprocessing import DataSetPreprocessor
 
 class TestKnnAutismAdult(TestCase):
     
+    # noinspection PyPep8Naming
     def test_basic(self):
         """
         En el conjunto de entrenamiento la clasificacion debe ser perfecta (para una instancias x,
@@ -16,12 +18,14 @@ class TestKnnAutismAdult(TestCase):
         target_attribute = 'Class/ASD'
         preprocessor = DataSetPreprocessor(ds, target_attribute)
         df = preprocessor.transform_to_rn()
+        X: DataFrame = df.drop(columns=target_attribute)
+        y = df[target_attribute]
 
-        classifier = KNNClassifier(1, target_attribute)
-        classifier.fit(df)
+        classifier = KNNClassifier(1)
+        classifier.fit(X, y)
 
         for i in range(len(df)):
-            self.assertEqual(classifier.predict(df.loc[i]),
-                             df.loc[i][target_attribute],
+            self.assertEqual(classifier.predict(X.loc[i]),
+                             y.loc[i],
                              f'El valor predecido para la instancia {i} no coincide su valor en el dataset')
 

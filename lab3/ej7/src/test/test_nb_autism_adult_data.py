@@ -31,7 +31,7 @@ class TestAutismAdultDataEj3(TestCase):
         test_pandas_df = ds.pandas_df.loc[~ds.pandas_df.index.isin (train_pandas_df.index), :]
 
         ds_train = DataSet ()
-        ds_train.load_from_pandas_df (train_pandas_df, ds.attribute_info, ds.attribute_list)
+        ds_train.load_from_pandas_df(train_pandas_df, ds.attribute_info, ds.attribute_list)
 
         # Instancio clasificador nb para realizar la validacion
         classifier = NBClassifier (target_attribute, ds.attribute_info, ds.attribute_list)
