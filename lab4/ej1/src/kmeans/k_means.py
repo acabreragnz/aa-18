@@ -82,6 +82,5 @@ def k_means(dataset, num_clusters, iterations):
         it_counter += 1
         new_points_cluster = [[] for i in range(num_clusters)]
 
-        # print_clusters_status(it_counter, clusters)
-
     print_results(clusters)
+    return clusters
