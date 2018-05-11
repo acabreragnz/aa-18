@@ -8,25 +8,15 @@ def print_results(kmeans, clusters):
     centroids = kmeans.cluster_centers_
     num_cluster_points = kmeans.labels_.tolist ()
 
-    clusters_copy = clusters[:]
-    print (f'Resultados k= {len(centroids)}: \n\n')
-    table = []
+    cant = 0;
     for i, centroid in enumerate(centroids):
 
-        dist_min = sys.float_info.max
-        cluster_prox = None
-
-        for j, cluster in enumerate(clusters_copy):
+        for j, cluster in enumerate(clusters):
             dist = distance.euclidean(cluster.centroid, centroid)
-            if dist <= dist_min:
-                dist_min = dist
-                cluster_prox = cluster
+            if dist == 0 and num_cluster_points.count(i) == len(cluster.points):
+                cant = cant + 1
 
-        table.append ([i + 1, num_cluster_points.count(i), len(cluster_prox.points),
-                       distance.euclidean (cluster_prox.centroid, centroid)])
-        clusters_copy.remove(cluster_prox)
-
-    print (tabulate (table, headers=["Cluster", "Number Points in Cluster sklearn", "Number Points in Cluster", "Distancia centroides"]))
+    print(f'\nCantidad de clusters con igual centroide e igual cantidad de puntos: {cant}\n')
 
 
 def print_results2(J, J_sklearn):

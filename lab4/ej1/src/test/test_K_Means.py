@@ -2,7 +2,6 @@ from unittest import TestCase
 
 from kmeans.k_means import k_means
 from kmeans.kmeans_helper import print_results, print_results2
-from sklearn.datasets import load_files
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.cluster import KMeans
 import pandas as pd
@@ -19,12 +18,11 @@ class TestKMeans(TestCase):
         for fname in filenames:
             with open (fname,encoding='latin-1') as infile:
                 for line in infile:
-                    text.append(line)
+                    text.append (line)
 
-        vectorizer = CountVectorizer (encoding='latin-1')
+        # vectorizer = CountVectorizer (encoding='latin-1', stop_words='english', max_features=300)
+        vectorizer = CountVectorizer (encoding='latin-1', stop_words='english', min_df=20)
         vector = vectorizer.fit_transform (text)
-
-        print(vector.shape)
 
         df = pd.DataFrame (data=vector.toarray ())
         points = df.as_matrix ().tolist()
@@ -33,13 +31,18 @@ class TestKMeans(TestCase):
         J = []
         J_sklearn = []
         max_iterations =10
-        for n_clusters in range(100,101):
+
+        for n_clusters in range(10, 100, 10):
 
             clusters = k_means(points, n_clusters, max_iterations)
+
+            print("TERMINO IMPLEMENTACION KMEANS")
 
             kmeans = KMeans (n_clusters=n_clusters, max_iter=max_iterations, init='random')
             # Calculate Kmeans
             kmeans.fit (points)
+
+            print ("TERMINO LA LIBRERIA")
 
             # Print final result
             print_results (kmeans, clusters)
@@ -54,7 +57,6 @@ class TestKMeans(TestCase):
         print_results2(J, J_sklearn)
 
 
-
     def test3(self):
 
         path = '../../../datasets/Health-Tweets/*.txt'
@@ -66,7 +68,7 @@ class TestKMeans(TestCase):
                 for line in infile:
                     text.append(line)
 
-        vectorizer = CountVectorizer (encoding='latin-1')
+        vectorizer = CountVectorizer (encoding='latin-1',min_df=20)
         vectors = vectorizer.fit_transform (text)
 
         print(vectors.shape)
