@@ -6,21 +6,25 @@ from sklearn.datasets import load_files
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.cluster import KMeans
 import pandas as pd
-
+import glob
 
 class TestKMeans(TestCase):
 
     def test(self):
 
-        dataset = load_files ("../../../datasets",categories=['Health-Tweets'])
-        # list of text documents
-        text = dataset.data
+        path = '../../../datasets/Health-Tweets/*.txt'
+        filenames = glob.glob (path)
 
-        # create the transform
-        vectorizer = CountVectorizer (encoding='latin-1', stop_words='english')
-        # tokenize and build vocab
-        vectorizer.fit (text)
+        text = []
+        for fname in filenames:
+            with open (fname,encoding='latin-1') as infile:
+                for line in infile:
+                    text.append(line)
+
+        vectorizer = CountVectorizer (encoding='latin-1')
         vector = vectorizer.fit_transform (text)
+
+        print(vector.shape)
 
         df = pd.DataFrame (data=vector.toarray ())
         points = df.as_matrix ().tolist()
@@ -29,7 +33,7 @@ class TestKMeans(TestCase):
         J = []
         J_sklearn = []
         max_iterations =10
-        for n_clusters in range(2,17):
+        for n_clusters in range(100,101):
 
             clusters = k_means(points, n_clusters, max_iterations)
 
@@ -52,17 +56,18 @@ class TestKMeans(TestCase):
 
 
     def test3(self):
-        dataset = load_files ("../../../datasets",categories=['Health-Tweets'])
-        # list of text documents
-        text = dataset.data
 
-        # create the transform
-        vectorizer = CountVectorizer (encoding='latin-1', stop_words='english')
-        # tokenize and build vocab
-        vectorizer.fit (text)
-        vector = vectorizer.fit_transform (text)
+        path = '../../../datasets/Health-Tweets/*.txt'
+        filenames = glob.glob (path)
 
-        data = pd.DataFrame (data=vector.toarray())
+        text = []
+        for fname in filenames:
+            with open (fname,encoding='latin-1') as infile:
+                for line in infile:
+                    text.append(line)
 
-        print(data.as_matrix().transpose().shape)
-        print (data.as_matrix ().transpose ().tolist())
+        vectorizer = CountVectorizer (encoding='latin-1')
+        vectors = vectorizer.fit_transform (text)
+
+        print(vectors.shape)
+
