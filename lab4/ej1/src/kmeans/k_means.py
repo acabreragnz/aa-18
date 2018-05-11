@@ -1,7 +1,6 @@
 import random
 import numpy as np
 import logging
-import pandas as pd
 import sys
 from scipy.spatial import distance
 from lab4.ej1.src.kmeans.Point import Point
@@ -68,7 +67,7 @@ def k_means(dataset, num_clusters, iterations):
     clusters_cost_min = None
     cost_min = sys.float_info.max
 
-    for i in range(3):
+    for i in range(5):
         # INICIALIZACIÓN: Selección aleatoria de N puntos y creación de los Clusters
         initial = random.sample(points, num_clusters)
         clusters = [Cluster([p]) for p in initial]
