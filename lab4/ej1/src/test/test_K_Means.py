@@ -1,13 +1,11 @@
 from unittest import TestCase
 
-import sys
 from kmeans.k_means import k_means
+from kmeans.kmeans_helper import print_results, print_results2
 from sklearn.datasets import load_files
 from sklearn.feature_extraction.text import CountVectorizer
-from time import time
 from sklearn.cluster import KMeans
-from tabulate import tabulate
-from scipy.spatial import distance
+import pandas as pd
 
 import logging
 
@@ -22,50 +20,57 @@ class TestKMeans(TestCase):
         dataset = load_files ("../../../datasets",categories=['Health-Tweets'])
         # list of text documents
         text = dataset.data
+
         # create the transform
         vectorizer = CountVectorizer (encoding='latin-1')
         # tokenize and build vocab
         vectorizer.fit (text)
         vector = vectorizer.fit_transform (text)
 
-        # summarize encoded vector
-        print (vector.shape)
-        print (type (vector))
-        # print (vector.toarray ())
+        df = pd.DataFrame (data=vector.toarray ())
+        points = df.as_matrix ().transpose().tolist()
+        print (df.as_matrix().shape)
 
+        J = []
+        J_sklearn = []
         max_iterations =300
-        for n_clusters in range(2,16):
+        for n_clusters in range(1000,1000*4,1000):
             logging.info (f'Cluseters: {n_clusters}')
-            clusters = k_means(vector, n_clusters, max_iterations)
+
+            clusters = k_means(points, n_clusters, max_iterations)
             logging.info (
                 '-------------------------------------------')
-            t0 = time ()
+
             kmeans = KMeans (n_clusters=n_clusters, max_iter=max_iterations, init='random')
             # Calculate Kmeans
-            kmeans.fit (vector)
+            kmeans.fit (points)
 
             # Print final result
-            print_results (kmeans, clusters)
+            # print_results (kmeans, clusters)
 
+            cost = 0
+            for c in clusters:
+                cost = cost + c.cost_function ()
+            cost_sklearn = kmeans.inertia_
+            J.append(cost)
+            J_sklearn.append(cost_sklearn)
+
+        print_results2(J, J_sklearn)
         logging.info ('------------------------------------------------------------------------------------------------')
 
-def print_results(kmeans, clusters):
-    # Obtain centroids and number Cluster of each point
-    centroids = kmeans.cluster_centers_
-    num_cluster_points = kmeans.labels_.tolist ()
-    clusters_copy = clusters[:]
-    print ('\n\nFINAL RESULT:')
-    table = []
-    for i, centroid in enumerate(centroids):
-        dist_min = sys.float_info.max
-        cluster_prox = None
-        for j, cluster in enumerate(clusters_copy):
-            dist = distance.euclidean(cluster.centroid, centroid)
-            if dist <= dist_min:
-                dist_min = dist
-                cluster_prox = cluster
-        table.append ([i + 1, num_cluster_points.count (i), clusters.index(cluster_prox) + 1, len (cluster_prox.points),
-                       distance.euclidean (cluster_prox.centroid, centroid)])
-        clusters_copy.remove(cluster_prox)
 
-    print (tabulate (table, headers=["Cluster", "Number Points in Cluster sklearn", "Cluster", "Number Points in Cluster", "Distancia centroides"]))
+    def test3(self):
+        dataset = load_files ("../../../datasets",categories=['Health-Tweets'])
+        # list of text documents
+        text = dataset.data
+
+        # create the transform
+        vectorizer = CountVectorizer (encoding='latin-1')
+        # tokenize and build vocab
+        vectorizer.fit (text)
+        vector = vectorizer.fit_transform (text)
+
+        data = pd.DataFrame (data=vector.toarray())
+
+        print(data.as_matrix().transpose().shape)
+        print (data.as_matrix ().transpose ().tolist())

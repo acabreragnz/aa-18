@@ -1,5 +1,5 @@
 import numpy as np
-
+from scipy.spatial import distance
 
 class Cluster:
 
@@ -23,6 +23,9 @@ class Cluster:
 
     def calculate_centroid(self):
 
+        if len (self.points) == 0:
+            return self.centroid
+
         sum_coordinates = np.zeros (self.dimension)
         for p in self.points:
             for i, x in enumerate (p.coordinates):
@@ -36,3 +39,10 @@ class Cluster:
         self.points = points
         self.centroid = self.calculate_centroid()
         self.converge = np.array_equal(old_centroid, self.centroid)
+
+    def cost_function(self):
+
+        sum = 0;
+        for p in self.points:
+            sum = sum + distance.euclidean(p.coordinates, self.centroid) ** 2
+        return sum
