@@ -20,8 +20,7 @@ class TestKMeans(TestCase):
                 for line in infile:
                     text.append (line)
 
-        # vectorizer = CountVectorizer (encoding='latin-1', stop_words='english', max_features=300)
-        vectorizer = CountVectorizer (encoding='latin-1', stop_words='english', min_df=20)
+        vectorizer = CountVectorizer (encoding='latin-1', stop_words='english', max_features=300)
         vector = vectorizer.fit_transform (text)
 
         df = pd.DataFrame (data=vector.toarray ())
@@ -32,7 +31,7 @@ class TestKMeans(TestCase):
         J_sklearn = []
         max_iterations =10
 
-        for n_clusters in range(10, 100, 10):
+        for n_clusters in range(40, 60, 10):
 
             clusters = k_means(points, n_clusters, max_iterations)
 
@@ -41,7 +40,7 @@ class TestKMeans(TestCase):
             kmeans.fit (points)
 
             # Print final result
-            print_results (kmeans, clusters)
+            print_results1(kmeans, clusters)
 
             cost = 0
             for c in clusters:
@@ -49,6 +48,9 @@ class TestKMeans(TestCase):
             cost_sklearn = kmeans.inertia_
             J.append(cost)
             J_sklearn.append(cost_sklearn)
+
+            print(J)
+            print (J_sklearn)
 
         print_results_J(J, J_sklearn)
 
