@@ -1,6 +1,8 @@
 import random
 import numpy as np
 import logging
+
+import sys
 from scipy.spatial import distance
 from lab4.ej1.src.kmeans.Point import Point
 from lab4.ej1.src.kmeans.Cluster import Cluster
@@ -55,51 +57,52 @@ def print_results(clusters):
         # logging.info('\t\tCentroid: %s' % str(c.centroid))
 
 
-def k_means(dataset, num_clusters, iterations):
+def k_means(dataset, num_clusters, iterations, optimize=False):
+    points = dataset_to_list_points (dataset)
 
-    points = dataset_to_list_points(dataset)
+    # J(c,µ) = ∑ || x^(i) - µc^(i)||^2
+    # Se inicializan varias veces los centroides y se toma el resultado con menor valor en la funcion de costos
+    # para evitar minimos locales
 
-    # #J(c,µ) = ∑ || x^(i) - µc^(i)||^2
-    # #Se inicializan varias veces los centroides y se toma el resultado con menor valor en la funcion de costos
-    # #para evitar minimos locales
-    #
-    # clusters_cost_min = None
-    # cost_min = sys.float_info.max
-    #
-    # for i in range(5):
+    clusters_cost_min = None
+    cost_min = sys.float_info.max
 
-    # INICIALIZACIÓN: Selección aleatoria de N puntos y creación de los Clusters
-    initial = random.sample(points, num_clusters)
-    clusters = [Cluster([p]) for p in initial]
+    n = 1
+    if optimize:
+        n = 5
 
-    # Inicializamos una lista para el paso de asignación de objetos
-    new_points_cluster = [[] for i in range(num_clusters)]
+    for i in range (1):
+        # INICIALIZACIÓN: Selección aleatoria de N puntos y creación de los Clusters
+        initial = random.sample (points, num_clusters)
+        clusters = [Cluster ([p]) for p in initial]
 
-    converge = False
-    it_counter = 0
-    while (not converge) and (it_counter < iterations):
-        # ASIGNACION
-        for p in points:
-            i_cluster = get_nearest_cluster(clusters, p)
-            new_points_cluster[i_cluster].append(p)
+        # Inicializamos una lista para el paso de asignación de objetos
+        new_points_cluster = [[] for i in range (num_clusters)]
 
-        # ACTUALIZACIÓN
-        for i, c in enumerate(clusters):
-            c.update_cluster(new_points_cluster[i])
+        converge = False
+        it_counter = 0
+        while (not converge) and (it_counter < iterations):
+            # ASIGNACION
+            for p in points:
+                i_cluster = get_nearest_cluster (clusters, p)
+                new_points_cluster[i_cluster].append (p)
 
-        # ¿CONVERGE?
-        converge = [c.converge for c in clusters].count(False) == 0
+            # ACTUALIZACIÓN
+            for i, c in enumerate (clusters):
+                c.update_cluster (new_points_cluster[i])
 
-        # Incrementamos el contador
-        it_counter += 1
-        new_points_cluster = [[] for i in range(num_clusters)]
+            # ¿CONVERGE?
+            converge = [c.converge for c in clusters].count (False) == 0
 
-        # cost = 0
-        # for c in clusters:
-        #     cost = cost + c.cost_function()
-        # if cost < cost_min:
-        #     cost_min = cost
-        #     clusters_cost_min = clusters
+            # Incrementamos el contador
+            it_counter += 1
+            new_points_cluster = [[] for i in range (num_clusters)]
 
-    print_results(clusters)
-    return clusters
+        cost = 0
+        for c in clusters:
+            cost = cost + c.cost_function ()
+        if cost < cost_min:
+            cost_min = cost
+            clusters_cost_min = clusters
+
+    return clusters_cost_min

@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from kmeans.k_means import k_means
-from kmeans.kmeans_helper import print_results, print_results2
+from kmeans.kmeans_helper import print_results_J, print_results, print_results1
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.cluster import KMeans
 import pandas as pd
@@ -36,13 +36,9 @@ class TestKMeans(TestCase):
 
             clusters = k_means(points, n_clusters, max_iterations)
 
-            print("TERMINO IMPLEMENTACION KMEANS")
-
             kmeans = KMeans (n_clusters=n_clusters, max_iter=max_iterations, init='random')
             # Calculate Kmeans
             kmeans.fit (points)
-
-            print ("TERMINO LA LIBRERIA")
 
             # Print final result
             print_results (kmeans, clusters)
@@ -54,7 +50,7 @@ class TestKMeans(TestCase):
             J.append(cost)
             J_sklearn.append(cost_sklearn)
 
-        print_results2(J, J_sklearn)
+        print_results_J(J, J_sklearn)
 
 
     def test3(self):
