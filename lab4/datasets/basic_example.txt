@@ -48,3 +48,19 @@
 547058681599520769|Mon Dec 22 15:58:48 +0000 2014|Personal Health: Why Cafeteria Food Is the Best http://nyti.ms/1zVQnou
 546894013090263040|Mon Dec 22 05:04:28 +0000 2014|Pharmacy Deal Heralds Changed Landscape for Hepatitis Drugs http://nyti.ms/1wd8nEK
 546525411623337984|Sun Dec 21 04:39:46 +0000 2014|Military Medicine: Military Hospital Care Is Questioned; Next, Reprisals http://nyti.ms/16Eu0co
+546389588973854720|Sat Dec 20 19:40:04 +0000 2014|Dispatch: Ebola Should Be Easy to Treat http://nyti.ms/1xyIZQn
+546141844288331777|Sat Dec 20 03:15:37 +0000 2014|Pain Clinic Doctor Is Sentenced In Overdose Deaths of 2 Patients  http://nyti.ms/1v9WeB3
+546141843432685568|Sat Dec 20 03:15:36 +0000 2014|Hepatitis C Treatment Wins Approval, but Price Relief May Be Limited http://nyti.ms/1ww5GTT
+546021777076666369|Fri Dec 19 19:18:30 +0000 2014|Well: For Hanukkah, Cooking With Oil http://nyti.ms/1zdlfC2
+545990925915545600|Fri Dec 19 17:15:55 +0000 2014|The New Old Age Blog: Dementia, but Prettier http://nyti.ms/1zcVIJ6
+545805323463065600|Fri Dec 19 04:58:24 +0000 2014|Lee W. Wattenberg, Who Saw Cancer Fighters in Foods, Dies at 92 http://nyti.ms/13FV3mD
+545796300055531520|Fri Dec 19 04:22:32 +0000 2014|Liberia Will Proceed With Senate Vote Delayed by Ebola  http://nyti.ms/1v6aOJQ
+545749330033143808|Fri Dec 19 01:15:54 +0000 2014|World Briefing: Obesity May Be a Disability, Court Says http://nyti.ms/13iF90F
+545654369715503104|Thu Dec 18 18:58:34 +0000 2014|Well: Weight Gain During Pregnancy Is Especially Good for Boys http://nyti.ms/1AwfGLZ
+545654368801148928|Thu Dec 18 18:58:33 +0000 2014|Well: Ask Well: Wild Fish vs. Farmed Fish http://nyti.ms/1C3N6Wp
+545621096255729665|Thu Dec 18 16:46:21 +0000 2014|Medical Paradox: Can Cuba Escape Poverty but Stay Healthy? http://nyti.ms/1r34s1u
+545443639825293313|Thu Dec 18 05:01:12 +0000 2014|World Briefing: Agencies Warn of Hunger in Ebola Zone http://nyti.ms/1GSGc4f
+545413335353933824|Thu Dec 18 03:00:47 +0000 2014|Citing Health Risks, Cuomo to Ban Fracking in New York State http://nyti.ms/13dIvlp
+545407394747265024|Thu Dec 18 02:37:10 +0000 2014|For That Door-to-Treadmill Service http://nyti.ms/13dDyJe
+545308477292560384|Wed Dec 17 20:04:06 +0000 2014|Well: Belly Fat Tied to Sudden Cardiac Death http://nyti.ms/1AIfysB
+545288768371310592|Wed Dec 17 18:45:48 +0000 2014|The New Old Age Blog: Questionable Remedies for Eye Disease http://nyti.ms/1zwwjrx
