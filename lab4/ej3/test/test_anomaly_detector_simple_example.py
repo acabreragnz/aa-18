@@ -8,7 +8,7 @@ from lab4.ej3.src.anomaly_detector import AnomalyTextDetector
 class TestAnomalyDectectorSimpleExample(TestCase):
     
     def test_anomaly_detector(self):
-        path = './../../datasets/basic_example.txt'
+        path = './../datasets/basic_example.txt'
 
         with open(path, encoding='latin-1') as f:
             text = f.read()

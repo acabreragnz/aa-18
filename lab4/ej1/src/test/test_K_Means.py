@@ -11,7 +11,7 @@ class TestKMeans(TestCase):
 
     def test(self):
 
-        path = '../../../datasets/Health-Tweets/*.txt'
+        path = './../../datasets/Health-Tweets/*.txt'
         filenames = glob.glob (path)
 
         text = []
@@ -57,7 +57,7 @@ class TestKMeans(TestCase):
 
     def test3(self):
 
-        path = '../../../datasets/Health-Tweets/*.txt'
+        path = './../../datasets/Health-Tweets/*.txt'
         filenames = glob.glob (path)
 
         text = []
