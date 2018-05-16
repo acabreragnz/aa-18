@@ -48,11 +48,7 @@ class AnomalyDetector:
         return self._is_anomalous(productorial_pdf), productorial_pdf
 
     def _is_anomalous(self, productorial_pdf):
-
-        lower = productorial_pdf < -self._threshold
-        higher = productorial_pdf > self._threshold
-
-        return lower or higher
+        return productorial_pdf < self._threshold
 
     def _productorial_pdf(self, instance):
         total_features = len(self._features_by_row)

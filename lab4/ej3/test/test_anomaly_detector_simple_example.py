@@ -32,6 +32,6 @@ class TestAnomalyDectectorSimpleExample(TestCase):
         print(f'Numpy pdf: {numpy_pdf}')
 
         # este metodo no es bueno para detectar anomalias en textos
-        assert prediction_is_anomalous
+        assert not prediction_is_anomalous
         assert math.isclose(prediction_pdf, numpy_pdf, rel_tol=1e-7)
 
