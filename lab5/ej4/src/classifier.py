@@ -1,69 +1,59 @@
-from pandas import DataFrame, Series
+import sys
+import numpy as np
+from numpy import ndarray
 from sklearn.base import BaseEstimator, ClassifierMixin
-from typing import Union, Tuple, Any
-
-
-def _generate_train_set(X, y, target_attribute: str='target_') -> Tuple[DataFrame, str]:
-    """
-    Generate a combined DataFrame attributes on X and y (the target attribute)
-    The new's DataFrame index start from 0 to len(X)-1 and the step is 1
-
-    :param target_attribute: name for the target attribute (values on y)
-    :return:
-    """
-    # .copy() suppress SettingWithCopyWarning, more info https://github.com/pandas-dev/pandas/issues/17476
-    # noinspection PyPep8Naming
-    X_train: DataFrame = X.copy()
-    X_train[target_attribute] = y
-    # noinspection PyPep8Naming
-    X_train: DataFrame = X_train.reset_index() \
-        .drop(columns=['index'], axis=1)
-    return X_train, target_attribute
+from log_regression import target_function, cost_function
 
 
 class LRClassifier(BaseEstimator, ClassifierMixin):
 
-    def __init__(self):
+    def __init__(self, tolerance: float):
         """
         Constructor
 
+        :param tolerance: defines a threshold for the cost function so the fit method will iterate until the cost
+            function falls under this value.
         """
 
-    def fit(self, X: DataFrame, y: Series):
+        self.tolerance = tolerance
+
+    def fit(self, X: ndarray, y: ndarray):
         """
         Fits the classifier with a set of examples
 
         :param X: set of examples (all attributes must be numeric)
-        :param y: y values for each instance on X
+        :param y: target value for each instance on X (values must be 1 or 0 (integer or float))
         """
 
-        # noinspection PyAttributeOutsideInit
-        self.X_ = X
-        # noinspection PyAttributeOutsideInit
-        self.y_ = y
+        # noinspection PyAttributeOutsideInit,PyUnresolvedReferences
+        self.theta_ = np.zeros(X.shape[1])
+        cost = sys.float_info.max
+        m = X.shape[0]
+        alpha = 1
+
+        # implements gradient descent in batch mode (until the value of the cost function is under the tolerance)
+        while cost > self.tolerance:
+            # noinspection PyTypeChecker
+            gradient = (1 / m) * (X.transpose() @ (target_function(X, self.theta_) - y))
+            # noinspection PyAttributeOutsideInit
+            self.theta_ = self.theta_ - alpha * gradient
+            # noinspection PyUnresolvedReferences
+            cost = cost_function(X, y, self._theta)
 
         return self
 
-    def predict(self, X: Union[DataFrame, Series]) -> Union[Series, Any]:
+    def predict(self, X: ndarray) -> ndarray:
         """
         Predict y value for a set of instances
 
-        :param X: set of instances which y value wants to be predicted (use pandas Series for individual instances)
-        :return: returns the list of predicted values for each instance in X (if X is just an individual instance it
-            just returns its predicted value)
-
+        :param X: set of instances which y value wants to be predicted
+        :return: returns the list of predicted values for each instance in X
         """
 
         try:
-            getattr(self, "X_")
-            (X_train, target_attribute) = _generate_train_set(self.X_, self.y_)
+            getattr(self, "theta_")
         except AttributeError:
             raise RuntimeError("You must train classifier before predicting data!")
 
-        # X is a set
-        if X.__class__ == DataFrame:
-            pass
-
-        # X is an instance
-        else:
-            pass
+        # noinspection PyTypeChecker
+        return np.apply_along_axis(lambda row: 1 if np.sum(row * self.theta_) > 0 else 0, axis=1, arr=X)
