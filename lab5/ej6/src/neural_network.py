@@ -55,6 +55,9 @@ class NeuralNetwork:
         print('---> Output Layer')
         self._output_layer.print()
 
+    def get_errors(self):
+        return [np.random.rand () for i in range (40)]
+
 
 class NeuralLayer:
     def __init__(self, size, layer_num, total_weights, weights=None, bias=None):

@@ -49,6 +49,11 @@ class TestParte2b(TestCase):
                 G.append(g(x,y))
                 H.append(h(x,y))
 
+            plt.grid(True)
+            plt.ylabel ('Max Iter='+str(max_iter))
+            plt.plot(neural_network.get_errors(), color='b', label='Error')
+            plt.legend (loc=0)
+            plt.show ()
 
             plt.grid(True)
             plt.ylabel ('Max Iter='+str(max_iter))
