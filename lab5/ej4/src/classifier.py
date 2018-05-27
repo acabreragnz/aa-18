@@ -37,8 +37,8 @@ class LRClassifier(BaseEstimator, ClassifierMixin):
             gradient = (1 / m) * (X.transpose() @ (target_function(X, self.theta_) - y))
             # noinspection PyAttributeOutsideInit
             self.theta_ = self.theta_ - alpha * gradient
-            # noinspection PyUnresolvedReferences
-            cost = cost_function(X, y, self._theta)
+            # noinspection PyUnresolvedReferences,PyTypeChecker
+            cost = cost_function(X, y, self.theta_)
 
         return self
 
