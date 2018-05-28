@@ -30,40 +30,66 @@ class NeuralNetwork:
         self._tolerance = tolerance
         self._max_iter = max_iter
         self._enable_gradient_checking = enable_gradient_checking
-        self._training_examples = []
-        self._target_attribute = None
+        self._training_examples = None
+        self._training_examples_result = None
+        self._errors_per_iteration = None
 
     def fit(self, training_examples, target_attribute):
+        self._training_examples_result = training_examples[target_attribute]
+        self._training_examples = training_examples.drop('fn_result', axis=1)
+        error_per_iteration = np.zeros((self._max_iter, len(self._training_examples_result)))
 
         # TODO: tener en cuenta la tolerancia
-        # TODO: calcular el error para cada iteracion y cada instancia de entrenamiento, devolver como resultado
         for iter_index in range(self._max_iter):
-            self._training_examples = training_examples
-            self._target_attribute = target_attribute
-
             self.init_gradient_calculators()
-            self.backward_propagate_error()
+
+            error_per_iteration[iter_index] = self.backward_propagate_error()
+
             self.calculate_gradient()
+
+            if self._enable_gradient_checking:
+                self.gradient_checking(self.get_flat_gradient())
+
             self.update_weights()
+
+        self._errors_per_iteration = error_per_iteration
 
     def init_gradient_calculators(self):
         for layer in self._layers:
             layer.init_gradient_calculators()
 
     def backward_propagate_error(self):
-        for training_example in self._training_examples:
-            self.feed_forward(training_example)
-            self._output_layer.backward_propagate_ouput_error(training_example[self._target_attribute])
-            self._hidden_layer.backward_propagate_hidden_error(self.get_associated_weights(), self.get_associated_deltas())
+        training_errors = np.zeros(len(self._training_examples))
+
+        for index, row in self._training_examples.iterrows():
+            expected_output = self._training_examples_result[index]
+            output = self.predict(row)
+
+            training_errors[index] = (expected_output - output) ** 2
+
+            self._output_layer.backward_propagate_output_error(expected_output)
+            self._hidden_layer.backward_propagate_hidden_error(
+                self.get_associated_weights(),
+                self.get_associated_deltas()
+            )
 
             for layer in self._layers:
                 layer.accumulate_delta()
+
+        return training_errors
 
     def calculate_gradient(self):
         total_examples = len(self._training_examples)
 
         for layer in self._layers:
             layer.calculate_gradient(total_examples)
+
+    def get_flat_gradient(self):
+        gradient_grouped_layer = self.get_gradient()
+        return [val for sublist in gradient_grouped_layer for val in sublist]
+
+    def get_gradient(self):
+        return [layer.get_gradient() for layer in self._layers]
 
     def update_weights(self):
         for layer in self._layers:
@@ -74,51 +100,44 @@ class NeuralNetwork:
 
         return activations[-1]
 
-    def predict_with_weights(self, instance, weights):
-        self._output_layer.activate_with_weights(instance, weights)
-
     def feed_forward(self, inputs):
         input_activations = inputs
-
         hidden_activations = self._hidden_layer.activate(inputs)
         output_activations = self._output_layer.activate(hidden_activations)
 
         return [input_activations, hidden_activations, output_activations]
 
-    # TODO: usar bien todos los pesos, cargarlos bien y predecir clonando
-    # TODO: bias no lo estamos teniendo en cuenta?
-    def gradient_checking(self, eps, gradient):
-        output_weights = self._output_layer.get_weights()
-        hidden_weights = self._hidden_layer.get_weights()
-        grad_approx = np.zeros(len(self._training_examples))
+    def gradient_checking(self, gradient, eps=0.01):
+        i = 0
+        training_examples = self._training_examples
+        y = self._training_examples_result
+        total_weights_and_bias = self.total_weights_and_bias()
 
-        for index, weight in enumerate(output_weights + hidden_weights):
-            theta_plus = np.copy(output_weights)
-            theta_minus = np.copy(output_weights)
+        grad_approx = np.zeros(total_weights_and_bias)
 
-            theta_plus[index] = weight + eps
-            theta_minus[index] = weight - eps
-            grad_approx[index] = self.gradient_approx(theta_plus, theta_minus, eps)
+        for layer in self._layers:
+            for neuron in layer.get_neurons():
+                for index, weight in enumerate(neuron.get_weights_with_bias()):
+                    neuron.set_weight(index, weight + eps)
+                    h_plus = map(lambda x: self.predict(x), training_examples)
+                    j_plus = self.j(y, list(h_plus), len(training_examples))
 
+                    neuron.set_weight(index, weight - eps)
+                    h_minus = map(lambda x: self.predict(x), training_examples)
+                    j_minus = self.j(y, list(h_minus), len(training_examples))
+
+                    grad_approx[i] = (j_plus - j_minus) / 2 * eps
+
+                    # set original weight
+                    neuron.set_weight(index, weight)
+                    i += 1
+
+        # change tolerances
         return np.isclose(gradient, grad_approx, 1e-1, 1e-1), grad_approx
 
-    def gradient_approx(self, theta_plus, theta_minus, eps):
-        training_examples = self._training_examples
-        y = training_examples[self._target_attribute]
-        h_plus = map(lambda x: self.predict_with_weights(x, theta_plus), training_examples)
-        h_minus = map(lambda x: self.predict_with_weights(x, theta_minus), training_examples)
-
-        j_plus = self.j(y, h_plus, len(training_examples))
-        j_minus = self.j(y, h_minus, len(training_examples))
-
-        return (j_plus - j_minus) / 2 * eps
-
-    def cost_fn(self):
-        training_examples = self._training_examples
-        y = training_examples[self._target_attribute]
-        h = map(self.predict, training_examples)
-
-        return self.j(y, h, len(training_examples))
+    def total_weights_and_bias(self):
+        return self._hidden_layer.total_weights_and_bias() + \
+               self._output_layer.total_weights_and_bias()
 
     def get_associated_weights(self):
         return self._output_layer.get_weights()
@@ -127,8 +146,8 @@ class NeuralNetwork:
         return self._output_layer.get_deltas()
 
     @staticmethod
-    def j(y, h, total_training_examples):
-        return y * math.log(h) + (1 - y) * math.log(1 - h) / total_training_examples
+    def j(y, h_out, total_training_examples):
+        return -(y * math.log(h_out) + (1 - y) * math.log(1 - h_out)) / total_training_examples
 
     def print(self):
         print('------------------------')
@@ -142,7 +161,7 @@ class NeuralNetwork:
         self._output_layer.print()
 
     def get_errors(self):
-        return [np.random.rand () for i in range (40)]
+        return [np.average(error_iteration) for error_iteration in self._errors_per_iteration]
 
 
 class NeuralLayer:
@@ -160,32 +179,25 @@ class NeuralLayer:
             Neuron(
                 weights=self.get_or_create_weights(weights, i),
                 layer_num=self._layer_num,
-                unit_num=i,
+                unit_num=i+1,
                 bias=self.get_or_create_bias(bias, i)
             )
             for i in range(self._size)
         ]
 
     def activate(self, inputs):
-        activation = [neuron.activate(inputs) for neuron in self._neurons]
+        self._activation = [neuron.activate(inputs) for neuron in self._neurons]
 
-        if len(activation) == 1:
-            activation = activation[0]
-
-        self._activation = activation
-
-        return activation
-
-    def activate_with_weights(self, inputs, weights):
-        activation = [neuron.activate_with_weights(inputs, weights[index]) for index, neuron in enumerate(self._neurons)]
-
-        if len(activation) == 1:
-            activation = activation[0]
-
-        return activation
+        return self._activation
 
     def get_weights(self):
         return [neuron.get_weights() for neuron in self._neurons]
+
+    def get_bias(self):
+        return [neuron.get_bias() for neuron in self._neurons]
+
+    def total_weights_and_bias(self):
+        return len(self.get_weights()) + 1
 
     def get_deltas(self):
         return [neuron.get_deltas() for neuron in self._neurons]
@@ -200,14 +212,17 @@ class NeuralLayer:
             return NeuralLayer.random_weights(self._total_weights)
 
     def total_neurons(self):
-        return len(self._neurons)
+        return len(self.get_neurons())
+
+    def get_neurons(self):
+        return self._neurons
 
     def init_gradient_calculators(self):
         for neuron in self._neurons:
             neuron.init_gradient_calculators()
 
-    def backward_propagate_ouput_error(self, expected_output):
-        for neuron in self._neurons:
+    def backward_propagate_output_error(self, expected_output):
+        for index, neuron in enumerate(self._neurons):
             neuron.calculate_output_error(expected_output)
 
     def backward_propagate_hidden_error(self, associated_weights, associated_deltas):
@@ -224,6 +239,9 @@ class NeuralLayer:
     def calculate_gradient(self, total_examples):
         for neuron in self._neurons:
             neuron.calculate_gradient(total_examples)
+
+    def get_gradient(self):
+        return [neuron.get_gradient() for neuron in self._neurons]
 
     def update_weights(self, learning_rate):
         for neuron in self._neurons:
@@ -269,19 +287,22 @@ class Neuron:
         self._inputs = None
         self._activation = None
         self._delta = None
-        self._max_deltas = None
+        self._bias_max_delta = None
+        self._weight_max_deltas = None
         self._partial_derivative_weight = None
+        self._partial_derivative_bias = None
 
     def activate(self, inputs):
+        print("inputs")
+        print(inputs)
+        print("self.weights")
+        print(self._weights)
+
         z = np.dot(self._weights, inputs) + self._bias
         self._activation = self.sigmoid(z)
         self._inputs = inputs
 
         return self._activation
-
-    def activate_with_weights(self, inputs, weights):
-        z = np.dot(weights, inputs) + self._bias
-        return self.sigmoid(z)
 
     # calculate the derivative of the neuron activation
     @staticmethod
@@ -301,26 +322,33 @@ class Neuron:
         return self._delta
 
     def update_weights(self, l_rate):
-        # TODO: update bias!
-        # self._bias -= self.bias_modifier(l_rate)
+        self._bias = self.bias_modifier(l_rate)
         self._weights = [self.weight_modifier(l_rate, index) for index, weight in enumerate(self._weights)]
 
     def bias_modifier(self, l_rate):
-        return self._bias - (l_rate * 1)
+        return self._bias - (l_rate * self._bias_max_delta)
 
     def weight_modifier(self, l_rate, weight_index):
         return self._weights[weight_index] - (l_rate * self._partial_derivative_weight[weight_index])
 
     def init_gradient_calculators(self):
-        self._max_deltas = np.zeros(len(self._weights))
+        self._weight_max_deltas = np.zeros(len(self._weights))
+        self._bias_max_delta = 0
         self._partial_derivative_weight = np.zeros(len(self._weights))
+        self._partial_derivative_bias = 0
 
     def accumulate_delta(self):
+        self._bias_max_delta += self._delta
+
         for weight_index in range(len(self._weights)):
-            self._max_deltas[weight_index] += self._delta * self._inputs[weight_index]
+            self._weight_max_deltas[weight_index] += self._inputs[weight_index] * self._delta
 
     def calculate_gradient(self, total_examples):
-        self._partial_derivative_weight = self._max_deltas / total_examples
+        self._partial_derivative_weight = self._weight_max_deltas / total_examples
+        self._partial_derivative_bias = self._bias_max_delta / total_examples
+
+    def get_gradient(self):
+        return [self._partial_derivative_bias] + self._partial_derivative_weight
 
     @staticmethod
     def sigmoid(x):
@@ -329,9 +357,17 @@ class Neuron:
     def get_weights(self):
         return self._weights
 
+    def get_weights_with_bias(self):
+        return [self._bias] + self._weights
+
     def get_deltas(self):
         return self._delta
 
     def get_bias(self):
         return self._bias
 
+    def set_weight(self, index, weight):
+        if index == 0:
+            self._bias = weight
+        else:
+            self._weights[index - 1] = weight
