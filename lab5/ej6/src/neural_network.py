@@ -36,7 +36,7 @@ class NeuralNetwork:
 
     def fit(self, training_examples, target_attribute):
         self._training_examples_result = training_examples[target_attribute]
-        self._training_examples = training_examples.drop('fn_result', axis=1)
+        self._training_examples = training_examples.drop(target_attribute, axis=1)
         error_per_iteration = np.zeros((self._max_iter, len(self._training_examples_result)))
 
         # TODO: tener en cuenta la tolerancia
