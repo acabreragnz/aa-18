@@ -14,9 +14,11 @@ class TestParte2b(TestCase):
         hidden_bias = np.random.rand(2)
         output_bias = np.random.rand(1)
 
-        for max_iter in [10**2, 10**3, 10**4, 10**5]:
+        for max_iter in [10**2]:#[10**2, 10**3, 10**4, 10**5]:
 
-            neural_network = NeuralNetwork(
+            training_data = get_training_data ()
+
+            neural_network_f = NeuralNetwork(
                 input_layer_size=2,
                 hidden_layer_size=2,
                 output_layer_size=1,
@@ -27,51 +29,79 @@ class TestParte2b(TestCase):
                 max_iter=max_iter
             )
 
-            neural_network.print()
+            neural_network_g = NeuralNetwork(
+                input_layer_size=2,
+                hidden_layer_size=2,
+                output_layer_size=1,
+                hidden_layer_weights=hidden_layer_weights,
+                output_layer_weights=output_layer_weights,
+                hidden_layer_bias=hidden_bias,
+                output_layer_bias=output_bias,
+                max_iter=max_iter
+            )
 
-            neural_network.fit()
+            neural_network_h = NeuralNetwork(
+                input_layer_size=2,
+                hidden_layer_size=2,
+                output_layer_size=1,
+                hidden_layer_weights=hidden_layer_weights,
+                output_layer_weights=output_layer_weights,
+                hidden_layer_bias=hidden_bias,
+                output_layer_bias=output_bias,
+                max_iter=max_iter
+            )
 
-            training_data = get_training_data()
+            neural_network_f.print()
 
-            P = []
-            F = []
-            G = []
-            H = []
+            data_f = training_data.drop (['g', 'h'], axis=1)
+            neural_network_f.fit (training_examples=data_f, target_attribute='f')
 
-            for point in training_data:
-                predict = neural_network.predict(point)
+            data_g = training_data.drop (['f', 'h'], axis=1)
+            neural_network_g.fit (training_examples=data_g, target_attribute='g')
 
-                P.append(predict)
+            data_h = training_data.drop (['f', 'g'], axis=1)
+            neural_network_h.fit (training_examples=data_h, target_attribute='h')
 
-                x = point[0]
-                y = point[1]
-                F.append(f(x))
-                G.append(g(x,y))
-                H.append(h(x,y))
+            P = [[],[],[]]
+            F = training_data['f']
+            G = training_data['g']
+            H = training_data['h']
+
+            for index, point in data_f.drop(['f'], axis=1).iterrows():
+
+                predict_f = neural_network_f.predict(point)
+                P[0].append(predict_f)
+
+                predict_g = neural_network_g.predict(point)
+                P[1].append(predict_g)
+
+                predict_h = neural_network_h.predict(point)
+                P[2].append(predict_h)
+
 
             plt.grid(True)
             plt.ylabel ('Max Iter='+str(max_iter))
-            plt.plot(neural_network.get_errors(), color='b', label='Error')
+            plt.plot(neural_network_f.get_errors(), color='b', label='Error')
             plt.legend (loc=0)
             plt.show ()
 
             plt.grid(True)
             plt.ylabel ('Max Iter='+str(max_iter))
-            plt.plot(P, color='b', label='Predict')
+            plt.plot(P[0], color='b', label='Predict')
             plt.plot(F, color='r', label='f')
             plt.legend (loc=0)
             plt.show ()
 
             plt.grid(True)
             plt.ylabel ('Max Iter=' + str (max_iter))
-            plt.plot(P, color='b', label='Predict')
+            plt.plot(P[1], color='b', label='Predict')
             plt.plot(G, color='r', label='g')
             plt.legend (loc=0)
             plt.show ()
 
             plt.grid(True)
             plt.ylabel ('Max Iter=' + str (max_iter))
-            plt.plot(P, color='b', label='Predict')
+            plt.plot(P[2], color='b', label='Predict')
             plt.plot(H, color='r', label='h')
             plt.legend (loc=0)
             plt.show ()
