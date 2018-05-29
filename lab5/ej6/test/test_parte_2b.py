@@ -14,7 +14,7 @@ class TestParte2b(TestCase):
         hidden_bias = np.random.rand(2)
         output_bias = np.random.rand(1)
 
-        for max_iter in [10**2]:#[10**2, 10**3, 10**4, 10**5]:
+        for max_iter in [10**2, 10**3, 10**4, 10**5]:
 
             training_data = get_training_data ()
 
@@ -81,7 +81,9 @@ class TestParte2b(TestCase):
 
             plt.grid(True)
             plt.ylabel ('Max Iter='+str(max_iter))
-            plt.plot(neural_network_f.get_errors(), color='b', label='Error')
+            plt.plot(neural_network_f.get_errors(), color='b', label='Error f')
+            plt.plot (neural_network_g.get_errors (), color='r', label='Error g')
+            plt.plot (neural_network_h.get_errors (), color='y', label='Error h')
             plt.legend (loc=0)
             plt.show ()
 
