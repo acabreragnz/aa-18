@@ -65,7 +65,7 @@ class NeuralNetwork:
             expected_output = self._training_examples_result[index]
             output = self.predict(row)
 
-            training_errors[index] = (expected_output - output) ** 2
+            training_errors[index] = NeuralNetwork.cross_entropy(expected_output, output[0])
 
             self._output_layer.backward_propagate_output_error(expected_output)
             self._hidden_layer.backward_propagate_hidden_error(
@@ -147,7 +147,11 @@ class NeuralNetwork:
 
     @staticmethod
     def j(y, h_out, total_training_examples):
-        return -(y * math.log(h_out) + (1 - y) * math.log(1 - h_out)) / total_training_examples
+        return NeuralNetwork.cross_entropy(y, h_out) / total_training_examples
+
+    @staticmethod
+    def cross_entropy(y, h_out):
+        return -(y * math.log(h_out) + (1 - y) * math.log(1 - h_out))
 
     def print(self):
         print('------------------------')
@@ -293,11 +297,6 @@ class Neuron:
         self._partial_derivative_bias = None
 
     def activate(self, inputs):
-        print("inputs")
-        print(inputs)
-        print("self.weights")
-        print(self._weights)
-
         z = np.dot(self._weights, inputs) + self._bias
         self._activation = self.sigmoid(z)
         self._inputs = inputs
