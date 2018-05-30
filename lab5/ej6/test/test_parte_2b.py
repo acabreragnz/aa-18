@@ -1,8 +1,9 @@
 from unittest import TestCase
-from neural_network import NeuralNetwork
+from neural_network import NeuralNetwork, Neuron
 import numpy as np
 import matplotlib.pyplot as plt
 from lab5.ej6.src.functions_helpper import get_training_data, f, g, h
+from scipy.special._ufuncs import logit
 
 
 class TestParte2b(TestCase):
@@ -14,7 +15,7 @@ class TestParte2b(TestCase):
         hidden_bias = np.random.rand(2)
         output_bias = np.random.rand(1)
 
-        for max_iter in [10**2, 10**3, 10**4, 10**5]:
+        for max_iter in [10**5]:#[10**2, 10**3, 10**4, 10**5]:
 
             training_data = get_training_data ()
 
@@ -57,9 +58,11 @@ class TestParte2b(TestCase):
             neural_network_f.fit (training_examples=data_f, target_attribute='f')
 
             data_g = training_data.drop (['f', 'h'], axis=1)
+            data_g['g'] = data_g['g'].apply (lambda x: Neuron.sigmoid (x))
             neural_network_g.fit (training_examples=data_g, target_attribute='g')
 
-            data_h = training_data.drop (['f', 'g'], axis=1)
+            data_h = training_data.drop(['f', 'g'], axis=1)
+            data_h['h'] = data_h['h'].apply (lambda x: Neuron.sigmoid(x))
             neural_network_h.fit (training_examples=data_h, target_attribute='h')
 
             P = [[],[],[]]
@@ -73,10 +76,10 @@ class TestParte2b(TestCase):
                 P[0].append(predict_f)
 
                 predict_g = neural_network_g.predict(point)
-                P[1].append(predict_g)
+                P[1].append(logit(predict_g))
 
                 predict_h = neural_network_h.predict(point)
-                P[2].append(predict_h)
+                P[2].append(logit(predict_h))
 
 
             plt.grid(True)
