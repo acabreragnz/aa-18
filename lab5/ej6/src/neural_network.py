@@ -48,7 +48,13 @@ class NeuralNetwork:
             self.calculate_gradient()
 
             if self._enable_gradient_checking:
-                self.gradient_checking(self.get_flat_gradient())
+                gradient_from_back_prop = self.get_flat_gradient()
+                (is_close_result, gradient_approx) = self.gradient_checking(gradient_from_back_prop)
+
+                for index in range(len(gradient_approx)):
+                    print("is_close", is_close_result[index])
+                    print("gradient_from_back_prop", gradient_from_back_prop[index])
+                    print("gradient_approx", gradient_approx[index])
 
             self.update_weights()
 
@@ -86,10 +92,13 @@ class NeuralNetwork:
 
     def get_flat_gradient(self):
         gradient_grouped_layer = self.get_gradient()
-        return [val for sublist in gradient_grouped_layer for val in sublist]
+
+        flat_gradient = [val for sublist in gradient_grouped_layer for val in sublist]
+
+        return np.asarray(flat_gradient)
 
     def get_gradient(self):
-        return [layer.get_gradient() for layer in self._layers]
+        return [layer.get_flat_gradient() for layer in self._layers]
 
     def update_weights(self):
         for layer in self._layers:
@@ -107,24 +116,21 @@ class NeuralNetwork:
 
         return [input_activations, hidden_activations, output_activations]
 
-    def gradient_checking(self, gradient, eps=0.01):
+    def gradient_checking(self, gradient, eps=0.1, rel_tol=1e-01, abs_tol=1e-01):
         i = 0
-        training_examples = self._training_examples
-        y = self._training_examples_result
-        total_weights_and_bias = self.total_weights_and_bias()
 
+        total_weights_and_bias = self.total_weights_and_bias()
         grad_approx = np.zeros(total_weights_and_bias)
 
         for layer in self._layers:
             for neuron in layer.get_neurons():
                 for index, weight in enumerate(neuron.get_weights_with_bias()):
                     neuron.set_weight(index, weight + eps)
-                    h_plus = map(lambda x: self.predict(x), training_examples)
-                    j_plus = self.j(y, list(h_plus), len(training_examples))
+
+                    j_plus = self.j_all()
 
                     neuron.set_weight(index, weight - eps)
-                    h_minus = map(lambda x: self.predict(x), training_examples)
-                    j_minus = self.j(y, list(h_minus), len(training_examples))
+                    j_minus = self.j_all()
 
                     grad_approx[i] = (j_plus - j_minus) / 2 * eps
 
@@ -133,7 +139,16 @@ class NeuralNetwork:
                     i += 1
 
         # change tolerances
-        return np.isclose(gradient, grad_approx, 1e-1, 1e-1), grad_approx
+        return np.isclose(gradient, grad_approx, rel_tol, abs_tol), grad_approx
+
+    def j_all(self):
+        costs = []
+
+        for index, te in self._training_examples.iterrows():
+            cost = NeuralNetwork.cross_entropy(self._training_examples_result[index], self.predict(te)[0])
+            costs.append(cost)
+
+        return sum(costs) / len(self._training_examples)
 
     def total_weights_and_bias(self):
         return self._hidden_layer.total_weights_and_bias() + \
@@ -144,10 +159,6 @@ class NeuralNetwork:
 
     def get_associated_deltas(self):
         return self._output_layer.get_deltas()
-
-    @staticmethod
-    def j(y, h_out, total_training_examples):
-        return NeuralNetwork.cross_entropy(y, h_out) / total_training_examples
 
     @staticmethod
     def cross_entropy(y, h_out):
@@ -201,7 +212,7 @@ class NeuralLayer:
         return [neuron.get_bias() for neuron in self._neurons]
 
     def total_weights_and_bias(self):
-        return len(self.get_weights()) + 1
+        return sum([neuron.total_weights_and_bias() for neuron in self._neurons])
 
     def get_deltas(self):
         return [neuron.get_deltas() for neuron in self._neurons]
@@ -243,6 +254,10 @@ class NeuralLayer:
     def calculate_gradient(self, total_examples):
         for neuron in self._neurons:
             neuron.calculate_gradient(total_examples)
+
+    def get_flat_gradient(self):
+        gradient_grouped_neuron = self.get_gradient()
+        return [val for sublist in gradient_grouped_neuron for val in sublist]
 
     def get_gradient(self):
         return [neuron.get_gradient() for neuron in self._neurons]
@@ -347,7 +362,7 @@ class Neuron:
         self._partial_derivative_bias = self._bias_max_delta / total_examples
 
     def get_gradient(self):
-        return [self._partial_derivative_bias] + self._partial_derivative_weight
+        return [self._partial_derivative_bias] + self._partial_derivative_weight.tolist()
 
     @staticmethod
     def sigmoid(x):
@@ -370,3 +385,6 @@ class Neuron:
             self._bias = weight
         else:
             self._weights[index - 1] = weight
+
+    def total_weights_and_bias(self):
+        return len(self.get_weights()) + 1
