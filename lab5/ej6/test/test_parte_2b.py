@@ -3,7 +3,7 @@ from neural_network import NeuralNetwork, Neuron
 import numpy as np
 import matplotlib.pyplot as plt
 from lab5.ej6.src.functions_helpper import get_training_data, f, g, h
-from scipy.special._ufuncs import logit
+from scipy.special import logit
 
 
 class TestParte2b(TestCase):

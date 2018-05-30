@@ -5,7 +5,7 @@ import numpy as np
 class NeuralNetwork:
     def __init__(self, input_layer_size, hidden_layer_size, output_layer_size, hidden_layer_weights=None,
                  output_layer_weights=None, hidden_layer_bias=None, output_layer_bias=None,
-                 learning_rate=0.001, tolerance=0.0001, max_iter=200, enable_gradient_checking=False):
+                 learning_rate=0.01, tolerance=0.0001, max_iter=200, enable_gradient_checking=False):
 
         self._total_inputs = input_layer_size
         self._hidden_layer = NeuralLayer(
