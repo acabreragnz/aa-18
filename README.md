@@ -25,6 +25,9 @@ Nota: siempre que se quiera correr python, se debe activar virtualenv
 
 ## Jupiter Notebooks
 
+Dentro de cada directorio de cada laboratorio se encuentra el directorio ```jp-notebooks``` con las notebooks 
+correspondientes. Para ejecutarlas correctamente se recomienda seguir los pasos que se enumeran a continuación.
+
 1. Instalar Anaconda:
 
   - Linux: desde la [página oficial](https://www.anaconda.com/download/#macos)
@@ -44,11 +47,9 @@ Nota: siempre que se quiera correr python, se debe activar virtualenv
 
 4. Instalar dependencias:
 
-  **Se deben instalar las mismas dependencias que se usan en todo el proyecto:**
+  **Se deben instalar las mismas dependencias que se usan en todo el proyecto (para todos los laboratorios):**
 
   ```pip install -r <directorio del proyecto>/requirements.txt```
-
-  El directorio del proyecto generalmente se encuentra bajo la ruta del directorio del usuario. En MacOS es /Users/ y en Linux /home .
 
 5. Ejecutar la interfaz gráfica de Anaconda y abrir Jupiter Notebooks para el entorno creado antes (py36).
 
