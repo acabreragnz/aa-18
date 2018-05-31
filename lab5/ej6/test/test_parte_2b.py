@@ -52,7 +52,13 @@ class TestParte2b(TestCase):
                 max_iter=max_iter
             )
 
+            print('Redes iniciales')
+            print('Red f')
             neural_network_f.print()
+            print ('Red g')
+            neural_network_g.print ()
+            print ('Red h')
+            neural_network_h.print ()
 
             data_f = training_data.drop (['g', 'h'], axis=1)
             neural_network_f.fit (training_examples=data_f, target_attribute='f')
@@ -64,6 +70,14 @@ class TestParte2b(TestCase):
             data_h = training_data.drop(['f', 'g'], axis=1)
             data_h['h'] = data_h['h'].apply (lambda x: Neuron.sigmoid(x))
             neural_network_h.fit (training_examples=data_h, target_attribute='h')
+
+            print ('Redes despues de fit')
+            print('Red f')
+            neural_network_f.print()
+            print ('Red g')
+            neural_network_g.print ()
+            print ('Red h')
+            neural_network_h.print ()
 
             P = [[],[],[]]
             F = training_data['f']
